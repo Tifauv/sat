@@ -21,22 +21,6 @@
 #include <stdlib.h>
 
 
-#define LIBHIST_VERS "1.0.1"
-#define LIBHIST_NAME "libHIST"
-#define LIBHIST_AUTH "Olivier Serve & Mickaël Sibelle & Philippe Strelezki"
-
-
-// Affiche le n° de version de l'unité et +
-void hist_vers() {
-  printf("\n   %s --- Gestion d'historiques --- v%s\n", LIBHIST_NAME, LIBHIST_VERS);
-  printf(" Cette librairie est un logiciel libre. Elle est fournie sans\n");
-  printf(" AUCUNE GARANTIE. Consultez le fichier COPYING pour plus de\n");
-  printf(" détails sur la licence GPL.\n\n");
-  printf(" Auteur(s): %s\n\n", LIBHIST_AUTH);
-} // hist_vers
-
-
-
 // Crée un historique
 tHist *hist_mk() {
   tHist *lHist;

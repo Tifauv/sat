@@ -38,12 +38,6 @@ int main(int argC, char *argV[]) {
   printf("  ()\\#/() | Ecrit par %s |\n", TESTSAT_AUTH);
   printf("  (\")'(\") |________________________________________________________________|\n");
 
-  printf("\n  %s utilise les librairies suivantes:\n", TESTSAT_NAME);
-  sat_vers();
-  intr_vers();
-  hist_vers();
-  dp_vers();
-
   nom_fic = malloc(32);
   if (argC == 1) strcpy(nom_fic, "cls.dat");
   else strcpy(nom_fic, argV[1]);

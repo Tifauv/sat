@@ -34,9 +34,6 @@ typedef struct {
 } tIntr;
 
 
-// Affiche le n° de version de la lib et +
-void intr_vers();
-
 // Crée une liste
 tIntr *intr_mk();
 

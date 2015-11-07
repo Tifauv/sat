@@ -20,20 +20,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define LIBINTR_VERS "1.2"
-#define LIBINTR_NAME "libINTR"
-#define LIBINTR_AUTH "Olivier Serve & Mickaël Sibelle & Philippe Strelezki"
-
-
-// Affiche le n° de version de l'unité et +
-void intr_vers() {
-  printf("\n   %s --- Gestion d'interprétations --- v%s\n", LIBINTR_NAME, LIBINTR_VERS);
-  printf(" Cette librairie est un logiciel libre. Elle est fournie sans\n");
-  printf(" AUCUNE GARANTIE. Consultez le fichier COPYING pour plus de\n");
-  printf(" détails sur la licence GPL.\n\n");
-  printf(" Auteur(s): %s\n\n", LIBINTR_AUTH);
-} // intr_vers
-
 
 // Crée une liste
 tIntr *intr_mk() {

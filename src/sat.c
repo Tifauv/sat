@@ -22,19 +22,6 @@
 #include <string.h>
 
 #define LN_SIZE 1024
-#define LIBSAT_VERS "1.5.2"
-#define LIBSAT_NAME "libSAT"
-#define LIBSAT_AUTH "Olivier Serve & Mickaël Sibelle & Philippe Strelezki"
-
-
-// Affiche les infos de version de la librairie
-void sat_vers() {
-  printf("\n   %s --- Gestion de graphe SAT --- v%s\n", LIBSAT_NAME, LIBSAT_VERS);
-  printf(" Cette librairie est un logiciel libre. Elle est fournie sans\n");
-  printf(" AUCUNE GARANTIE. Consultez le fichier COPYING pour plus de\n");
-  printf(" détails sur la licence GPL.\n\n");
-  printf(" Auteur(s): %s\n\n", LIBSAT_AUTH);
-} // sat_vers
 
 
 // Libère le graphe

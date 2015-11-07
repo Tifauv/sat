@@ -37,9 +37,6 @@ typedef struct {
 } tHist;
 
 
-// Affiche le n° de version de la lib et +
-void hist_vers();
-
 // Crée un historique
 tHist *hist_mk();
 

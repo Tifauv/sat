@@ -21,21 +21,6 @@
 #include <stdlib.h>
 
 
-#define LIBDP_VERS "1.2.4"
-#define LIBDP_NAME "libDP"
-#define LIBDP_AUTH "Olivier Serve & Mickael Sibelle & Philippe Strelezki"
-
-
-// Affiche les infos de version de la librairie
-void dp_vers() {
-  printf("\n   %s --- Algorithme de Davis-Putnam --- v%s\n", LIBDP_NAME, LIBDP_VERS);
-  printf(" Cette librairie est un logiciel libre. Elle est fournie sans\n");
-  printf(" AUCUNE GARANTIE. Consultez le fichier COPYING pour plus de\n");
-  printf(" détails sur la licence GPL.\n\n");
-  printf(" Auteur(s): %s\n\n", LIBDP_AUTH);
-} // dp_vers
-
-
 // Lancement de la résolution
 tIntr *dp_sat(tGraphe **pGraph) {
 

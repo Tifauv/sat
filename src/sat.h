@@ -59,9 +59,6 @@ typedef struct tGraphe {
    tVar    *vars   ; // Pointeur vers la liste des variables
 } tGraphe;
 
-// Affiche le numéro de version de la librairie et +
-void sat_vers();
-
 // Libère la mémoire occupée par le graphe
 void sat_free(tGraphe **pGraph);
 

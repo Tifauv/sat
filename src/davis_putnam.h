@@ -23,9 +23,6 @@
 #include "interpretation.h"
 #include "history.h"
 
-// Affiche les infos de version de la librairie
-void dp_vers();
-
 // Résout un graphe SAT
 tIntr *dp_sat(tGraphe **pGraph);
 
