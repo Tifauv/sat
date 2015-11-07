@@ -1,5 +1,5 @@
-/* Programme de résolution de problèmes SAT par Davis-Putnam
-   Copyright (C) 2002 Olivier Serve, Mickaël Sibelle & Philippe Strelezki
+/* Programme de rÃ©solution de problÃ¨mes SAT par Davis-Putnam
+   Copyright (C) 2002 Olivier Serve, MickaÃ«l Sibelle & Philippe Strelezki
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ int main(int argC, char *argV[]) {
   tGraphe *graph;
   char *nom_fic;
 
-  // Afficher les versions et auteurs des librairies utilisées
+  // Afficher les versions et auteurs des librairies utilisÃ©es
   printf("\n\n           ________________________________________________________________\n");
   printf("    ^ ^   |                                                                |\n");
   printf("   (o o) <  Bienvenue dans %s v%s !                                  |\n", TESTSAT_NAME, TESTSAT_VERS);
@@ -54,18 +54,18 @@ int main(int argC, char *argV[]) {
   printf("\n\n> Affichage :\n");
   sat_see(graph);
 
-  printf("\n\n> Résolution:\n");
+  printf("\n\n> RÃ©solution:\n");
   intr_see( dp_sat(&graph) );
 
-  printf("\n\n> Libération de la mémoire:\n");
+  printf("\n\n> LibÃ©ration de la mÃ©moire:\n");
   sat_free(&graph);
 
-  printf("\n\n> Terminé\n\n");
+  printf("\n\n> TerminÃ©\n\n");
 
   fprintf(stderr, "              ________________________________________________________________\n");
   fprintf(stderr, "             /                                                                \\\n");
   fprintf(stderr, "     o o    |  Pour ne plus voir tous ces messages, il suffit de taper         |\n");
-  fprintf(stderr, "    (. .)  <  ' 2> /dev/null' à la fin de la ligne de commande. Mais vous pou- |\n");
+  fprintf(stderr, "    (. .)  <  ' 2> /dev/null' Ã  la fin de la ligne de commande. Mais vous pou- |\n");
   fprintf(stderr, "   () \" ()  | vez aussi rediriger la sortie vers un fichier de log...          |\n");
   fprintf(stderr, "   (\")'(\")   \\________________________________________________________________/\n\n"); 
 

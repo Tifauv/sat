@@ -1,5 +1,5 @@
-/* EN-têtes de la libHIST -- Librairie de gestion d'historiques de graphes SAT
-   Copyright (C) 2002 Olivier Serve, Mickaël Sibelle & Philippe Strelezki
+/* EN-tÃªtes de la libHIST -- Librairie de gestion d'historiques de graphes SAT
+   Copyright (C) 2002 Olivier Serve, MickaÃ«l Sibelle & Philippe Strelezki
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -24,53 +24,53 @@ typedef struct tEtape tEtape;
 
 // Etape
 struct tEtape {
-  int           op;     // Opération réalisée: 1->sub_cls 2->sub_var_in_cls
-  unsigned int  indCls; // Indice de la clause concernée
-  int          *vars;   // Tableau de littéraux
+  int           op;     // OpÃ©ration rÃ©alisÃ©e: 1->sub_cls 2->sub_var_in_cls
+  unsigned int  indCls; // Indice de la clause concernÃ©e
+  int          *vars;   // Tableau de littÃ©raux
   int           size;   // Taille du tableau
   tEtape       *suiv;   // Ptr sur suivant
 };
 
 // Historique
 typedef struct {
-  tEtape *deb; // Début de liste
+  tEtape *deb; // DÃ©but de liste
 } tHist;
 
 
-// Affiche le n° de version de la lib et +
+// Affiche le nÂ° de version de la lib et +
 void hist_vers();
 
-// Crée un historique
+// CrÃ©e un historique
 tHist *hist_mk();
 
-// Libère un historique
+// LibÃ¨re un historique
 int hist_free(tHist **pHist);
 
 // Teste si l'historique est vide
 int hist_void(tHist *pHist);
 
-// Ajoute une étape 1 en tête
+// Ajoute une Ã©tape 1 en tÃªte
 int hist_add_cls(tHist *pHist, tClause *pCls);
 
-// Ajoute une étape 2 en tête
+// Ajoute une Ã©tape 2 en tÃªte
 int hist_add_var(tHist *pHist, int pIndCls, int pVar);
 
-// Supprime la première étape
+// Supprime la premiÃ¨re Ã©tape
 int hist_rm(tHist *pHist);
 
-// Renvoie le code de première opération
+// Renvoie le code de premiÃ¨re opÃ©ration
 int hist_get_code(tHist *pHist);
 
-// Renvoie l'indice de la première opération
+// Renvoie l'indice de la premiÃ¨re opÃ©ration
 int hist_get_cls(tHist *pHist);
 
-// Renvoie le tableau de variables de la première opération
+// Renvoie le tableau de variables de la premiÃ¨re opÃ©ration
 int *hist_get_vars(tHist *pHist);
 
-// Renvoie la taille du dernier tableau ajouté
+// Renvoie la taille du dernier tableau ajoutÃ©
 int hist_get_size(tHist *pHist);
 
-// Ré-effectue les modifications de l'historique
+// RÃ©-effectue les modifications de l'historique
 int hist_redo(tHist *pHist, tGraphe **pGraph);
 
 #endif

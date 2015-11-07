@@ -1,5 +1,5 @@
-/* En-têtes de la libDP -- Algorithme de Davis-Putnam pour problèmes SAT
-   Copyright (C) 2002 Olivier Serve, Mickaël Sibelle & Philippe Strelezki
+/* En-tÃªtes de la libDP -- Algorithme de Davis-Putnam pour problÃ¨mes SAT
+   Copyright (C) 2002 Olivier Serve, MickaÃ«l Sibelle & Philippe Strelezki
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,19 +27,19 @@
 // Affiche les infos de version de la librairie
 void dp_vers();
 
-// Résout un graphe SAT
+// RÃ©sout un graphe SAT
 tIntr *dp_sat(tGraphe **pGraph);
 
 // Algorithme de Davis-Putnam
 tIntr *dp_davis_putnam(tGraphe **pGraph, tIntr *pIntr); 
 
-// Renvoie l'interprétation 
+// Renvoie l'interprÃ©tation 
 tIntr *dp_test_sat(tGraphe **pGraph, int pLitt, tIntr *pLsLitt);
 
-// Réduit la clause du graphe en f° du littéral
+// RÃ©duit la clause du graphe en fÂ° du littÃ©ral
 int dp_reduire_cls(int pLitt, tClause *pCls, tGraphe *pGraph, tHist *pHist);
 
-// Réduit le graphe en fonction du littéral
+// RÃ©duit le graphe en fonction du littÃ©ral
 void dp_reduire(int pLitt, tGraphe **pGraph, tHist *pHist);
 
 #endif

@@ -1,5 +1,5 @@
-/* En-têtes de la libSAT -- Librairie de gestion de graphe SAT
-   Copyright (C) 2002 Olivier Serve, Mickaël Sibelle & Philippe Strelezki
+/* En-tÃªtes de la libSAT -- Librairie de gestion de graphe SAT
+   Copyright (C) 2002 Olivier Serve, MickaÃ«l Sibelle & Philippe Strelezki
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -28,29 +28,29 @@ typedef struct tPtVar tPtVar;       // Type Liste de pointeurs vers une variable
 
 // Type Liste de clauses
 struct tClause {
-   unsigned int indCls; // Indice de la clause : entier non-signé (0 -> 255)
+   unsigned int indCls; // Indice de la clause : entier non-signÃ© (0 -> 255)
    tPtVar       *vars  ; // Pointeur sur la liste des variables de la clause
-   tClause      *suiv  ; // Pointeur chaînant
+   tClause      *suiv  ; // Pointeur chaÃ®nant
 };
 
 // Type Liste de variables
 struct tVar {
    unsigned int  indVar; // Indice de la variable
    tPtVarSgn     *clsPos; // Pointeur vers les clauses dans lesquelles la variable est positive
-   tPtVarSgn     *clsNeg; // Pointeur vers les clauses dans lesquelles la variable est négative
-   tVar          *suiv  ; // Pointeur chaînant
+   tPtVarSgn     *clsNeg; // Pointeur vers les clauses dans lesquelles la variable est nÃ©gative
+   tVar          *suiv  ; // Pointeur chaÃ®nant
 };
 
 // Type Liste de pointeurs vers une variable contenue dans une clause
 struct tPtVar {
    tVar   *var ; // Pointeur vers une variable de la clause
-   tPtVar *suiv; // Pointeur chaînant
+   tPtVar *suiv; // Pointeur chaÃ®nant
 };
 
 // Type Liste de pointeurs (indiquant le signe d'une variable dans une clause)
 struct tPtVarSgn {
    tClause   *clause; // Pointeur vers une clause qui utilise la variable positivement
-   tPtVarSgn *suiv  ; // Pointeur chaînant
+   tPtVarSgn *suiv  ; // Pointeur chaÃ®nant
 };
 
 // Type Graphe
@@ -59,19 +59,19 @@ typedef struct tGraphe {
    tVar    *vars   ; // Pointeur vers la liste des variables
 } tGraphe;
 
-// Affiche le numéro de version de la librairie et +
+// Affiche le numÃ©ro de version de la librairie et +
 void sat_vers();
 
-// Libère la mémoire occupée par le graphe
+// LibÃ¨re la mÃ©moire occupÃ©e par le graphe
 void sat_free(tGraphe **pGraph);
 
 // Renvoie un graphe vide
 tGraphe *sat_mk();
 
-// Charge un fichier dans un graph vide à l'origine
+// Charge un fichier dans un graph vide Ã  l'origine
 tGraphe *sat_load_file(char *pNom_fic);
 
-// Teste si une variable appartient à une clause --------------------------
+// Teste si une variable appartient Ã  une clause --------------------------
 int sat_ex_var_in_cls(int pVar, tClause *pCls);
 
 // Compare une clause et un tableau de variables
@@ -83,7 +83,7 @@ int sat_ex_clause(tGraphe *pGraph, unsigned int pIndCls, int *pTabVar, int pSize
 // Teste si une variable existe
 tVar *sat_ex_var(tGraphe *pGraph, unsigned int pIndVar);
 
-// Lie une variable à une clause et inversement
+// Lie une variable Ã  une clause et inversement
 void sat_lnk_clsVar(tClause *pCls, tVar *pVar, int pSignVar);
 
 // Construit un tableau de variables
@@ -92,16 +92,16 @@ int *sat_mk_tabVar(char *pStr, int *pSize);
 // Renvoie le signe d'un entier
 int sat_sign(int pNbe);
 
-// Crée et ajoute une variable à la liste des variables
+// CrÃ©e et ajoute une variable Ã  la liste des variables
 tVar *sat_add_var(tGraphe *pGraph, int pIndVar);
 
-// Ajoute une variable à une clause
+// Ajoute une variable Ã  une clause
 int sat_add_var_to_cls(tGraphe *pGraph, unsigned int pIndCls, int pVar);
 
-// Ajoute une clause à un graphe
+// Ajoute une clause Ã  un graphe
 int sat_add_clause(tGraphe *pGraph, unsigned int pIndCls, int *pTabVar, int pSize);
 
-// Renvoie le signe d'une variable appartenant à une clause
+// Renvoie le signe d'une variable appartenant Ã  une clause
 int sat_get_sign(tVar *pVar, unsigned int pIndCls);
 
 // Affiche les clauses
@@ -119,14 +119,14 @@ tPtVarSgn *sat_get_ptr_varSgn(tPtVarSgn *pVarSgn, tClause *pCls);
 // Recherche et supprime la cellule de la variable pointant sur la clause
 int sat_unlnk_varSgn_cls(tVar *pVar, int pSign, tClause *pCls);
 
-// Enlève les liens entre une clause et sa première variable
+// EnlÃ¨ve les liens entre une clause et sa premiÃ¨re variable
 int sat_unlnk_cls_var(tGraphe *pGraph, tClause *pCls);
  
 // Supprime une clause
 int sat_sub_clause(tGraphe *pGraph, unsigned int pIndCls);
 
-// Renvoie la variable de la première clause unitaire trouvée
-//  0 si non trouvée
+// Renvoie la variable de la premiÃ¨re clause unitaire trouvÃ©e
+//  0 si non trouvÃ©e
 int sat_get_var_cls_unit(tGraphe *pGraph);
 
 #endif

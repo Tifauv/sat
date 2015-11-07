@@ -1,5 +1,5 @@
-/* En-têtes de la libINTR -- Librairie de gestion d'interprétations
-   Copyright (C) 2002 Olivier Serve, Mickaël Sibelle & Philippe Strelezki
+/* En-tÃªtes de la libINTR -- Librairie de gestion d'interprÃ©tations
+   Copyright (C) 2002 Olivier Serve, MickaÃ«l Sibelle & Philippe Strelezki
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,48 +20,48 @@
 
 typedef struct tLitt tLitt;
 
-// Littéral
+// LittÃ©ral
 struct tLitt {
   int    litt;  // Valeur dans la liste
   tLitt *suiv; // Ptr sur le suivant
 };
 
-// Interprétation
+// InterprÃ©tation
 typedef struct {
   int insatisfiable; // Si 1, insatisfiable; sinon satisfiable
-  tLitt *deb; // ptr sur début de liste
+  tLitt *deb; // ptr sur dÃ©but de liste
   tLitt *fin; // ptr sur fin de liste
 } tIntr;
 
 
-// Affiche le n° de version de la lib et +
+// Affiche le nÂ° de version de la lib et +
 void intr_vers();
 
-// Crée une liste
+// CrÃ©e une liste
 tIntr *intr_mk();
 
-// Libère une liste
+// LibÃ¨re une liste
 int intr_free(tIntr **pIntr);
 
 // Teste si une liste est vide
 int intr_is_void(tIntr *pIntr);
 
-// Ajoute un élément en tête
+// Ajoute un Ã©lÃ©ment en tÃªte
 int intr_add(tIntr *pIntr, int n);
 
-// Supprime le dernier élément
+// Supprime le dernier Ã©lÃ©ment
 int intr_rm(tIntr **pIntr);
 
-// Renvoie le premier élément
+// Renvoie le premier Ã©lÃ©ment
 int intr_get_first(tIntr *pIntr);
 
 // Teste si l est insatisfiable
 int intr_is_insatisfiable(tIntr *pIntr);
 
-// Positionne l à insatisfiable
+// Positionne l Ã  insatisfiable
 int intr_set_insatisfiable(tIntr **pIntr);
 
-// Affiche une interprétation
+// Affiche une interprÃ©tation
 void intr_see(tIntr *pIntr);
 
 #endif

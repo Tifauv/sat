@@ -1,5 +1,5 @@
-/* Fonctions de la libINTR -- Librairie de gestion d'interprétations
-   Copyright (C) 2002 Olivier Serve, Mickaël Sibelle & Philippe Strelezki
+/* Fonctions de la libINTR -- Librairie de gestion d'interprÃ©tations
+   Copyright (C) 2002 Olivier Serve, MickaÃ«l Sibelle & Philippe Strelezki
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,24 +22,24 @@
 
 #define LIBINTR_VERS "1.2"
 #define LIBINTR_NAME "libINTR"
-#define LIBINTR_AUTH "Olivier Serve & Mickaël Sibelle & Philippe Strelezki"
+#define LIBINTR_AUTH "Olivier Serve & MickaÃ«l Sibelle & Philippe Strelezki"
 
 
-// Affiche le n° de version de l'unité et +
+// Affiche le nÂ° de version de l'unitÃ© et +
 void intr_vers() {
-  printf("\n   %s --- Gestion d'interprétations --- v%s\n", LIBINTR_NAME, LIBINTR_VERS);
+  printf("\n   %s --- Gestion d'interprÃ©tations --- v%s\n", LIBINTR_NAME, LIBINTR_VERS);
   printf(" Cette librairie est un logiciel libre. Elle est fournie sans\n");
   printf(" AUCUNE GARANTIE. Consultez le fichier COPYING pour plus de\n");
-  printf(" détails sur la licence GPL.\n\n");
+  printf(" dÃ©tails sur la licence GPL.\n\n");
   printf(" Auteur(s): %s\n\n", LIBINTR_AUTH);
 } // intr_vers
 
 
-// Crée une liste
+// CrÃ©e une liste
 tIntr *intr_mk() {
   tIntr *lIntr;
 
-  // Création de la liste
+  // CrÃ©ation de la liste
   lIntr = (tIntr *) malloc(sizeof(tIntr));
 
   // Initialisation
@@ -51,17 +51,17 @@ tIntr *intr_mk() {
 } // intr_mk
 
 
-// Libère une linterprétation
+// LibÃ¨re une linterprÃ©tation
 int intr_free(tIntr **pIntr) {
   tLitt *e;
 
-  // Vérification de l
+  // VÃ©rification de l
   if (!(*pIntr)) {
     fprintf(stderr, " Ooops: Le pointeur de liste est NULL.\n");
     return -1;
   }
 
-  // Suppression des éléments
+  // Suppression des Ã©lÃ©ments
   e = (*pIntr)->deb;
   while (e) {
     intr_rm(pIntr);
@@ -77,9 +77,9 @@ int intr_free(tIntr **pIntr) {
 // Teste si une liste est vide
 int intr_is_void(tIntr *pIntr) {
 
-  // Vérification de pIntr
+  // VÃ©rification de pIntr
   if (!pIntr) {
-    fprintf(stderr, " Ooops: Le pointeur d'interprétation est NULL.\n");
+    fprintf(stderr, " Ooops: Le pointeur d'interprÃ©tation est NULL.\n");
     return -1;
   }
 
@@ -91,17 +91,17 @@ int intr_is_void(tIntr *pIntr) {
 } // intr_is_void
 
 
-// Ajoute un élément en tête
+// Ajoute un Ã©lÃ©ment en tÃªte
 int intr_add(tIntr *pIntr, int n) {
   tLitt *e;
 
-  // Vérification de pIntr
+  // VÃ©rification de pIntr
   if (!pIntr) {
-    fprintf(stderr, " Ooops: Le pointeur d'interprétation est NULL.\n");
+    fprintf(stderr, " Ooops: Le pointeur d'interprÃ©tation est NULL.\n");
     return -1;
   }
 
-  // Création de e
+  // CrÃ©ation de e
   e = (tLitt *) malloc(sizeof(tLitt));
 
   // Initialisation de e
@@ -120,7 +120,7 @@ int intr_add(tIntr *pIntr, int n) {
   }
 
   if (pIntr->insatisfiable == 1) {
-    fprintf(stderr, " Waouu: L'interprétation était insatisfiable.\n");
+    fprintf(stderr, " Waouu: L'interprÃ©tation Ã©tait insatisfiable.\n");
     pIntr->insatisfiable = 0;
     fprintf(stderr, "        Elle est maintenant satisfiable");
     return 1;
@@ -129,19 +129,19 @@ int intr_add(tIntr *pIntr, int n) {
 } // intr_add
 
 
-// Supprime le premier élément
+// Supprime le premier Ã©lÃ©ment
 int intr_rm(tIntr **pIntr) {
   tLitt *e, *e2;
 
-  // Vérification de l
+  // VÃ©rification de l
   if (!(*pIntr)) {
-    fprintf(stderr, " Ooops: Le pointeur d'interprétation est NULL.\n");
+    fprintf(stderr, " Ooops: Le pointeur d'interprÃ©tation est NULL.\n");
     return -1;
   }
 
-  // Vérification de la taille
+  // VÃ©rification de la taille
   if (!(*pIntr)->deb) {
-    fprintf(stderr, " Waouu: L'interprétation est vide: rien à supprimer.\n");
+    fprintf(stderr, " Waouu: L'interprÃ©tation est vide: rien Ã  supprimer.\n");
     return -2;
   }
  
@@ -163,12 +163,12 @@ int intr_rm(tIntr **pIntr) {
 } // intr_rm
 
 
-// Renvoie le premier élément
+// Renvoie le premier Ã©lÃ©ment
 int intr_get_first(tIntr *pIntr) {
 
-  // Vérification de pIntr
+  // VÃ©rification de pIntr
   if (!pIntr) {
-    fprintf(stderr, " Ooops: Le pointeur d'interprétation est NULL.\n");
+    fprintf(stderr, " Ooops: Le pointeur d'interprÃ©tation est NULL.\n");
     return 0;
   }
   return pIntr->deb->litt;
@@ -178,9 +178,9 @@ int intr_get_first(tIntr *pIntr) {
 // Teste si l est insatisfiable
 int intr_is_insatisfiable(tIntr *pIntr) {
 
-  // Vérification de l
+  // VÃ©rification de l
   if (!pIntr) {
-    fprintf(stderr, " Ooops: Le pointeur d'interprétation est NULL.\n");
+    fprintf(stderr, " Ooops: Le pointeur d'interprÃ©tation est NULL.\n");
     return -1;
   }
 
@@ -188,12 +188,12 @@ int intr_is_insatisfiable(tIntr *pIntr) {
 } // intr_is_insatisfiable
 
 
-// Positionne l à insatisfiable
+// Positionne l Ã  insatisfiable
 int intr_set_insatisfiable(tIntr **pIntr) {/* passer en double pointeurs */
 
-  // Vérification de pIntr
+  // VÃ©rification de pIntr
   if (!(*pIntr)) {
-    fprintf(stderr, " Ooops: Le pointeur d'interprétation est NULL.\n");
+    fprintf(stderr, " Ooops: Le pointeur d'interprÃ©tation est NULL.\n");
     return -1;
   }
 
@@ -202,25 +202,25 @@ int intr_set_insatisfiable(tIntr **pIntr) {/* passer en double pointeurs */
 } // intr_set_insatisfiable
 
 
-// Affiche une interprétation
+// Affiche une interprÃ©tation
 void intr_see(tIntr *pIntr) {
   tLitt *lLitt;
 
-  // Vérification de pIntr;
+  // VÃ©rification de pIntr;
   if (!pIntr) {
-    fprintf(stderr, "  Ooops: Le pointeur d'interprétation est NULL.\n");
+    fprintf(stderr, "  Ooops: Le pointeur d'interprÃ©tation est NULL.\n");
     exit(1);
   }
 
   // Teste si insatisfiable
-  if (pIntr->insatisfiable == 1) printf("  L'interprétation est insatisfiable.\n");
+  if (pIntr->insatisfiable == 1) printf("  L'interprÃ©tation est insatisfiable.\n");
   else {
-    // Parcours de la liste des littéraux...
-    printf("  Interprétation = (");
+    // Parcours de la liste des littÃ©raux...
+    printf("  InterprÃ©tation = (");
     lLitt = pIntr->deb;
     while (lLitt) {
       printf(" ");
-      if (lLitt->litt < 0) printf("¬");
+      if (lLitt->litt < 0) printf("Â¬");
       printf("X%d", abs(lLitt->litt));
       lLitt = lLitt->suiv;
     }

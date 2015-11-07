@@ -1,5 +1,5 @@
-/* Fonctions de la libDP -- Algorithme de Davis-Putnam pour problèmes SAT
-   Copyright (C) 2002 Olivier Serve, Mickaël Sibelle & Philippe Strelezki
+/* Fonctions de la libDP -- Algorithme de Davis-Putnam pour problÃ¨mes SAT
+   Copyright (C) 2002 Olivier Serve, MickaÃ«l Sibelle & Philippe Strelezki
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -34,15 +34,15 @@ void dp_vers() {
   printf("\n   %s --- Algorithme de Davis-Putnam --- v%s\n", LIBDP_NAME, LIBDP_VERS);
   printf(" Cette librairie est un logiciel libre. Elle est fournie sans\n");
   printf(" AUCUNE GARANTIE. Consultez le fichier COPYING pour plus de\n");
-  printf(" détails sur la licence GPL.\n\n");
+  printf(" dÃ©tails sur la licence GPL.\n\n");
   printf(" Auteur(s): %s\n\n", LIBDP_AUTH);
 } // dp_vers
 
 
-// Lancement de la résolution
+// Lancement de la rÃ©solution
 tIntr *dp_sat(tGraphe **pGraph) {
 
-  // Vérification de pGraph
+  // VÃ©rification de pGraph
   if (!pGraph) {
     fprintf(stderr, " Ooops: Le pointeur du graphe est NULL.\n");
     return NULL;
@@ -58,15 +58,15 @@ tIntr *dp_davis_putnam(tGraphe **pGraph, tIntr *pIntr) {
   tIntr *lIntr, *rslt;
   tHist *lHist;
 
-  // Vérification de pGraph
+  // VÃ©rification de pGraph
   if (!(*pGraph)) {
     fprintf(stderr, " Ooops: Le pointeur de graphe est NULL.\n");
     return NULL;
   }
 
-  // Vérification de pIntr
+  // VÃ©rification de pIntr
   if (!pIntr) {
-    fprintf(stderr, " Ooops: Le pointeur de l'interprétation est NULL.\n");
+    fprintf(stderr, " Ooops: Le pointeur de l'interprÃ©tation est NULL.\n");
     return NULL;
   }
 
@@ -76,26 +76,26 @@ tIntr *dp_davis_putnam(tGraphe **pGraph, tIntr *pIntr) {
 
   if (!(*pGraph)->clauses) return pIntr;
 
-  // Prendre la variable de la première clause unitaire qui traine
+  // Prendre la variable de la premiÃ¨re clause unitaire qui traine
   var_cls_unit = sat_get_var_cls_unit(*pGraph);
 
-  // Création d'un historique
-  fprintf(stderr, " Création d'un historique...");
+  // CrÃ©ation d'un historique
+  fprintf(stderr, " CrÃ©ation d'un historique...");
   lHist = hist_mk();
   fprintf(stderr, "OK\n");
 
-  // Première réduction et test du résultat
-  fprintf(stderr, " Première tentative de réduction...\n");
+  // PremiÃ¨re rÃ©duction et test du rÃ©sultat
+  fprintf(stderr, " PremiÃ¨re tentative de rÃ©duction...\n");
   dp_reduire(var_cls_unit, pGraph, lHist);
   lIntr = dp_test_sat(pGraph, var_cls_unit, pIntr);
 
   if (intr_is_insatisfiable(lIntr)) {
 
-    fprintf(stderr, " Régénération du graphe pour seconde tentative...\n");
+    fprintf(stderr, " RÃ©gÃ©nÃ©ration du graphe pour seconde tentative...\n");
     hist_redo(lHist, pGraph);
  
-    // Seconde réduction et test du résultat
-    fprintf(stderr, " Seconde tentative de réduction...\n");
+    // Seconde rÃ©duction et test du rÃ©sultat
+    fprintf(stderr, " Seconde tentative de rÃ©duction...\n");
     dp_reduire(-var_cls_unit, pGraph, lHist);
     rslt = dp_test_sat(pGraph, -var_cls_unit, pIntr);
 
@@ -114,11 +114,11 @@ tIntr *dp_davis_putnam(tGraphe **pGraph, tIntr *pIntr) {
 } // dp_davis_putnam
 
 
-// Renvoie l'interprétation du graphe
+// Renvoie l'interprÃ©tation du graphe
 tIntr *dp_test_sat(tGraphe **pGraph, int pLitt, tIntr *pLsLitt) {
   tIntr *lIntr;
 
-  fprintf(stderr, "\n  Test de satisfiabilité: ");
+  fprintf(stderr, "\n  Test de satisfiabilitÃ©: ");
   // Si insatisfiable...
   if (!(*pGraph)) {
     fprintf(stderr, "Insatisfiable\n");
@@ -134,29 +134,29 @@ tIntr *dp_test_sat(tGraphe **pGraph, int pLitt, tIntr *pLsLitt) {
   }
   else {
     fprintf(stderr, "Il reste des clauses\n");
-  // ajout du littéral à l'interprétation
+  // ajout du littÃ©ral Ã  l'interprÃ©tation
   fprintf(stderr, "  Ajout de ");
-  if (pLitt < 0) fprintf(stderr, "¬");
-  fprintf(stderr, "X%d à l'interprétation.\n", abs(pLitt));
+  if (pLitt < 0) fprintf(stderr, "Â¬");
+  fprintf(stderr, "X%d Ã  l'interprÃ©tation.\n", abs(pLitt));
   intr_add(pLsLitt, pLitt);
   return dp_davis_putnam(pGraph, pLsLitt);
   }
 } // dp_test_sat
 
 
-// Réduit une clause en f° du littéral
+// RÃ©duit une clause en fÂ° du littÃ©ral
 int dp_reduire_cls(int pLitt, tClause *pCls, tGraphe *pGraph, tHist *pHist) {
   tPtVar *lPtVar;
 
-  // Vérification de tClause
+  // VÃ©rification de tClause
   if (!pCls) {
     fprintf(stderr, " Ooops: Le pointeur de clause est NULL.\n");
     return -1;
   }
 
   //  sat_see(pGraph);
-  fprintf(stderr, "\n   Réduction de la Clause n°%d par ", pCls->indCls);
-  if (pLitt < 0) fprintf(stderr, "¬");
+  fprintf(stderr, "\n   RÃ©duction de la Clause nÂ°%d par ", pCls->indCls);
+  if (pLitt < 0) fprintf(stderr, "Â¬");
   fprintf(stderr, "X%d.\n",  abs(pLitt));
 
   lPtVar = pCls->vars;
@@ -165,13 +165,13 @@ int dp_reduire_cls(int pLitt, tClause *pCls, tGraphe *pGraph, tHist *pHist) {
     fprintf(stderr, "    Test de X%d == X%d: ", lPtVar->var->indVar, abs(pLitt));
     if (lPtVar->var->indVar == abs(pLitt)) {
       fprintf(stderr, "positif\n");
-      fprintf(stderr, "     Test de polarité: ");
+      fprintf(stderr, "     Test de polaritÃ©: ");
       if (sat_sign(pLitt) == sat_get_sign(lPtVar->var, pCls->indCls)) {
 
-	// même polarité: on vire la clause
+	// mÃªme polaritÃ©: on vire la clause
 	fprintf(stderr, "positif\n");
 
-	// Ajout de la suppresion à l'historique
+	// Ajout de la suppresion Ã  l'historique
 	fprintf(stderr, "    Sauvegarde de la clause dans l'historique.\n");
 	hist_add_cls(pHist, pCls);
 
@@ -179,10 +179,10 @@ int dp_reduire_cls(int pLitt, tClause *pCls, tGraphe *pGraph, tHist *pHist) {
 	sat_sub_clause(pGraph, pCls->indCls);
 	return 1;
       }
-      else { // polarité contraire: on vire le littéral de la clause
-	// retourne: 2 si la clause est non vide (après traitement)
+      else { // polaritÃ© contraire: on vire le littÃ©ral de la clause
+	// retourne: 2 si la clause est non vide (aprÃ¨s traitement)
 	//           3 si elle est vide (insatisfiable).
-	fprintf(stderr, "négatif\n");
+	fprintf(stderr, "nÃ©gatif\n");
 
 	// Ajout de la modif
 	fprintf(stderr, "    Sauvegarde de la variable dans l'historique.\n");
@@ -193,7 +193,7 @@ int dp_reduire_cls(int pLitt, tClause *pCls, tGraphe *pGraph, tHist *pHist) {
       }
     }
     else {
-      fprintf(stderr, "négatif\n");
+      fprintf(stderr, "nÃ©gatif\n");
       lPtVar = lPtVar->suiv;
     }
   }
@@ -201,7 +201,7 @@ int dp_reduire_cls(int pLitt, tClause *pCls, tGraphe *pGraph, tHist *pHist) {
 } // dp_reduire_cls
 
 
-// Réduit le graphe en fonction du littéral
+// RÃ©duit le graphe en fonction du littÃ©ral
 void dp_reduire(int pLitt, tGraphe **pGraph, tHist *pHist) {
   tClause *lCls, *lCls2;
   int rslt;
@@ -210,8 +210,8 @@ void dp_reduire(int pLitt, tGraphe **pGraph, tHist *pHist) {
     fprintf(stderr, "  Waouu: Le pointeur de graphe est NULL.\n");
   }
   else {
-    fprintf(stderr, "  Réduction par ");
-    if (pLitt < 0) fprintf(stderr, "¬");
+    fprintf(stderr, "  RÃ©duction par ");
+    if (pLitt < 0) fprintf(stderr, "Â¬");
     fprintf(stderr, "X%d...\n", abs(pLitt));
     lCls = (*pGraph)->clauses;
 
@@ -228,9 +228,9 @@ void dp_reduire(int pLitt, tGraphe **pGraph, tHist *pHist) {
 	while (lCls2) {
 	  rslt = hist_add_cls(pHist, lCls2); 
 	  if (rslt == -3) 
-	    fprintf(stderr, "   La clause n°%d est vide et n'a pas été ajoutée.\n", lCls2->indCls);
+	    fprintf(stderr, "   La clause nÂ°%d est vide et n'a pas Ã©tÃ© ajoutÃ©e.\n", lCls2->indCls);
 	  else if (rslt == 0) 
-	    fprintf(stderr, "   Clause n°%d mise dans l'historique.\n", lCls2->indCls);
+	    fprintf(stderr, "   Clause nÂ°%d mise dans l'historique.\n", lCls2->indCls);
 	  lCls2 = lCls2->suiv;
 	}
 
