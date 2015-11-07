@@ -205,7 +205,6 @@ int dp_reduire_cls(int pLitt, tClause *pCls, tGraphe *pGraph, tHist *pHist) {
 void dp_reduire(int pLitt, tGraphe **pGraph, tHist *pHist) {
   tClause *lCls, *lCls2;
   int rslt;
-  tIntr * lIntr;
 
   if (!*pGraph) {
     fprintf(stderr, "  Waouu: Le pointeur de graphe est NULL.\n");
@@ -215,7 +214,6 @@ void dp_reduire(int pLitt, tGraphe **pGraph, tHist *pHist) {
     if (pLitt < 0) fprintf(stderr, "¬");
     fprintf(stderr, "X%d...\n", abs(pLitt));
     lCls = (*pGraph)->clauses;
-    lIntr = intr_mk();
 
     while (lCls) {
       lCls2 = lCls->suiv;
