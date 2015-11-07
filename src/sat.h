@@ -15,8 +15,8 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
 */
-#ifndef LIBSAT_H
-#define LIBSAT_H
+#ifndef SAT_H
+#define SAT_H
 
 typedef struct tVar tVar;           // Type Liste de variables
 
@@ -129,4 +129,4 @@ int sat_sub_clause(tGraphe *pGraph, unsigned int pIndCls);
 //  0 si non trouvée
 int sat_get_var_cls_unit(tGraphe *pGraph);
 
-#endif
+#endif // SAT_H

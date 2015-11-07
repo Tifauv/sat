@@ -15,13 +15,10 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
 */
-
-#include "libDP.h"
+#include "davis_putnam.h"
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "libHist.h"
-#include "libSat.h"
 
 
 #define LIBDP_VERS "1.2.4"

@@ -20,8 +20,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "libSat.h"
-#include "libDP.h"
+#include "sat.h"
+#include "davis_putnam.h"
 
 #define TESTSAT_NAME "TestSAT"
 #define TESTSAT_VERS "2.1"

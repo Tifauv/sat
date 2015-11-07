@@ -15,7 +15,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
 */
-#include "libSat.h"
+#include "sat.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -109,6 +109,18 @@ tGraphe *sat_load_file(char *pNom_fic) {
     printf("#");
     str[strlen(str)-1] = '\0';
     fprintf(stderr, "\n Ligne[%d] = |%s|\n", i, str);
+    
+    // Ignore comment lines
+    if (str[0] == 'c')
+      continue;
+    
+    // Ignore project lines
+    if (str[0] == 'p')
+      continue;
+    
+    // Break at '%' lines
+    if (str[0] == '%')
+      break;
 
     // Transformation string -> tab
     tab = sat_mk_tabVar(str, &size);

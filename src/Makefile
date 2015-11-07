@@ -8,20 +8,20 @@
 CC = gcc
 CFLAGS = -ggdb
 
-testSat : testSat.o libSat.o libIntr.o libDP.o libHist.o
-	$(CC) $(CFLAGS) -o testSat testSat.o libSat.o libIntr.o libDP.o libHist.o
+testSat : testSat.o sat.o interpretation.o davis_putnam.o history.o
+	$(CC) $(CFLAGS) -o testSat testSat.o sat.o interpretation.o davis_putnam.o history.o
 
 testSat.o : testSat.c
 	$(CC) -Wall -c $(CFLAGS) testSat.c
 
-libSat.o : libSat.c
-	$(CC) -Wall -c $(CFLAGS) libSat.c
-libIntr.o : libIntr.c
-	$(CC) -Wall -c $(CFLAGS) libIntr.c
-libDP.o : libDP.c
-	$(CC) -Wall -c $(CFLAGS) libDP.c
-libHist.o : libHist.c
-	$(CC) -Wall -c $(CFLAGS) libHist.c
+sat.o : sat.c
+	$(CC) -Wall -c $(CFLAGS) sat.c
+interpretation.o : interpretation.c
+	$(CC) -Wall -c $(CFLAGS) interpretation.c
+davis_putnam.o : davis_putnam.c
+	$(CC) -Wall -c $(CFLAGS) davis_putnam.c
+history.o : history.c
+	$(CC) -Wall -c $(CFLAGS) history.c
 
 clean :
 	rm *.o testSat

@@ -16,13 +16,12 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
 */
 
-#ifndef LIBDP_H
-#define LIBDP_H
+#ifndef DAVIS_PUTNAM_H
+#define DAVIS_PUTNAM_H
 
-#include "libSat.h"
-#include "libIntr.h"
-#include "libDP.h"
-#include "libHist.h"
+#include "sat.h"
+#include "interpretation.h"
+#include "history.h"
 
 // Affiche les infos de version de la librairie
 void dp_vers();
@@ -42,4 +41,4 @@ int dp_reduire_cls(int pLitt, tClause *pCls, tGraphe *pGraph, tHist *pHist);
 // Réduit le graphe en fonction du littéral
 void dp_reduire(int pLitt, tGraphe **pGraph, tHist *pHist);
 
-#endif
+#endif // DAVIS_PUTNAM_H

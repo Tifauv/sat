@@ -15,10 +15,10 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
 */
-#ifndef LIBHIST_H
-#define LIBHIST_H
+#ifndef HISTORY_H
+#define HISTORY_H
 
-#include "libSat.h"
+#include "sat.h"
 
 typedef struct tEtape tEtape;
 
@@ -73,4 +73,4 @@ int hist_get_size(tHist *pHist);
 // Ré-effectue les modifications de l'historique
 int hist_redo(tHist *pHist, tGraphe **pGraph);
 
-#endif
+#endif // HISTORY_H

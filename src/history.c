@@ -15,11 +15,11 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
 */
-#include "libHist.h"
+#include "history.h"
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "libSat.h"
+
 
 #define LIBHIST_VERS "1.0.1"
 #define LIBHIST_NAME "libHIST"

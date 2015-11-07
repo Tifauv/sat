@@ -15,8 +15,8 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
 */
-#ifndef LIBINTR_H
-#define LIBINTR_H
+#ifndef INTERPRETATION_H
+#define INTERPRETATION_H
 
 typedef struct tLitt tLitt;
 
@@ -64,4 +64,4 @@ int intr_set_insatisfiable(tIntr **pIntr);
 // Affiche une interprétation
 void intr_see(tIntr *pIntr);
 
-#endif
+#endif // INTERPRETATION_H
