@@ -1,0 +1,142 @@
+                 ---==< README du projet de Logique >==---
+
+
+ Projet de Logique: Graphe SAT et algorithme de Davis-Putnam
+ Licence Informatique 2001/2002
+ Université d'Angers
+
+ _________
+/ Auteurs \___________________________________________________________________
+
+Référez-vous au fichier AUTHORS.
+
+ _____________
+/ Compilation \_______________________________________________________________
+
+Référez-vous au fichier INSTALL.
+
+ __________
+/ Fichiers \__________________________________________________________________
+
+L'archive doit contenir les fichiers suivants:
+
+ AUTHORS ..: Noms des auteurs
+ COPYING ..: Licence GPL
+ INSTALL ..: Décrit le processus de compilation
+ Makefile .: Script pour 'make'
+ README ...: Le fichier que vous lisez
+
+ libSat.h .: En-têtes de la librairie libSAT
+ libSat.c .: Fonctions de la libSAT
+
+ libIntr.h : En-têtes de la librairie libINTR
+ libIntr.c : Fonctions de la libINTR
+
+ libHist.h : En-têtes de la librairie libHIST
+ libHist.c : Fonctions de la libHIST
+
+ libDP.h ..: En-têtes de la librairie libDP
+ libDP.c ..: Fonctions de la libDP
+
+ testSat.c : Programme principal
+
+ clsx.dat .: Fichiers de test 
+
+ ____________
+/ Librairies \________________________________________________________________
+
+Ce projet a nécessité la création de 4 librairies:
+
+ libSAT .: Gestion d'un graphe SAT, du chargement à sa destruction
+ libINTR : Gestion d'interprétations, une liste avec un champ insatisfiable
+ libHIST : Gestion d'historique, une pile d'étapes de destruction de graphe
+ libDP ..: Algorithme Davis-Putnam
+
+ ________
+/ libSat \____________________________________________________________________
+
+Role:
+ Gestion de graphes SAT
+
+Liste des fonctions:
+
+ sat_vers ..............: Affiche la version de la librairie
+ sat_free ..............: Libère la mémoire occupée par un graphe
+ sat_mk ................: Alloue la mémoire nécessaire et initialise le graphe
+ sat_load_file .........: Renvoie le graphe correspondant au fichier
+ sat_ex_var_in_cls .....: Teste si une variable existe dans une clause
+ sat_compare_cls_tabVar : Compare une clause à un tableau de variables
+ sat_ex_clause .........: Teste si une clause (mêmes variables) existe déjà
+ sat_ex_var ............: Teste si une variable existe déjà
+ sat_lnk_clsVar ........: Crée un lien entre une clause et une variable
+ sat_tabVar ............: Crée un tableau des variables
+ sat_sign ..............: Renvoie (+1) ou (-1) suivant le signe d'un entier
+ sat_add_var ...........: Ajoute une variable
+ sat_add_var_to_cls ....: Ajoute une variable à une clause
+ sat_add_clause ........: Ajoute une clause (crée les variables si nécessaire)
+ sat_get_sign ..........: Renvoie le signe d'une variable dans une clause
+ sat_see ...............: Affiche toutes les clauses
+ sat_sub_var ...........: Supprime une variable
+ sat_sub_var_in_cls ....: Supprime le lien d'une clause sur une variable
+ sat_get_ptr_varSgn ....: Renvoie un pointeur sur un tPtVarSgn
+ sat_unlnk_varSgn_cls ..: Supprime le lien Var -> Clause
+ sat_unlnk_cls_var .....: Enlève les liens entre une clause et ses variables
+ sat_sub_clause ........: Supprime une clause
+ sat_get_var_cls_unit ..: Renvoie un pointeur sur la variable de la première
+                          clause unitaire trouvée
+
+ _________
+/ libIntr \___________________________________________________________________
+
+Role:
+ Gestion d'interprétations
+
+Liste des fonctions:
+
+ intr_vers .............: Affiche la version de la librairie
+ intr_mk ...............: Crée une interprétation
+ intr_free .............: Détruit un interprétation
+ intr_is_void ..........: Teste si une interprétation est vide
+ intr_add ..............: Ajoute un littéral à une interprétation
+ intr_rm ...............: Supprime un littéral d'une interprétation
+ intr_get_first ........: Renvoie le premier littéral
+ intr_is_insatisfiable .: Teste si une interprétation est insatisfiable
+ intr_set_insatisfiable : Positionne une interprétation à insatisfiable
+ intr_see ..............: Affiche les littéraux d'une interprétation
+
+ _________
+/ libHist \___________________________________________________________________
+
+Role:
+ Gestion d'historiques de Graphes SAT
+
+Liste des fonctions:
+
+ hist_vers ....: Affiche la version de la librairie
+ hist_mk ......: Crée un historique
+ hist_free ....: Détruit un historique
+ hist_void ....: Teste si un historique est vide
+ hist_add_cls .: Ajoute une clause à l'historique
+ hist_add_var .: Ajoute une variable d'une clause à l'historique
+ hist_rm ......: Supprime la dernière étape
+ hist_get_code : Renvoie le code de l'opération
+ hist_get_cls .: Renvoie l'indics de la clause modifiée
+ hist_get_vars : Renvoie le tableau des variables modifiées
+ hist_get_size : Renvoie la taille de ce tableau
+ hist_redo ....: Annule toutes les modifications de l'historique
+
+ _______
+/ libDP \_____________________________________________________________________
+
+Role:
+ Contient l'algorithme de Davis-Putnam
+
+Liste des fonctions:
+
+ dp_vers ........: Affiche la version de la librairie
+ dp_sat .........: Résoud un graphe SAT
+ dp_davis_putnam : Algorithme de Davis-Putnam
+ dp_test_sat ....: Teste une interprétation
+ dp_reduire_cls .: Réduit une clause par un littéral
+ dp_reduire .....: Réduit un graphe SAT par un littéral
+______________________________________________________________________________
