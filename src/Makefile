@@ -8,20 +8,14 @@
 CC = gcc
 CFLAGS = -ggdb
 
-testSat : testSat.o sat.o interpretation.o davis_putnam.o history.o
-	$(CC) $(CFLAGS) -o testSat testSat.o sat.o interpretation.o davis_putnam.o history.o
+## GENERAL RULES
+# Builds the default targets
+all: testSat
 
-testSat.o : testSat.c
-	$(CC) -Wall -c $(CFLAGS) testSat.c
-
-sat.o : sat.c
-	$(CC) -Wall -c $(CFLAGS) sat.c
-interpretation.o : interpretation.c
-	$(CC) -Wall -c $(CFLAGS) interpretation.c
-davis_putnam.o : davis_putnam.c
-	$(CC) -Wall -c $(CFLAGS) davis_putnam.c
-history.o : history.c
-	$(CC) -Wall -c $(CFLAGS) history.c
-
+# Cleans the build environment
 clean :
 	rm *.o testSat
+
+
+## DEPENDENCIES RULES
+testSat : testSat.o sat.o interpretation.o davis_putnam.o history.o
