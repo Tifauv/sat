@@ -1,0 +1,9 @@
+{
+	"name": "SAT",
+	"files": [ { "git": 1 } ],
+	"build": {
+		"directory": "build",
+		"build": "make",
+		"clean": "make clean"
+	}
+}
