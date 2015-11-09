@@ -3,7 +3,7 @@
 	"files": [ { "git": 1 } ],
 	"build": {
 		"directory": "build",
-		"build": "make",
+		"build": "make all",
 		"clean": "make clean"
 	}
 }
