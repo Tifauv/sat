@@ -143,6 +143,7 @@ int intr_rm(tIntr **pIntr) {
     while (e2->suiv != e)
       e2 = e2->suiv;
     (*pIntr)->fin = e2;
+	(*pIntr)->fin->suiv = NULL;
     free(e);
   }
   return 0;
