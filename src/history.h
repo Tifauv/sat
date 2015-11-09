@@ -38,7 +38,7 @@ typedef struct {
 
 
 // Crée un historique
-tHist *hist_mk();
+tHist *hist_new();
 
 // Libère un historique
 int hist_free(tHist **pHist);

@@ -21,15 +21,17 @@
 #include <stdlib.h>
 
 
-// Crée un historique
-tHist *hist_mk() {
-  tHist *lHist;
+/**
+ * Creates a new history.
+ */
+tHist *hist_new() {
+	tHist *history;
 
-  lHist = (tHist *) malloc(sizeof(tHist));
-  lHist->deb = NULL;
+	history = (tHist *) malloc(sizeof(tHist));
+	history->deb = NULL;
 
-  return lHist;
-} // hist_mk
+	return history;
+} // hist_new
 
 
 // Libère un historique

@@ -419,10 +419,10 @@ int sat_add_clause(tGraphe *pGraph, unsigned int pIndCls, int *pTabVar, int pSiz
   }
 
   // Teste si la clause existe
-  if (sat_ex_clause(pGraph, pIndCls, pTabVar, pSize) == 1) {
+  /*if (sat_ex_clause(pGraph, pIndCls, pTabVar, pSize) == 1) {
     fprintf(stderr, "  Waouu: Tentative d'ajout de clause existante.\n         Continue...\n");
     return 2;
-  }
+  }*/
 
   // Construction et Ajout de la clause
 
@@ -501,47 +501,46 @@ int sat_get_sign(tVar *pVar, unsigned int pIndCls) {
 
 
 // Affiche les clauses d'un graphe --------------------------------------------
-void sat_see(tGraphe *pGraph) {
-  tClause *pc; // Pointeur de parcours de la liste des clauses
-  tPtVar  *pv; // Pointeur de parcours de la liste des variables
-  int   sign; // Variable contenant le signe d'une variable dans une clause
-  int  deb=0; // Indique si l'on est au début de la ligne
+void sat_see(tGraphe* p_formula) {
+	tClause *pc; // Pointeur de parcours de la liste des clauses
+	tPtVar  *pv; // Pointeur de parcours de la liste des variables
+	int   sign; // Variable contenant le signe d'une variable dans une clause
+	int  deb=0; // Indique si l'on est au début de la ligne
 
-  // Vérif de pGraph
-  if (!pGraph) {
-    fprintf(stderr, "  Waouu: Le pointeur de graphe est NULL.\n");
-  }
-  else {
-    // Initialisation de pc
-    pc = pGraph->clauses;
-    printf("  Clauses = {\n");
+	// Vérif de p_formula
+	if (!p_formula) {
+		fprintf(stderr, "  Waouu: Le pointeur de graphe est NULL.\n");
+		return;
+	}
 
-    // Parcours des clauses
-    while (pc) {
-      // Numéro de la clause
-      printf("   %d: ", pc->indCls);
-      deb = 1;
+	// Initialisation de pc
+	pc = p_formula->clauses;
+	fprintf(stderr, "  Clauses = {\n");
 
-      // Affichage de la clause
-      pv = pc->vars;
-      while (pv) {
-	sign = sat_get_sign(pv->var, pc->indCls);
+	// Parcours des clauses
+	while (pc) {
+		// Numéro de la clause
+		fprintf(stderr, "   %d: ", pc->indCls);
+		deb = 1;
 
-	if (deb != 1) printf("v ");
-	if (sign == -1) printf("¬");
-	printf("X%d ", pv->var->indVar);
-	if (deb == 1) deb = 0;
+		// Affichage de la clause
+		pv = pc->vars;
+		while (pv) {
+			sign = sat_get_sign(pv->var, pc->indCls);
 
-	// Variable suivante
-	pv = pv->suiv;
-      }
+			fprintf(stderr, "%s%sx%d ", (deb != 1 ? "v " : ""), (sign == -1 ? "¬" : ""), pv->var->indVar);
+			if (deb == 1)
+				deb = 0;
+
+			// Variable suivante
+			pv = pv->suiv;
+		}
      
-      // Clause suivante
-      printf("\n");
-      pc = pc->suiv;
-    }
-    printf("  }\n");
-  }
+		// Clause suivante
+		fprintf(stderr, "\n");
+		pc = pc->suiv;
+	}
+	fprintf(stderr, "  }\n");
 } // sat_see
 
 

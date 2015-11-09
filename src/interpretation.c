@@ -189,30 +189,29 @@ int intr_set_insatisfiable(tIntr **pIntr) {/* passer en double pointeurs */
 
 
 // Affiche une interprétation
-void intr_see(tIntr *pIntr) {
-  tLitt *lLitt;
+void intr_see(tIntr* p_interpretation) {
+	tLitt *litteral;
 
-  // Vérification de pIntr;
-  if (!pIntr) {
-    fprintf(stderr, "  Ooops: Le pointeur d'interprétation est NULL.\n");
-    exit(1);
-  }
+	// Vérification de p_interpretation;
+	if (p_interpretation == NULL) {
+		fprintf(stderr, "  Ooops: Le pointeur d'interprétation est NULL.\n");
+		return;
+	}
 
-  // Teste si insatisfiable
-  if (pIntr->insatisfiable == 1) printf("  L'interprétation est insatisfiable.\n");
-  else {
-    // Parcours de la liste des littéraux...
-    printf("  Interprétation = (");
-    lLitt = pIntr->deb;
-    while (lLitt) {
-      printf(" ");
-      if (lLitt->litt < 0) printf("¬");
-      printf("X%d", abs(lLitt->litt));
-      lLitt = lLitt->suiv;
-    }
-    printf(" )\n");
-  }
+	// Teste si insatisfiable
+	if (p_interpretation->insatisfiable == 1) {
+		fprintf(stderr, "  L'interprétation est insatisfiable.\n");
+		return;
+	}
 
+	// Parcours de la liste des littéraux...
+	fprintf(stderr, "  Interprétation = (");
+	litteral = p_interpretation->deb;
+	while (litteral) {
+		fprintf(stderr, " %sx%d", (litteral->litt < 0 ? "¬" : ""), abs(litteral->litt));
+		litteral = litteral->suiv;
+	}
+	fprintf(stderr, " )\n");
 } // intr_see
 
 // FIN DE libList
