@@ -25,12 +25,12 @@
 /**
  * Common entrypoint for SAT solvers.
  * 
- * @param p_graph
- *            the SAT graph to solve
+ * @param p_formula
+ *            the SAT formula to solve
  * 
- * @return NULL if p_graph is NULL,
+ * @return NULL if p_formula is NULL,
  *         or an interpretation (satisfiable or not)
  */
-tIntr *alg_solve(tGraphe **p_graph);
+tIntr *alg_solve(tGraphe** p_formula);
 
 #endif // SOLVER_H
