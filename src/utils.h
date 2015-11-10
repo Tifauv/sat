@@ -18,5 +18,6 @@
 #define UTILS_H
 
 #define isNull(p) (p == NULL)
+#define notNull(p) (p != NULL)
 
 #endif // UTILS_H
