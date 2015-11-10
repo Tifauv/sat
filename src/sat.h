@@ -1,5 +1,5 @@
-/* En-têtes de la libSAT -- Librairie de gestion de graphe SAT
-   Copyright (C) 2002 Olivier Serve, Mickaël Sibelle & Philippe Strelezki
+/* Copyright (C) 2002 Olivier Serve, Mickaël Sibelle & Philippe Strelezki
+   Copyright (C) 2015 Olivier Serve
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -15,8 +15,8 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
 */
-#ifndef SAT_H
-#define SAT_H
+#ifndef FORMULA_H
+#define FORMULA_H
 
 typedef struct tVar tVar;           // Type Liste de variables
 
@@ -59,23 +59,15 @@ typedef struct tGraphe {
    tVar    *vars   ; // Pointeur vers la liste des variables
 } tGraphe;
 
+
+// Renvoie un graphe vide
+tGraphe *sat_new();
+
 // Libère la mémoire occupée par le graphe
 void sat_free(tGraphe **pGraph);
 
-// Renvoie un graphe vide
-tGraphe *sat_mk();
-
 // Charge un fichier dans un graph vide à l'origine
 tGraphe *sat_load_file(char *pNom_fic);
-
-// Teste si une variable appartient à une clause --------------------------
-int sat_ex_var_in_cls(int pVar, tClause *pCls);
-
-// Compare une clause et un tableau de variables
-int sat_compare_cls_tabVar(tClause *pCls, unsigned int pIndCls, int *pTabVar, int pSize);
-
-// Teste si une clause existe
-int sat_ex_clause(tGraphe *pGraph, unsigned int pIndCls, int *pTabVar, int pSize);
 
 // Teste si une variable existe
 tVar *sat_ex_var(tGraphe *pGraph, unsigned int pIndVar);
@@ -126,4 +118,4 @@ int sat_sub_clause(tGraphe *pGraph, unsigned int pIndCls);
 //  0 si non trouvée
 int sat_get_var_cls_unit(tGraphe *pGraph);
 
-#endif // SAT_H
+#endif // FORMULA_H

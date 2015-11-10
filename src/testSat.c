@@ -24,24 +24,26 @@
 #include "solver.h"
 
 int main(int argC, char *argV[]) {
-  tGraphe *graph;
-  char *nom_fic;
+	char* nom_fic = malloc(32);
+	if (argC == 1)
+		strcpy(nom_fic, "cls.dat");
+	else
+		strcpy(nom_fic, argV[1]);
 
-  nom_fic = malloc(32);
-  if (argC == 1) strcpy(nom_fic, "cls.dat");
-  else strcpy(nom_fic, argV[1]);
+	printf("\n\n> Chargement du fichier :\n");
+	tGraphe* formula = sat_load_file(nom_fic);
+	free(nom_fic);
+	sat_see(formula);
 
-  printf("\n\n> Chargement du fichier :\n");
-  graph = sat_load_file(nom_fic);
-  sat_see(graph);
+	printf("\n\n> Résolution:\n");
+	tIntr* interpretation = alg_solve(&formula);
+	intr_see(interpretation);
 
-  printf("\n\n> Résolution:\n");
-  intr_see( alg_solve(&graph) );
+	printf("\n\n> Libération de la mémoire:\n");
+	intr_free(&interpretation);
+	sat_free(&formula);
 
-  printf("\n\n> Libération de la mémoire:\n");
-  sat_free(&graph);
+	printf("\n\n> Terminé\n\n");
 
-  printf("\n\n> Terminé\n\n");
-
-  return 0;
+	return 0;
 }

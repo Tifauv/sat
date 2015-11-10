@@ -56,7 +56,6 @@ tIntr* alg_solve(tGraphe** p_formula) {
  */
 tIntr* dp_main(tGraphe** p_formula, tIntr* p_interpretation) {
 	tIntr* intr;
-	tIntr* result;
 	tHist* history;
 
 	/* Check parameters */
@@ -103,7 +102,8 @@ tIntr* dp_main(tGraphe** p_formula, tIntr* p_interpretation) {
 		hist_free(&history);
 		return p_interpretation;
 	}
-
+	intr_free(&intr);
+	
 	/*
 	 * The interpretation is not satisfiable: we try with the opposite literal.
 	 */
@@ -115,18 +115,23 @@ tIntr* dp_main(tGraphe** p_formula, tIntr* p_interpretation) {
 	// Seconde réduction et test du résultat
 	fprintf(stderr, " Seconde tentative de réduction...\n");
 	dp_reduce(p_formula, -chosen_literal, history);
-	result = dp_test_sat(p_formula, -chosen_literal, p_interpretation);
+	intr = dp_test_sat(p_formula, -chosen_literal, p_interpretation);
 
-	// Reconstruction du graphe & destruction de l'historique
-	fprintf(stderr, " Reconstruction des formules avant backtracking...\n");
+	/* Restoring state before backtracking. */
+	fprintf(stderr, " Restoring state before backtracking...\n");
 	// Remove the current literal from the interpretation
 	intr_rm(&p_interpretation);
+
+	// Reconstruction du graphe & destruction de l'historique
+	fprintf(stderr, "  Rebuilding the formula...\n");
 	hist_redo(history, p_formula);
 	hist_free(&history);
+
+	fprintf(stderr, "  Rebuilt data:\n");
 	sat_see(*p_formula);
 	intr_see(p_interpretation);
 	
-	return result;
+	return intr;
 }
 
 
@@ -167,18 +172,18 @@ tIntr* dp_test_sat(tGraphe** p_formula, Literal p_literal, tIntr* p_interpretati
 		return intr;
 	}
 
-	// Si graphe est vide
+	// Ajout du littéral à l'interprétation
+	fprintf(stderr, "  Ajout de %sx%d à l'interprétation.\n", (p_literal < 0 ? "¬" : ""), abs(p_literal));
+	intr_add(p_interpretation, p_literal);
+
+	// Si le graphe est vide, l'interprétation est terminée
 	if (isNull((*p_formula)->clauses)) {
 		fprintf(stderr, "Plus de clauses\n");
-		intr_add(p_interpretation, p_literal);
 		return p_interpretation;
 	}
 
+	// Il reste des clauses : ajout du littéral à l'interprétation
 	fprintf(stderr, "Il reste des clauses\n");
-
-	// ajout du littéral à l'interprétation
-	fprintf(stderr, "  Ajout de %sx%d à l'interprétation.\n", (p_literal < 0 ? "¬" : ""), abs(p_literal));
-	intr_add(p_interpretation, p_literal);
 	return dp_main(p_formula, p_interpretation);
 }
 

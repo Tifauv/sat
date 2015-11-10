@@ -184,8 +184,8 @@ int hist_rm(tHist *pHist) {
   // MàJ du ptr de début de liste
   pHist->deb = lEtape->suiv;
 
-  // On ne libère pas le tableau de variables
-  // free(lEtape->vars);
+  // On libère le tableau de variables
+  free(lEtape->vars);
 
   // On libère lEtape
   free(lEtape);
@@ -289,7 +289,7 @@ int hist_redo(tHist *pHist, tGraphe **pGraph) {
   if (!(*pGraph)) {
     fprintf(stderr, "    Waouu: Le graphe est vide.\n");
     fprintf(stderr, "    Initialisation...\n");
-    (*pGraph) = sat_mk();
+    (*pGraph) = sat_new();
   }
 
   fprintf(stderr, "    Reconstruction...\n");

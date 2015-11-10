@@ -51,7 +51,16 @@ int dp_choose_literal(tGraphe* p_formula);
 
 
 /**
- * Renvoie l'interprétation 
+ * Renvoie l'interprétation du graphe
+ * 
+ * @param p_formula
+ *            the SAT formula
+ * @param p_literal
+ *            the reduction literal
+ * @param p_interpretation
+ *            the current interpretation
+ * 
+ * @return 
  */
 tIntr* dp_test_sat(tGraphe** p_formula, Literal p_literal, tIntr* p_interpretation);
 
