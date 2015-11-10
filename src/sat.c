@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "literal.h"
 #include "utils.h"
 
 #define LN_SIZE 1024
@@ -63,72 +64,66 @@ void sat_free(tGraphe** p_formula) {
  
 
 // Charge un fichier dans un graphe vide à l'origine --------------------------
-tGraphe *sat_load_file(char *pNom_fic) {
-  FILE *fic;
-  char *str;
-  int *tab;
-  int size=0, i=0, lIndCls=1;
-  tGraphe *p_formula;
+tGraphe *sat_load_file(char* pNom_fic) {
+	int *tab;
+	int size=0, i=0, lIndCls=1;
 
-  // Initialisation de p_formula
-  p_formula = sat_new();
+	// Ouverture du fichier
+	FILE* fic = fopen(pNom_fic, "r");
+	if (fic == NULL) {
+		fprintf(stderr, " Ooops: Impossible d'ouvrir le fichier %s.\n", pNom_fic);
+		return NULL;
+	}
+	fprintf(stderr, " Fichier %s ouvert.\n", pNom_fic);
+	
+	// Initialisation de p_formula
+	tGraphe* p_formula = sat_new();
 
-  // Initialisation de str
-  str = malloc(LN_SIZE);
-  strcpy(str, "\0");
+	// Initialisation de str
+	char* str = malloc(LN_SIZE);
+	strcpy(str, "\0");
+	
+	while (!feof(fic)) {
+		// Compteur de ligne
+		i++;
 
-  // Ouverture du fichier
-  fic = fopen(pNom_fic, "r");
-  if (fic == NULL) {
-    fprintf(stderr, " Ooops: Impossible d'ouvrir le fichier %s.\n", pNom_fic);
-    exit(1);
-  }
-  fprintf(stderr, " Fichier %s ouvert.\n", pNom_fic);
-
-  printf("  [");
-
-  while (!feof(fic)) {
+		// lecture de la ligne
+		fgets(str, LN_SIZE, fic);
+		if (feof(fic))
+			break;
+		
+		str[strlen(str)-1] = '\0';
+		fprintf(stderr, "\n Ligne[%d] = |%s|\n", i, str);
     
-    // Compteur de ligne
-    i++;
-
-    // lecture de la ligne
-    fgets(str, LN_SIZE, fic);
-    if (feof(fic)) break;
-    printf("#");
-    str[strlen(str)-1] = '\0';
-    fprintf(stderr, "\n Ligne[%d] = |%s|\n", i, str);
+		// Ignore comment lines
+		if (str[0] == 'c')
+			continue;
     
-    // Ignore comment lines
-    if (str[0] == 'c')
-      continue;
+		// Ignore project lines
+		if (str[0] == 'p')
+			continue;
     
-    // Ignore project lines
-    if (str[0] == 'p')
-      continue;
-    
-    // Break at '%' lines
-    if (str[0] == '%')
-      break;
+		// Break at '%' lines
+		if (str[0] == '%')
+			break;
 
-    // Transformation string -> tab
-    tab = sat_mk_tabVar(str, &size);
+		// Transformation string -> tab
+		tab = sat_mk_tabVar(str, &size);
 
-    if (sat_add_clause(p_formula, lIndCls, tab, size)) {
-      fprintf(stderr, " Waouu: Erreur non fatale à l'ajout de la clause.\n");
-      fprintf(stderr, "        La clause n'a pas été ajoutée.\n");
-    }
-    else
-		++lIndCls;
-	free(tab);
+		if (sat_add_clause(p_formula, lIndCls, tab, size)) {
+			fprintf(stderr, " Waouu: Erreur non fatale à l'ajout de la clause.\n");
+			fprintf(stderr, "        La clause n'a pas été ajoutée.\n");
+		}
+		else
+			++lIndCls;
+		free(tab);
+	}
+	printf("]\n");
+	fclose(fic);
+	free(str);
+	fprintf(stderr, " Fichier %s fermé.\n", pNom_fic);
 
-  }
-  printf("]\n");
-  fclose(fic);
-  free(str);
-  fprintf(stderr, " Fichier %s fermé.\n", pNom_fic);
-
-  return p_formula;
+	return p_formula;
 } // sat_load_file
 
 
@@ -224,6 +219,8 @@ int *sat_mk_tabVar(char *pStr, int *pSize) {
 	// I/ Nombre de tokens dans la chaîne
 	token = strtok(str1, " ");
 	while (token) {
+		if (atoi(token) == 0)
+			break;
 		nb_tok++;
 		token = strtok(NULL, " ");
 	}
@@ -244,26 +241,34 @@ int *sat_mk_tabVar(char *pStr, int *pSize) {
 	token = strtok(str2, " ");
 	nb_tok = 0;
 	while (token) {
+		// Parse current token
+		Literal literal = atoi(token);
+		
+		// Prepare next token
+		token = strtok(NULL, " ");
+		
+		// Break for this line if the '0' token has been found
+		if (literal == 0)
+			break;
+		
 		// On teste si l'entier n'apparaît pas déjà dans la variable
-		int rslt = sat_test_prev_var(tab, atoi(token), nb_tok);
+		int rslt = sat_test_prev_var(tab, literal, nb_tok);
 		if (rslt == 1)  { // Le token apparaît 2 fois avec le même "signe" -> pas ajouté cette fois
-			fprintf(stderr, "  Waouu: Le littéral %s a déjà été ajouté.\n", token);
+			fprintf(stderr, "  Waouu: Le littéral %d a déjà été ajouté.\n", literal);
 			--*pSize;
 		}
 		else if (rslt == -1) { // Le token et son contraire apparaîssent -> tab = NIL, pSize = 0;
-			fprintf(stderr, "  Waouu: Le littéral %s et son contraire apparaîssent: tableau vide.\n", token);
+			fprintf(stderr, "  Waouu: Le littéral %d et son contraire apparaîssent: tableau vide.\n", literal);
 			free(tab);
-			free(str2);
-			free(str1);
+			tab = NULL;
 			*pSize = 0;
-			return NULL;
+			break;
 		}
 		else {
-			tab[nb_tok] = atoi(token);
+			tab[nb_tok] = literal;
 			fprintf(stderr, "  Ajout de |%d| au rang %d.\n", tab[nb_tok], nb_tok);
 			nb_tok++;
 		}
-		token = strtok(NULL, " ");
 	}
 
 	free(str2);
