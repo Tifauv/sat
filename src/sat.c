@@ -20,33 +20,35 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "utils.h"
 
 #define LN_SIZE 1024
 
 
 // Libère le graphe
-void sat_free(tGraphe **pGraph) {
-  tClause *lCls;
+void sat_free(tGraphe** p_formula) {
+	tClause* clause;
 
-  if (*pGraph) {
-    // Il y a des clauses
-    lCls = (*pGraph)->clauses;
+	if (isNull(*p_formula))
+		return;
+  
+	// Il y a des clauses
+	clause = (*p_formula)->clauses;
 
-    printf("  [");
+	printf("  [");
 
-    // Suppression des clauses une à une
-    while (lCls) {
-      sat_sub_clause((*pGraph), lCls->indCls);
-      lCls = (*pGraph)->clauses;
-      printf("#");
-    }
+	// Suppression des clauses une à une
+	while (clause) {
+		sat_sub_clause((*p_formula), clause->indCls);
+		clause = (*p_formula)->clauses;
+		printf("#");
+	}
 
-    printf("]\n");
-    // Normalement, quand toutes les variables sont supprimées
-    // toutes les variables aussi: on peut donc supprimer pGraph
-    free(*pGraph);
-    (*pGraph) = NULL;
-  }
+	printf("]\n");
+	// Normalement, quand toutes les variables sont supprimées
+	// toutes les variables aussi: on peut donc supprimer p_formula
+	free(*p_formula);
+	(*p_formula) = NULL;
 } // sat_free
 
 
@@ -66,10 +68,10 @@ tGraphe *sat_load_file(char *pNom_fic) {
   char *str;
   int *tab;
   int size=0, i=0, lIndCls=1;
-  tGraphe *pGraph;
+  tGraphe *p_formula;
 
-  // Initialisation de pGraph
-  pGraph = sat_mk();
+  // Initialisation de p_formula
+  p_formula = sat_mk();
 
   // Initialisation de str
   str = malloc(LN_SIZE);
@@ -112,7 +114,7 @@ tGraphe *sat_load_file(char *pNom_fic) {
     // Transformation string -> tab
     tab = sat_mk_tabVar(str, &size);
 
-    if (sat_add_clause(pGraph, lIndCls, tab, size)) {
+    if (sat_add_clause(p_formula, lIndCls, tab, size)) {
       fprintf(stderr, " Waouu: Erreur non fatale à l'ajout de la clause.\n");
       fprintf(stderr, "        La clause n'a pas été ajoutée.\n");
     }
@@ -124,7 +126,7 @@ tGraphe *sat_load_file(char *pNom_fic) {
   free(str);
   fprintf(stderr, " Fichier %s fermé.\n", pNom_fic);
 
-  return pGraph;
+  return p_formula;
 } // sat_load_file
 
 
@@ -156,7 +158,7 @@ int sat_ex_var_in_cls(int pVar, tClause *pCls) {
 
 // Compare une clause et un tableau de variables --------------------------
 int sat_compare_cls_tabVar(tClause *pCls, unsigned int pIndCls, int *pTabVar, int pSize) {
-  int nb_var_in_cls=0, i;
+  int nb_var_in_cls=0;
   tPtVar *lPtVar;
 
   // I)  Calculer nb_var_in_cls
@@ -166,10 +168,10 @@ int sat_compare_cls_tabVar(tClause *pCls, unsigned int pIndCls, int *pTabVar, in
     ++nb_var_in_cls;
   }
 
-  fprintf(stderr, "   %d variables trouvées dans la clause %u, %d dans le tableau.\n", nb_var_in_cls, pCls->indCls, pSize);
+  fprintf(stderr, "   %d littéraux trouvés dans la clause %u, %d dans le tableau.\n", nb_var_in_cls, pCls->indCls, pSize);
   // II) Si nb_var_in_cls == pSize
   if (nb_var_in_cls == pSize) {
-    for (i=0; i<pSize; ++i)
+    for (int i=0; i<pSize; ++i)
       if (sat_ex_var_in_cls(pTabVar[i], pCls) == 0) {
 	fprintf(stderr, "   Les deux clauses sont différentes.\n");
 	return 0;
@@ -185,11 +187,11 @@ int sat_compare_cls_tabVar(tClause *pCls, unsigned int pIndCls, int *pTabVar, in
 
 
 // Renvoie un Boolean != 0 si une clause égale existe déjà. -----------------
-int sat_ex_clause(tGraphe *pGraph, unsigned int pIndCls, int *pTabVar, int pSize) {
+int sat_ex_clause(tGraphe *p_formula, unsigned int pIndCls, int *pTabVar, int pSize) {
   tClause   *pc; // Pointeur permettant le parcours
 
   // Initialisation du pointeur sur les clauses
-  pc = pGraph->clauses;
+  pc = p_formula->clauses;
 
   // Recherche de la clause désirée
   while (pc) {
@@ -204,12 +206,12 @@ int sat_ex_clause(tGraphe *pGraph, unsigned int pIndCls, int *pTabVar, int pSize
 
 
 // Renvoie le pointeur sur une variable, NULL si elle n'existe pas ------------
-tVar *sat_ex_var(tGraphe *pGraph, unsigned int pIndVar) {
+tVar *sat_ex_var(tGraphe *p_formula, unsigned int pIndVar) {
   tVar *lVar;
   int trouve=0;
 
   // Initialisation de lVar
-  lVar = pGraph->vars;
+  lVar = p_formula->vars;
 
   // Recherche
   while (lVar && (!trouve)) {
@@ -272,7 +274,7 @@ int sat_test_prev_var(int *pTabVar, int pVar, int pSize) {
 
   for (i=0; i<pSize; ++i) {
     if ( abs(pVar) == abs(pTabVar[i]) ) {
-      fprintf(stderr, "   Variable %d déjà en position %d (%d).\n", pVar, i, pTabVar[i]);
+      fprintf(stderr, "   Littéral x%u déjà en position %d (%d).\n", abs(pVar), i, pTabVar[i]);
       return sat_sign(pVar * pTabVar[i]);
     }
   }
@@ -283,7 +285,7 @@ int sat_test_prev_var(int *pTabVar, int pVar, int pSize) {
 int *sat_mk_tabVar(char *pStr, int *pSize) {
 	int* tab = NULL;
 	char* token = NULL;
-	int nb_tok=0, rslt=0;
+	int nb_tok=0;
 	char *str2, *str1;
 
 	// Sauvegarde de la chaîne originale
@@ -316,7 +318,7 @@ int *sat_mk_tabVar(char *pStr, int *pSize) {
 	nb_tok = 0;
 	while (token) {
 		// On teste si l'entier n'apparaît pas déjà dans la variable
-		rslt = sat_test_prev_var(tab, atoi(token), nb_tok);
+		int rslt = sat_test_prev_var(tab, atoi(token), nb_tok);
 		if (rslt == 1)  { // Le token apparaît 2 fois avec le même "signe" -> pas ajouté cette fois
 			fprintf(stderr, "  Waouu: Le littéral %s a déjà été ajouté.\n", token);
 			--*pSize;
@@ -351,7 +353,7 @@ int sat_sign(int pNbe) {
  
 
 // Ajoute une variable au graphe ----------------------------------------------
-tVar *sat_add_var(tGraphe *pGraph, int pIndVar) {
+tVar *sat_add_var(tGraphe *p_formula, int pIndVar) {
   tVar *var;
 
   // Création de var
@@ -365,8 +367,8 @@ tVar *sat_add_var(tGraphe *pGraph, int pIndVar) {
   fprintf(stderr, "   Littéral x%d créé.\n", pIndVar);
 
   // Chaînage
-  var->suiv = pGraph->vars;
-  pGraph->vars = var;
+  var->suiv = p_formula->vars;
+  p_formula->vars = var;
   fprintf(stderr, "   Littéral x%d chaîné.\n", pIndVar);
 
   return var;
@@ -374,49 +376,46 @@ tVar *sat_add_var(tGraphe *pGraph, int pIndVar) {
 
 
 // Ajoute une variable à une clause
-int sat_add_var_to_cls(tGraphe *pGraph, unsigned int pIndCls, int pVar) {
-  tClause *lCls;
-  tVar *lVar;
-  int *lTabVar;
+int sat_add_var_to_cls(tGraphe *p_formula, unsigned int pIndCls, int pVar) {
+  tClause *clause;
 
-  if (!pGraph) {
+  if (!p_formula) {
     fprintf(stderr, " Ooops: Le pointeur de graphe est NULL.\n");
     return -1;
   }
 
   // I) Recherche de la clause...
-  lCls = pGraph->clauses;
-  while (lCls && (lCls->indCls != pIndCls))
-    lCls = lCls->suiv;
-  if (!lCls) {
-	  fprintf(stderr, "  Clause n°%u non trouvée.\n", pIndCls);
-    lTabVar = malloc(sizeof(int));
+  clause = p_formula->clauses;
+  while (clause && (clause->indCls != pIndCls))
+    clause = clause->suiv;
+  if (!clause) {
+	  fprintf(stderr, "  Clause %u non trouvée.\n", pIndCls);
+    int* lTabVar = malloc(sizeof(int));
     lTabVar[0] = pVar;
-    sat_add_clause(pGraph, pIndCls, lTabVar, 1);
+    sat_add_clause(p_formula, pIndCls, lTabVar, 1);
     return 1;
   }
   else {
-    fprintf(stderr, "  Clause n°%u trouvée.\n", lCls->indCls);
+    fprintf(stderr, "  Clause %u trouvée.\n", clause->indCls);
 
     // Teste si la variable existe
-    lVar = sat_ex_var(pGraph, abs(pVar));
+    tVar* lVar = sat_ex_var(p_formula, abs(pVar));
     if (!lVar) {
       fprintf(stderr, "   Littéral x%d non trouvé: ajout.\n", abs(pVar));
-      lVar = sat_add_var(pGraph, abs(pVar));
+      lVar = sat_add_var(p_formula, abs(pVar));
     }
 
     // Lien entre la variable et la clause
-    sat_lnk_clsVar(lCls, lVar, sat_sign(pVar));
+    sat_lnk_clsVar(clause, lVar, sat_sign(pVar));
     return 0;
   }
 } // sat_add_var_to_cls
 
 
 // Ajoute une clause à un graphe ----------------------------------------------
-int sat_add_clause(tGraphe *pGraph, unsigned int pIndCls, int *pTabVar, int pSize) {
-  tClause *lCls;
+int sat_add_clause(tGraphe *p_formula, unsigned int pIndCls, int *pTabVar, int pSize) {
+  tClause *clause;
   int *lTabVar;
-  tVar *lVar;
   int i;
 
   // Teste si on essaye d'ajouter une clause vide (stupide)
@@ -426,7 +425,7 @@ int sat_add_clause(tGraphe *pGraph, unsigned int pIndCls, int *pTabVar, int pSiz
   }
 
   // Teste si la clause existe
-  /*if (sat_ex_clause(pGraph, pIndCls, pTabVar, pSize) == 1) {
+  /*if (sat_ex_clause(p_formula, pIndCls, pTabVar, pSize) == 1) {
     fprintf(stderr, "  Waouu: Tentative d'ajout de clause existante.\n         Continue...\n");
     return 2;
   }*/
@@ -434,34 +433,35 @@ int sat_add_clause(tGraphe *pGraph, unsigned int pIndCls, int *pTabVar, int pSiz
   // Construction et Ajout de la clause
 
   // Création de la clause
-  lCls = (tClause *)malloc(sizeof(tClause));
+  clause = (tClause *)malloc(sizeof(tClause));
 
   fprintf(stderr, "  Clause %u créée.\n", pIndCls);
 
   // Màj de l'indice
-  lCls->indCls = pIndCls;
-  lCls->suiv = NULL;
-  lCls->vars = NULL;
+  clause->indCls = pIndCls;
+  clause->suiv = NULL;
+  clause->vars = NULL;
 
   // Chaînage des variables
   lTabVar = pTabVar;
   // Parcours des variables de la clause
   for (i=0; i<pSize; i++) {
+	tVar *lVar;
 
     fprintf(stderr, "  Lien clause %u <-> littéral x%d en cours...\n", pIndCls, lTabVar[i]);
 
     // Si la variable n'existe pas, l'ajouter.
-    if ( !(lVar = sat_ex_var(pGraph, abs(lTabVar[i]))) )
-      lVar = sat_add_var(pGraph, lTabVar[i]);
+    if ( !(lVar = sat_ex_var(p_formula, abs(lTabVar[i]))) )
+      lVar = sat_add_var(p_formula, lTabVar[i]);
     // Linkage Clause <--> Variable    
-    sat_lnk_clsVar(lCls, lVar, sat_sign(lTabVar[i]));
+    sat_lnk_clsVar(clause, lVar, sat_sign(lTabVar[i]));
     
   }
   fprintf(stderr, "  Clause %u initialisée.\n", pIndCls);
 
   // Chaînage des clauses
-  lCls->suiv = pGraph->clauses;
-  pGraph->clauses = lCls;
+  clause->suiv = p_formula->clauses;
+  p_formula->clauses = clause;
 
   fprintf(stderr, "  Clause %u chaînée.\n", pIndCls);
 
@@ -471,69 +471,58 @@ int sat_add_clause(tGraphe *pGraph, unsigned int pIndCls, int *pTabVar, int pSiz
 
 // Renvoie le signe d'une variable dans une clause ----------------------------
 int sat_get_sign(tVar *pVar, unsigned int pIndCls) {
-  tPtVarSgn *ps; // Pointeur de parcours des clsPos et clsNeg de tVar
-  int trouve=0; // Boolean != 0 si on a trouvé la clause
+	tPtVarSgn *ps; // Pointeur de parcours des clsPos et clsNeg de tVar
 
-  // Recherche parmis les clauses "positives"
-  if (!pVar) {
-    fprintf (stderr, "Ooops: le littéral est vide.\n");
-    exit(1);
-  }
-  else
-  {
-    ps = pVar->clsPos;
+	// Recherche parmis les clauses "positives"
+	if (isNull(pVar)) {
+		fprintf (stderr, "Ooops: le littéral est vide.\n");
+		return 1;
+	}
 
-  while (ps && !trouve) {
-    if (ps->clause->indCls == pIndCls) {
-      trouve = 1;
-      return 1;
-    }
-    else ps = ps->suiv;
-  }
+	ps = pVar->clsPos;
+	while (ps) {
+		if (ps->clause->indCls == pIndCls)
+			return 1;
 
-  // Si pas trouvé, recherche parmis les "négatifs"
-  ps = pVar->clsNeg;
+		ps = ps->suiv;
+	}
 
-  while (ps && !trouve) {
-    if (ps->clause->indCls == pIndCls) {
-      trouve = 1;
-      return -1;
-    }
-    else ps = ps->suiv;
-  }
-  }
-  // Cas qui ne devrait pas arriver, mais on ne sait jamais...
-  return 0;
-} // sat_get_sign
+	// Si pas trouvé, recherche parmis les "négatifs"
+	ps = pVar->clsNeg;
+	while (ps) {
+		if (ps->clause->indCls == pIndCls)
+			return -1;
+
+		ps = ps->suiv;
+	}
+
+	// Cas qui ne devrait pas arriver, mais on ne sait jamais...
+	return 0;
+}
 
 
 // Affiche les clauses d'un graphe --------------------------------------------
 void sat_see(tGraphe* p_formula) {
-	tClause *pc; // Pointeur de parcours de la liste des clauses
-	tPtVar  *pv; // Pointeur de parcours de la liste des variables
-	int   sign; // Variable contenant le signe d'une variable dans une clause
-	int  deb=0; // Indique si l'on est au début de la ligne
-
 	// Vérif de p_formula
-	if (!p_formula) {
+	if (isNull(p_formula)) {
 		fprintf(stderr, "  Waouu: Le pointeur de graphe est NULL.\n");
 		return;
 	}
 
 	// Initialisation de pc
-	pc = p_formula->clauses;
+	tClause* pc = p_formula->clauses;
 	fprintf(stderr, "  Clauses = {\n");
 
 	// Parcours des clauses
 	while (pc) {
 		// Numéro de la clause
 		fprintf(stderr, "   %u: ", pc->indCls);
-		deb = 1;
 
 		// Affichage de la clause
-		pv = pc->vars;
+		int deb = 1;
+		tPtVar* pv = pc->vars;
 		while (pv) {
-			sign = sat_get_sign(pv->var, pc->indCls);
+			int sign = sat_get_sign(pv->var, pc->indCls);
 
 			fprintf(stderr, "%s%sx%u ", (deb != 1 ? "v " : ""), (sign == -1 ? "¬" : ""), pv->var->indVar);
 			if (deb == 1)
@@ -548,21 +537,58 @@ void sat_see(tGraphe* p_formula) {
 		pc = pc->suiv;
 	}
 	fprintf(stderr, "  }\n");
+	
+	
+	fprintf(stderr, "  Littéraux = {\n");
+	tVar* litt_iter = p_formula->vars;
+	while (litt_iter) {
+		// Numéro de la clause
+		fprintf(stderr, "   x%u [+ ", litt_iter->indVar);
+		
+		// Affichage des clauses "positives"
+		int deb = 1;
+		tPtVarSgn* clause_iter = litt_iter->clsPos;
+		while (clause_iter) {
+			fprintf(stderr, "%s%u", (deb != 1 ? " " : ""), clause_iter->clause->indCls);
+			if (deb == 1)
+				deb = 0;
+			
+			clause_iter = clause_iter->suiv;
+		}
+
+		fprintf(stderr, "]  [- ");
+		
+		// Affichage des clauses "négatives"
+		deb = 1;
+		clause_iter = litt_iter->clsNeg;
+		while (clause_iter) {
+			fprintf(stderr, "%s%u", (deb != 1 ? " " : ""), clause_iter->clause->indCls);
+			if (deb == 1)
+				deb = 0;
+			
+			clause_iter = clause_iter->suiv;
+		}
+		
+		// Littéral suivant
+		fprintf(stderr, "]\n");
+		litt_iter = litt_iter->suiv;
+	}
+	fprintf(stderr, "  }\n");
 } // sat_see
 
 
 // Supprime une variable -------------------------------------------
-int sat_sub_var(tGraphe *pGraph, unsigned int pIndVar) {
+int sat_sub_var(tGraphe *p_formula, unsigned int pIndVar) {
   tVar *lVar, *lVar2;
 
   // Teste si le graphe est vide
-  if (!pGraph) { 
+  if (!p_formula) { 
     fprintf(stderr, " Ooops: le graphe est vide, impossible de supprimer un littéral.\n");
     return 1;
   }
 
   // initialisatin de lVar
-  lVar = pGraph->vars;
+  lVar = p_formula->vars;
 
   // Vérification de lVar
   if (!lVar) {
@@ -572,9 +598,9 @@ int sat_sub_var(tGraphe *pGraph, unsigned int pIndVar) {
 
   // Teste si c'est la première variable
   if (lVar->indVar == pIndVar) {
-    fprintf(stderr, "  Suppression du littéral %u.\n", lVar->indVar);
+    fprintf(stderr, "  Suppression du littéral x%u.\n", lVar->indVar);
     // Chaînage préc <-> suiv
-    pGraph->vars = lVar->suiv;
+    p_formula->vars = lVar->suiv;
     // Libération de la variable
     free(lVar);
   }
@@ -606,7 +632,7 @@ int sat_sub_var(tGraphe *pGraph, unsigned int pIndVar) {
 
 
 // Supprime une variable dans une clause
-int sat_sub_var_in_cls(tPtVar *pPtVar, int pSign, tClause *pCls, tGraphe *pGraph) {
+int sat_sub_var_in_cls(tPtVar *pPtVar, int pSign, tClause *pCls, tGraphe *p_formula) {
   tPtVar *lPtVar, *lPtVar2;
   tPtVarSgn *lVarSgn;
 
@@ -616,8 +642,8 @@ int sat_sub_var_in_cls(tPtVar *pPtVar, int pSign, tClause *pCls, tGraphe *pGraph
     return -1;
   }
 
-  // Vérification de pGraph
-  if (!pGraph) {
+  // Vérification de p_formula
+  if (!p_formula) {
     fprintf(stderr, "     Ooops: Le pointeur de Graphe est NULL.\n");
     return -2;
   }
@@ -627,11 +653,11 @@ int sat_sub_var_in_cls(tPtVar *pPtVar, int pSign, tClause *pCls, tGraphe *pGraph
 
   if (lPtVar == pPtVar) { // premier à supprimer 
     // Défait les liens et tout et tout
-    sat_unlnk_cls_var(pGraph, pCls);
+    sat_unlnk_cls_var(p_formula, pCls);
 
     // Si la variable est vide, la virer
     if (!lPtVar->var->clsPos && !lPtVar->var->clsNeg)
-      sat_sub_var(pGraph, lPtVar->var->indVar);
+      sat_sub_var(p_formula, lPtVar->var->indVar);
 
     // Codes de retour
     if (!pCls->vars) {
@@ -656,7 +682,7 @@ int sat_sub_var_in_cls(tPtVar *pPtVar, int pSign, tClause *pCls, tGraphe *pGraph
 
       // II/ Suppression du lien Variable -> Clause -------------------------
       if (!lVarSgn) {
-	fprintf(stderr, "      Waouu: Le littéral x%u n'est pas utilisé.\n", pSign * lPtVar->suiv->var->indVar);
+	fprintf(stderr, "      Waouu: Le littéral %sx%u n'est pas utilisé.\n", (pSign == -1 ? "¬" : ""), lPtVar->suiv->var->indVar);
 	return 2;
       }
 
@@ -667,7 +693,7 @@ int sat_sub_var_in_cls(tPtVar *pPtVar, int pSign, tClause *pCls, tGraphe *pGraph
       else lPtVar->suiv->var->clsNeg = lVarSgn->suiv;
       // Libération de la cellule de la variable
       free(lVarSgn);
-      fprintf(stderr, "      Lien littéral x%d -> clause %u détruit.\n", pSign * lPtVar->suiv->var->indVar, pCls->indCls);
+      fprintf(stderr, "      Lien littéral %sx%u -> clause %u détruit.\n", (pSign == -1 ? "¬" : ""), lPtVar->suiv->var->indVar, pCls->indCls);
       }
       else { // la clause n'est pas la première
 	lVarSgn = sat_get_ptr_varSgn(lVarSgn, pCls);
@@ -676,10 +702,10 @@ int sat_sub_var_in_cls(tPtVar *pPtVar, int pSign, tClause *pCls, tGraphe *pGraph
 	  lVarSgn->suiv = lVarSgn->suiv->suiv;
 	  // Libération de la cellule
 	  free(lVarSgn->suiv);
-	  fprintf(stderr, "      Lien littéral %d -> clause %u détruit.\n", pSign * lPtVar->suiv->var->indVar, pCls->indCls);
+	  fprintf(stderr, "      Lien littéral %sx%u -> clause %u détruit.\n", (pSign == -1 ? "¬" : ""), lPtVar->suiv->var->indVar, pCls->indCls);
 	}
 	else {
-	  fprintf(stderr, "      Waouu: Pas de lien littéral x%d -> clause %u trouvé.\n", pSign * lPtVar->suiv->var->indVar, pCls->indCls);
+	  fprintf(stderr, "      Waouu: Pas de lien littéral %sx%u -> clause %u trouvé.\n", (pSign == -1 ? "¬" : ""), lPtVar->suiv->var->indVar, pCls->indCls);
 	  return 3;
 	}
       }
@@ -691,7 +717,7 @@ int sat_sub_var_in_cls(tPtVar *pPtVar, int pSign, tClause *pCls, tGraphe *pGraph
 
       // Si la variable est vide, la virer
       if (!lPtVar2->var->clsPos && !lPtVar2->var->clsNeg)
-	sat_sub_var(pGraph, lPtVar2->var->indVar);
+	sat_sub_var(p_formula, lPtVar2->var->indVar);
 
       // Suppression de la cellule
       free(lPtVar2);
@@ -717,147 +743,152 @@ int sat_sub_var_in_cls(tPtVar *pPtVar, int pSign, tClause *pCls, tGraphe *pGraph
 
 // Renvoie le pointeur sur la cellule de la clause pointant sur la clause
 tPtVarSgn *sat_get_ptr_varSgn(tPtVarSgn *pVarSgn, tClause *pCls) {
-  tPtVarSgn *lVarSgn;
+	tPtVarSgn *lVarSgn;
 
-  // Vérifie que la clause n'est pas NULL
-  if (!pCls) {
-    fprintf(stderr, "    Ooops: La clause n'existe pas.\n");
-    return NULL;
-  }
+	// Vérifie que la clause n'est pas NULL
+	if (isNull(pCls)) {
+		fprintf(stderr, "    Ooops: La clause n'existe pas.\n");
+		return NULL;
+	}
 
-  // Vérification de lVarSgn
-  if (!pVarSgn) {
-    fprintf(stderr, "    Ooops: Pas de lien entre la variable et une clause");
-    return NULL;
-  }
+	// Vérification de lVarSgn
+	if (isNull(pVarSgn)) {
+		fprintf(stderr, "    Ooops: Pas de lien entre le littéral et une clause");
+		return NULL;
+	}
 
-  // Recherche
-  lVarSgn = pVarSgn;
+	// Recherche
+	lVarSgn = pVarSgn;
 
-  while (lVarSgn->suiv && (lVarSgn->suiv->clause != pCls))
-    lVarSgn = lVarSgn->suiv;
+	while (lVarSgn->suiv && (lVarSgn->suiv->clause->indCls != pCls->indCls))
+		lVarSgn = lVarSgn->suiv;
 
-  // Si pas de résultat trouvé, retourne NULL, sinon le pointeur voulu
-  if (!lVarSgn->suiv) return NULL;
-  else return lVarSgn;
+	// Si pas de résultat trouvé, retourne NULL, sinon le pointeur voulu
+	if (isNull(lVarSgn->suiv))
+		return NULL;
+	else
+		return lVarSgn;
 } // sat_get_ptr_varSgn
 
 
 // Recherche et supprime la cellule de la variable pointant sur la clause
 int sat_unlnk_varSgn_cls(tVar *pVar, int pSign, tClause *pCls) {
-  tPtVarSgn *lVarSgn;
-  tPtVar *lPtVar;
+	tPtVarSgn* lVarSgn;
+	tPtVar* lPtVar;
 
-  // I/ Tests d'application --------------------------------------------
+	// I/ Tests d'application --------------------------------------------
 
-  // Teste le signe et initialise la recherche
-  if ((pSign != 1) && (pSign != -1)) {
-    fprintf(stderr, "   Ooops: Le signe demandé (%d) est incorrect: 1 -> positif, -1 -> négatif\n", pSign);
-    return 1;
-  }
-  if (pSign ==  1) lVarSgn = pVar->clsPos;
-  if (pSign == -1) lVarSgn = pVar->clsNeg;
+	// Teste le signe et initialise la recherche
+	if ((pSign != 1) && (pSign != -1)) {
+		fprintf(stderr, "   Ooops: Le signe demandé (%d) est incorrect: 1 -> positif, -1 -> négatif\n", pSign);
+		return 1;
+	}
+	if (pSign ==  1)
+		lVarSgn = pVar->clsPos;
+	if (pSign == -1)
+		lVarSgn = pVar->clsNeg;
 
-  // II/ Suppression du lien Variable -> Clause -------------------------
-  if (!lVarSgn) {
-    fprintf(stderr, "   Waouu: La Variable %d n'est pas utilisée.\n", pSign * pVar->indVar);
-    return 2;
-  }
+	// II/ Suppression du lien Variable -> Clause -------------------------
+	if (isNull(lVarSgn)) {
+		fprintf(stderr, "   Waouu: Le littéral %sx%u n'est pas utilisé.\n", (pSign == -1 ? "¬" : ""), pVar->indVar);
+		return 2;
+	}
 
-  if (lVarSgn->clause == pCls) { // teste si la première clause correspond
-    // Chaînage de la précédente avec la suivante
-    if (pSign == 1) // Chaînage des positifs
-      pVar->clsPos = lVarSgn->suiv;
-    else pVar->clsNeg = lVarSgn->suiv;
-    // Libération de la cellule de la variable
-    free(lVarSgn);
-    lVarSgn = NULL;
-    fprintf(stderr, "   Lien littéral x%d -> clause %u détruit.\n", pSign * pVar->indVar, pCls->indCls); 
-  }
-  else { // la clause n'est pas la première
-    lVarSgn = sat_get_ptr_varSgn(lVarSgn, pCls);
-    if (lVarSgn) { // cellule trouvée
-      // Lien préc <-> suiv
-      lVarSgn->suiv = lVarSgn->suiv->suiv;    
-      // Libération de la cellule
-      free(lVarSgn->suiv);
-      fprintf(stderr, "   Lien littéral x%d -> clause %u détruit.\n", pSign * pVar->indVar, pCls->indCls);
-    }
-    else {
-      fprintf(stderr, "   Waouu: Pas de lien littéral x%d -> clause %u trouvé.\n", pSign * pVar->indVar, pCls->indCls);
-      return 3;
-    }
-  }
+	if (lVarSgn->clause->indCls == pCls->indCls) { // teste si la première clause correspond
+		// Chaînage de la précédente avec la suivante
+		if (pSign == 1) // Chaînage des positifs
+			pVar->clsPos = lVarSgn->suiv;
+		else
+			pVar->clsNeg = lVarSgn->suiv;
+		// Libération de la cellule de la variable
+		free(lVarSgn);
+		lVarSgn = NULL;
+		fprintf(stderr, "   Lien littéral %sx%u -> clause %u détruit.\n", (pSign == -1 ? "¬" : ""), pVar->indVar, pCls->indCls); 
+	}
+	else { // la clause n'est pas la première
+		lVarSgn = sat_get_ptr_varSgn(lVarSgn, pCls);
+		if (notNull(lVarSgn)) {
+			// Lien préc <-> suiv
+			tPtVarSgn* toDelete = lVarSgn->suiv;
+			lVarSgn->suiv = lVarSgn->suiv->suiv;
+			// Libération de la cellule
+			free(toDelete);
+			fprintf(stderr, "   Lien littéral %sx%u -> clause %u détruit.\n", (pSign == -1 ? "¬" : ""), pVar->indVar, pCls->indCls);
+		}
+		else {
+			fprintf(stderr, "   Waouu: Pas de lien littéral %sx%u -> clause %u trouvé.\n", (pSign == -1 ? "¬" : ""), pVar->indVar, pCls->indCls);
+			return 3;
+		}
+	}
 
-  // III/ Suppression du lien Clause -> Variable ---------------------
-  lPtVar = pCls->vars;
-  pCls->vars = pCls->vars->suiv;
-  free(lPtVar);
-  lPtVar = NULL;
-  fprintf(stderr, "   Lien littéral x%d <- clause %u détruit.\n", pSign * pVar->indVar, pCls->indCls);
-  return 0;
-
+	// III/ Suppression du lien Clause -> Variable ---------------------
+	lPtVar = pCls->vars;
+	pCls->vars = pCls->vars->suiv;
+	free(lPtVar);
+	lPtVar = NULL;
+	fprintf(stderr, "   Lien littéral %sx%u <- clause %u détruit.\n", (pSign == -1 ? "¬" : ""), pVar->indVar, pCls->indCls);
+	return 0;
 } // sat_unlnk_varSgn_cls
 
 
 // Enlève les liens entre une clause et sa première variable
-int sat_unlnk_cls_var(tGraphe *pGraph, tClause *pCls) {
-  tVar *lVar;
+int sat_unlnk_cls_var(tGraphe *p_formula, tClause *pCls) {
+	tVar* lVar;
 
-  // Vérification de la clause
-  if (!pCls) {
-    fprintf(stderr, "  Ooops: La clause n'existe pas.\n");
-    return 1;
-  }
+	// Vérification de la clause
+	if (isNull(pCls)) {
+		fprintf(stderr, "  Ooops: La clause n'existe pas.\n");
+		return 1;
+	}
 
-  fprintf(stderr, "  Suppression des liens entre la clause %u et son premier littéral...\n", pCls->indCls);
-  // Vérification de la liste des variables de la clause
-  if (!pCls->vars) {
-    fprintf(stderr, "  Waouu: La clause %u ne contient pas de littéraux.\n", pCls->indCls);
-    return 2;
-  }
+	fprintf(stderr, "  Suppression des liens entre la clause %u et son premier littéral...\n", pCls->indCls);
+	// Vérification de la liste des variables de la clause
+	if (isNull(pCls->vars)) {
+		fprintf(stderr, "  Waouu: La clause %u ne contient pas de littéraux.\n", pCls->indCls);
+		return 2;
+	}
 
-  // Initialisation de lVar
-  lVar = pCls->vars->var;
+	// Initialisation de lVar
+	lVar = pCls->vars->var;
 
-  // Test de validité de lVar
-  if (!lVar) {
-    fprintf(stderr, "  Ooops: Le littéral est NULL.\n");
-    return 3;
-  }
+	// Test de validité de lVar
+	if (isNull(lVar)) {
+		fprintf(stderr, "  Ooops: Le littéral est NULL.\n");
+		return 3;
+	}
 
-  // Appels de sat_unlnk_varSgn_cls
-  else {
-    if (sat_unlnk_varSgn_cls(lVar, 1, pCls) == 0)
-      fprintf(stderr, "  Lien littéral x%u <-> clause %u détruit.\n", lVar->indVar, pCls->indCls);
-    else
-      if (sat_unlnk_varSgn_cls(lVar, -1, pCls) == 0)
-		  fprintf(stderr, "  Lien littéral ¬x%u <-> clause %u détruit.\n", lVar->indVar, pCls->indCls);
-      else fprintf(stderr, "  Waouu: Impossible de trouver le lien littéral x%u -> clause %u.\n", lVar->indVar, pCls->indCls);
-  }
+	// Appels de sat_unlnk_varSgn_cls
+	else {
+		if (sat_unlnk_varSgn_cls(lVar, 1, pCls) == 0)
+			fprintf(stderr, "  Lien littéral x%u <-> clause %u détruit.\n", lVar->indVar, pCls->indCls);
+		else if (sat_unlnk_varSgn_cls(lVar, -1, pCls) == 0)
+			fprintf(stderr, "  Lien littéral ¬x%u <-> clause %u détruit.\n", lVar->indVar, pCls->indCls);
+		else
+			fprintf(stderr, "  Waouu: Impossible de trouver le lien littéral x%u -> clause %u.\n", lVar->indVar, pCls->indCls);
+	}
 
-  // Après destruction des liens, on teste si on peut supprimer la variable
-  if ((!lVar->clsPos) && (!lVar->clsNeg))
-    sat_sub_var(pGraph, lVar->indVar);
+	// Après destruction des liens, on teste si on peut supprimer la variable
+	if ((!lVar->clsPos) && (!lVar->clsNeg))
+		sat_sub_var(p_formula, lVar->indVar);
   
-  return 0;
+	return 0;
 } // sat_unlnk_cls_var
 
 
 // Enlève les liens entre une clause et toutes ses variables
-int sat_sub_clause(tGraphe *pGraph, unsigned int pIndCls) {
+int sat_sub_clause(tGraphe *p_formula, unsigned int pIndCls) {
   tPtVar *ptVars;
   tClause *cls, *cls2;
 
   fprintf(stderr, "\n Suppression de la clause %u...\n", pIndCls);
   // Teste si le graphe est vide, auquel cas -> quit !
-  if (!pGraph) {
+  if (!p_formula) {
     fprintf(stderr, " Ooops: Aucune clause à supprimer car le graphe est vide !\n");
     return 1;
   }
 
   // Initialisation
-  cls = pGraph->clauses;
+  cls = p_formula->clauses;
 
   // Test de validité
   if (!cls) {
@@ -871,11 +902,11 @@ int sat_sub_clause(tGraphe *pGraph, unsigned int pIndCls) {
     // Destruction des liens
     ptVars = cls->vars;
     while (ptVars) {
-      sat_unlnk_cls_var(pGraph, cls);
+      sat_unlnk_cls_var(p_formula, cls);
       ptVars = cls->vars;
     }
     // On re-chaîne
-    pGraph->clauses = cls->suiv;
+    p_formula->clauses = cls->suiv;
     // On libère cls
     free(cls);
     fprintf(stderr, " Clause %u détruite.\n", pIndCls);
@@ -891,7 +922,7 @@ int sat_sub_clause(tGraphe *pGraph, unsigned int pIndCls) {
     // On retire les liens
     ptVars = cls2->vars;
     while (ptVars) {
-      sat_unlnk_cls_var(pGraph, cls2);
+      sat_unlnk_cls_var(p_formula, cls2);
       ptVars = cls2->vars;
     }
     // On re-chaîne avec le suivant
@@ -906,44 +937,44 @@ int sat_sub_clause(tGraphe *pGraph, unsigned int pIndCls) {
 
 // Renvoie la variable de la première clause unitaire trouvée
 //  0 si non trouvée
-int sat_get_var_cls_unit(tGraphe *pGraph) {
-  tClause *lCls;
+int sat_get_var_cls_unit(tGraphe *p_formula) {
+  tClause *clause;
   tVar    *lVar;
   int      rslt;
 
-  // Vérification de pGraph
-  if (!pGraph) {
+  // Vérification de p_formula
+  if (!p_formula) {
     fprintf(stderr, "  Ooops: Le pointeur de graphe est NULL.\n");
     return 1;
   }
 
   // Recherche...
-  lCls = pGraph->clauses;
+  clause = p_formula->clauses;
 
-  while (lCls) {
-    if (!lCls->vars) {
-      fprintf(stderr, "  Waouu: La clause %u ne contient pas de littéraux.\n", lCls->indCls);
+  while (clause) {
+    if (!clause->vars) {
+      fprintf(stderr, "  Waouu: La clause %u ne contient pas de littéraux.\n", clause->indCls);
     }
-    else if (!lCls->vars->suiv) {
-      rslt = sat_get_sign(lCls->vars->var, lCls->indCls) * lCls->vars->var->indVar;
-	  fprintf(stderr, "  La clause n°%u (%sx%d) est unitaire.\n", lCls->indCls, (rslt < 0 ? "¬" : ""), abs(rslt));
+    else if (!clause->vars->suiv) {
+      rslt = sat_get_sign(clause->vars->var, clause->indCls) * clause->vars->var->indVar;
+	  fprintf(stderr, "  La clause n°%u (%sx%d) est unitaire.\n", clause->indCls, (rslt < 0 ? "¬" : ""), abs(rslt));
       return rslt;
     }
     else {
-		fprintf(stderr, "  La clause n°%u n'est pas unitaire.\n", lCls->indCls);
-      lCls = lCls->suiv;
+		fprintf(stderr, "  La clause n°%u n'est pas unitaire.\n", clause->indCls);
+      clause = clause->suiv;
     }
   }
 
   // Pas de clause unitaire trouvée
-  if (!pGraph->vars) {
+  if (!p_formula->vars) {
     fprintf(stderr, "  Ooops: Plus de littéraux dans le graphe.\n");
     return 0;
   }
-  lVar = pGraph->vars;
+  lVar = p_formula->vars;
   if (!lVar->clsPos) {
     if (!lVar->clsNeg) {
-      fprintf(stderr, "  Ooops: Le littéral %u n'est liée à aucune clause.\n", lVar->indVar);
+      fprintf(stderr, "  Ooops: Le littéral x%u n'est liée à aucune clause.\n", lVar->indVar);
       return 0;
     }
     else {
