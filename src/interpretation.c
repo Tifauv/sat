@@ -34,7 +34,7 @@ tIntr* intr_new() {
 	interpretation = (tIntr*) malloc(sizeof(tIntr));
 
 	// Initialisation
-	interpretation->insatisfiable = 0;
+	interpretation->insatisfiable = SATISFIABLE;
 	interpretation->deb = NULL;
 	interpretation->fin = NULL;
 
@@ -108,9 +108,9 @@ int intr_push(tIntr* p_interpretation, Literal p_literal) {
 		p_interpretation->fin = e;
 	}
 
-	if (p_interpretation->insatisfiable == 1) {
+	if (p_interpretation->insatisfiable == UNSATISFIABLE) {
 		fprintf(stderr, " Waouu: L'interprétation était insatisfiable.\n");
-		p_interpretation->insatisfiable = 0;
+		p_interpretation->insatisfiable = SATISFIABLE;
 		fprintf(stderr, "        Elle est maintenant satisfiable");
 		return 1;
 	}
@@ -200,7 +200,7 @@ int intr_set_insatisfiable(tIntr** p_interpretation) {
 		return -1;
 	}
 
-	(*p_interpretation)->insatisfiable = 1;
+	(*p_interpretation)->insatisfiable = UNSATISFIABLE;
 	return 0;
 }
 
@@ -218,7 +218,7 @@ void intr_see(tIntr* p_interpretation) {
 	}
 
 	// Tests if unsatisfiable
-	if (p_interpretation->insatisfiable == 1) {
+	if (p_interpretation->insatisfiable == UNSATISFIABLE) {
 		fprintf(stderr, "  L'interprétation est insatisfiable.\n");
 		return;
 	}

@@ -20,6 +20,9 @@
 
 #include "literal.h"
 
+#define SATISFIABLE   0
+#define UNSATISFIABLE 1
+
 typedef struct tLitt tLitt;
 
 // Littéral
