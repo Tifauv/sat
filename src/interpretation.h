@@ -1,6 +1,6 @@
-/* En-têtes de la libINTR -- Librairie de gestion d'interprétations
-   Copyright (C) 2002 Olivier Serve, Mickaël Sibelle & Philippe Strelezki
-
+/* Copyright (C) 2002 Olivier Serve, Mickaël Sibelle & Philippe Strelezki
+   Copyright (C) 2015 Olivier Serve
+   
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
@@ -18,12 +18,14 @@
 #ifndef INTERPRETATION_H
 #define INTERPRETATION_H
 
+#include "literal.h"
+
 typedef struct tLitt tLitt;
 
 // Littéral
 struct tLitt {
-  int    litt;  // Valeur dans la liste
-  tLitt *suiv; // Ptr sur le suivant
+  Literal litt; // Valeur dans la liste
+  tLitt*  suiv; // Ptr sur le suivant
 };
 
 // Interprétation
@@ -34,31 +36,84 @@ typedef struct {
 } tIntr;
 
 
-// Crée une liste
-tIntr *intr_mk();
+/**
+ * Creates an empty interpretation.
+ * 
+ * @return an empty interpretation
+ */
+tIntr* intr_new();
 
-// Libère une liste
-int intr_free(tIntr **pIntr);
 
-// Teste si une liste est vide
-int intr_is_void(tIntr *pIntr);
+/**
+ * Deletes an interpretation.
+ * 
+ * @param p_interpretation
+ *            the interpretation
+ * 
+ * @return -1 if p_interpretation is NULL,
+ *          0 otherwise
+ */
+int intr_free(tIntr** p_interpretation);
 
-// Ajoute un élément en tête
-int intr_add(tIntr *pIntr, int n);
 
-// Supprime le dernier élément
-int intr_rm(tIntr **pIntr);
+/**
+ * Appends a literal to an interpretation.
+ * 
+ * @param p_interpretation
+ *            the interpretation
+ * @param p_literal
+ *            the literal
+ * 
+ * @return -1 if p_interpretation is NULL,
+ *          0 if the literal was appended,
+ *          1 if the literal was appended and the satisfiability status reset
+ */
+int intr_push(tIntr* p_interpretation, Literal p_literal);
 
-// Renvoie le premier élément
-int intr_get_first(tIntr *pIntr);
 
-// Teste si l est insatisfiable
-int intr_is_insatisfiable(tIntr *pIntr);
+/**
+ * Removes the last literal of the interpretation.
+ * 
+ * @param p_interpretation
+ *            the interpretation
+ * 
+ * @return -2 if p_interpretation is empty,
+ *         -1 if p_interpretation is NULL,
+ *          0 if the last literal could be removed
+ */          
+int intr_poke(tIntr** p_interpretation);
 
-// Positionne l à insatisfiable
-int intr_set_insatisfiable(tIntr **pIntr);
 
-// Affiche une interprétation
-void intr_see(tIntr *pIntr);
+/**
+ * Gives the value of the 'unsatisfiable' bit of an interpretation.
+ * 
+ * @param p_interpretation
+ *            the interpretation
+ * 
+ * @return -1 if p_interpretation is NULL,
+ *          0 if p_interpretation is satisfiable,
+ *          1 if p_interpretation is unsatisfiable
+ */
+int intr_is_insatisfiable(tIntr* p_interpretation);
+
+
+/**
+ * Marks the interpretation as unsatisfiable.
+ * 
+ * @param p_interpretation
+ *            the interpretation
+ * 
+ * @return -1 if p_interpretation is NULL,
+ *          0 if p_interpretation could be set unsatisfiable
+ */
+int intr_set_insatisfiable(tIntr** p_interpretation);
+
+
+/**
+ * Prints an interpretation to stderr.
+ * 
+ * @param p_interpretation
+ */
+void intr_see(tIntr* p_interpretation);
 
 #endif // INTERPRETATION_H

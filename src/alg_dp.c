@@ -39,7 +39,7 @@ tIntr* alg_solve(tGraphe** p_formula) {
 		return NULL;
 	}
 
-	return dp_main(p_formula, intr_mk());
+	return dp_main(p_formula, intr_new());
 }
 
 
@@ -120,7 +120,7 @@ tIntr* dp_main(tGraphe** p_formula, tIntr* p_interpretation) {
 	/* Restoring state before backtracking. */
 	fprintf(stderr, " Restoring state before backtracking...\n");
 	// Remove the current literal from the interpretation
-	intr_rm(&p_interpretation);
+	intr_poke(&p_interpretation);
 
 	// Reconstruction du graphe & destruction de l'historique
 	fprintf(stderr, "  Rebuilding the formula...\n");
@@ -167,14 +167,14 @@ tIntr* dp_test_sat(tGraphe** p_formula, Literal p_literal, tIntr* p_interpretati
 	// Si insatisfiable...
 	if (isNull(*p_formula)) {
 		fprintf(stderr, "Insatisfiable\n");
-		intr = intr_mk();
+		intr = intr_new();
 		intr_set_insatisfiable(&intr);
 		return intr;
 	}
 
 	// Ajout du littéral à l'interprétation
 	fprintf(stderr, "  Ajout de %sx%d à l'interprétation.\n", (p_literal < 0 ? "¬" : ""), abs(p_literal));
-	intr_add(p_interpretation, p_literal);
+	intr_push(p_interpretation, p_literal);
 
 	// Si le graphe est vide, l'interprétation est terminée
 	if (isNull((*p_formula)->clauses)) {

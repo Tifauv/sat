@@ -1,6 +1,6 @@
-/* Fonctions de la libINTR -- Librairie de gestion d'interprétations
-   Copyright (C) 2002 Olivier Serve, Mickaël Sibelle & Philippe Strelezki
-
+/* Copyright (C) 2002 Olivier Serve, Mickaël Sibelle & Philippe Strelezki
+   Copyright (C) 2015
+   
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
@@ -19,200 +19,216 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "utils.h"
 
 
-// Crée une liste
-tIntr *intr_mk() {
-  tIntr *lIntr;
+/**
+ * Creates an empty interpretation.
+ * 
+ * @return an empty interpretation
+ */
+tIntr* intr_new() {
+	tIntr* interpretation;
 
-  // Création de la liste
-  lIntr = (tIntr *) malloc(sizeof(tIntr));
+	// Création de la liste
+	interpretation = (tIntr*) malloc(sizeof(tIntr));
 
-  // Initialisation
-  lIntr->insatisfiable = 0;
-  lIntr->deb = NULL;
-  lIntr->fin = NULL;
+	// Initialisation
+	interpretation->insatisfiable = 0;
+	interpretation->deb = NULL;
+	interpretation->fin = NULL;
 
-  return lIntr;
-} // intr_mk
-
-
-// Libère une linterprétation
-int intr_free(tIntr **pIntr) {
-  tLitt *e;
-
-  // Vérification de l
-  if (!(*pIntr)) {
-    fprintf(stderr, " Ooops: Le pointeur de liste est NULL.\n");
-    return -1;
-  }
-
-  // Suppression des éléments
-  e = (*pIntr)->deb;
-  while (e) {
-    intr_rm(pIntr);
-    e = (*pIntr)->deb;
-  }
-
-  free(*pIntr);
-  *pIntr = NULL;
-  return 0;
-} // intr_free
+	return interpretation;
+}
 
 
-// Teste si une liste est vide
-int intr_is_void(tIntr *pIntr) {
+/**
+ * Deletes an interpretation.
+ * 
+ * @param p_interpretation
+ *            the interpretation
+ * 
+ * @return -1 if p_interpretation is NULL,
+ *          0 otherwise
+ */
+int intr_free(tIntr** p_interpretation) {
+	// Vérification de l
+	if (isNull(*p_interpretation)) {
+		fprintf(stderr, " Ooops: Le pointeur de liste est NULL.\n");
+		return -1;
+	}
 
-  // Vérification de pIntr
-  if (!pIntr) {
-    fprintf(stderr, " Ooops: Le pointeur d'interprétation est NULL.\n");
-    return -1;
-  }
+	// Suppression des éléments
+	tLitt* e = (*p_interpretation)->deb;
+	while (notNull(e)) {
+		intr_poke(p_interpretation);
+		e = (*p_interpretation)->deb;
+	}
 
-  if (pIntr->insatisfiable) {
-    fprintf(stderr, " Insatisfiable.\n");
-    return 2;
-  }
-  else return (!pIntr->deb);
-} // intr_is_void
-
-
-// Ajoute un élément en tête
-int intr_add(tIntr *pIntr, int n) {
-  tLitt *e;
-
-  // Vérification de pIntr
-  if (!pIntr) {
-    fprintf(stderr, " Ooops: Le pointeur d'interprétation est NULL.\n");
-    return -1;
-  }
-
-  // Création de e
-  e = (tLitt *) malloc(sizeof(tLitt));
-
-  // Initialisation de e
-  e->litt = n;
-  e->suiv = NULL;
-
-  if (!pIntr->deb) {
-    // Si vide
-    pIntr->deb = e;
-    pIntr->fin = e;
-  }
-  else {
-  // Ptr de pIntr
-  pIntr->fin->suiv = e;
-  pIntr->fin = e;
-  }
-
-  if (pIntr->insatisfiable == 1) {
-    fprintf(stderr, " Waouu: L'interprétation était insatisfiable.\n");
-    pIntr->insatisfiable = 0;
-    fprintf(stderr, "        Elle est maintenant satisfiable");
-    return 1;
-  }
-  return 0;
-} // intr_add
+	free(*p_interpretation);
+	*p_interpretation = NULL;
+	return 0;
+}
 
 
-// Supprime le premier élément
-int intr_rm(tIntr **pIntr) {
-  tLitt *e, *e2;
+/**
+ * Appends a literal to an interpretation.
+ * 
+ * @param p_interpretation
+ *            the interpretation
+ * @param p_literal
+ *            the literal
+ * 
+ * @return -1 if p_interpretation is NULL,
+ *          0 if the literal was appended,
+ *          1 if the literal was appended and the satisfiability status reset
+ */
+int intr_push(tIntr* p_interpretation, Literal p_literal) {
+	// Vérification de p_interpretation
+	if (isNull(p_interpretation)) {
+		fprintf(stderr, " Ooops: Le pointeur d'interprétation est NULL.\n");
+		return -1;
+	}
 
-  // Vérification de l
-  if (!(*pIntr)) {
-    fprintf(stderr, " Ooops: Le pointeur d'interprétation est NULL.\n");
-    return -1;
-  }
+	// Création de e
+	tLitt* e = (tLitt *) malloc(sizeof(tLitt));
 
-  // Vérification de la taille
-  if (!(*pIntr)->deb) {
-    fprintf(stderr, " Waouu: L'interprétation est vide: rien à supprimer.\n");
-    return -2;
-  }
+	// Initialisation de e
+	e->litt = p_literal;
+	e->suiv = NULL;
+
+	if (isNull(p_interpretation->deb)) {
+		// Si vide
+		p_interpretation->deb = e;
+		p_interpretation->fin = e;
+	}
+	else {
+		// Ptr de p_interpretation
+		p_interpretation->fin->suiv = e;
+		p_interpretation->fin = e;
+	}
+
+	if (p_interpretation->insatisfiable == 1) {
+		fprintf(stderr, " Waouu: L'interprétation était insatisfiable.\n");
+		p_interpretation->insatisfiable = 0;
+		fprintf(stderr, "        Elle est maintenant satisfiable");
+		return 1;
+	}
+
+	return 0;
+}
+
+
+/**
+ * Removes the last literal of the interpretation.
+ * 
+ * @param p_interpretation
+ *            the interpretation
+ * 
+ * @return -2 if p_interpretation is empty,
+ *         -1 if p_interpretation is NULL,
+ *          0 if the last literal could be removed
+ */          
+int intr_poke(tIntr** p_interpretation) {
+	// Parameters check
+	if (isNull(*p_interpretation)) {
+		fprintf(stderr, " Ooops: Le pointeur d'interprétation est NULL.\n");
+		return -1;
+	}
+
+	// Check the size
+	if (isNull((*p_interpretation)->deb)) {
+		fprintf(stderr, " Waouu: L'interprétation est vide: rien à supprimer.\n");
+		return -2;
+	}
  
-  if ((*pIntr)->deb == (*pIntr)->fin) {
-    e = (*pIntr)->deb;
-    (*pIntr)->deb = NULL;
-    (*pIntr)->fin = NULL;
-    free(e);
-  }
-  else {
-    e = (*pIntr)->fin;
-    e2 = (*pIntr)->deb;
-    while (e2->suiv != e)
-      e2 = e2->suiv;
-    (*pIntr)->fin = e2;
-	(*pIntr)->fin->suiv = NULL;
-    free(e);
-  }
-  return 0;
-} // intr_rm
+	// One element only : remove it
+	if ((*p_interpretation)->deb == (*p_interpretation)->fin) {
+		tLitt* e = (*p_interpretation)->deb;
+		(*p_interpretation)->deb = NULL;
+		(*p_interpretation)->fin = NULL;
+		free(e);
+	}
+	// List of elements : get the last element and remove it
+	else {
+		tLitt* e  = (*p_interpretation)->fin;
+		tLitt* e2 = (*p_interpretation)->deb;
+		while (e2->suiv != e)
+			e2 = e2->suiv;
+		(*p_interpretation)->fin = e2;
+		(*p_interpretation)->fin->suiv = NULL;
+		free(e);
+	}
+	return 0;
+}
 
 
-// Renvoie le premier élément
-int intr_get_first(tIntr *pIntr) {
+/**
+ * Gives the value of the 'unsatisfiable' bit of an interpretation.
+ * 
+ * @param p_interpretation
+ *            the interpretation
+ * 
+ * @return -1 if p_interpretation is NULL,
+ *          0 if p_interpretation is satisfiable,
+ *          1 if p_interpretation is unsatisfiable
+ */
+int intr_is_insatisfiable(tIntr* p_interpretation) {
+	// Parameters check
+	if (isNull(p_interpretation)) {
+		fprintf(stderr, " Ooops: Le pointeur d'interprétation est NULL.\n");
+		return -1;
+	}
 
-  // Vérification de pIntr
-  if (!pIntr) {
-    fprintf(stderr, " Ooops: Le pointeur d'interprétation est NULL.\n");
-    return 0;
-  }
-  return pIntr->deb->litt;
-} // intr_get_first
-
-
-// Teste si l est insatisfiable
-int intr_is_insatisfiable(tIntr *pIntr) {
-
-  // Vérification de l
-  if (!pIntr) {
-    fprintf(stderr, " Ooops: Le pointeur d'interprétation est NULL.\n");
-    return -1;
-  }
-
-  return pIntr->insatisfiable;
-} // intr_is_insatisfiable
+	return p_interpretation->insatisfiable;
+}
 
 
-// Positionne l à insatisfiable
-int intr_set_insatisfiable(tIntr **pIntr) {/* passer en double pointeurs */
+/**
+ * Marks the interpretation as unsatisfiable.
+ * 
+ * @param p_interpretation
+ *            the interpretation
+ * 
+ * @return -1 if p_interpretation is NULL,
+ *          0 if p_interpretation could be set unsatisfiable
+ */
+int intr_set_insatisfiable(tIntr** p_interpretation) {
+	// Parameters check
+	if (isNull(*p_interpretation)) {
+		fprintf(stderr, " Ooops: Le pointeur d'interprétation est NULL.\n");
+		return -1;
+	}
 
-  // Vérification de pIntr
-  if (!(*pIntr)) {
-    fprintf(stderr, " Ooops: Le pointeur d'interprétation est NULL.\n");
-    return -1;
-  }
-
-  (*pIntr)->insatisfiable = 1;
-  return 0;
-} // intr_set_insatisfiable
+	(*p_interpretation)->insatisfiable = 1;
+	return 0;
+}
 
 
-// Affiche une interprétation
+/**
+ * Prints an interpretation to stderr.
+ * 
+ * @param p_interpretation
+ */
 void intr_see(tIntr* p_interpretation) {
-	tLitt *litteral;
-
-	// Vérification de p_interpretation;
-	if (p_interpretation == NULL) {
+	// Parameters check
+	if (isNull(p_interpretation)) {
 		fprintf(stderr, "  Ooops: Le pointeur d'interprétation est NULL.\n");
 		return;
 	}
 
-	// Teste si insatisfiable
+	// Tests if unsatisfiable
 	if (p_interpretation->insatisfiable == 1) {
 		fprintf(stderr, "  L'interprétation est insatisfiable.\n");
 		return;
 	}
 
-	// Parcours de la liste des littéraux...
+	// Browses the literals...
 	fprintf(stderr, "  Interprétation = (");
-	litteral = p_interpretation->deb;
-	while (litteral) {
+	tLitt* litteral = p_interpretation->deb;
+	while (notNull(litteral)) {
 		fprintf(stderr, " %sx%d", (litteral->litt < 0 ? "¬" : ""), abs(litteral->litt));
 		litteral = litteral->suiv;
 	}
 	fprintf(stderr, " )\n");
-} // intr_see
-
-// FIN DE libList
+}
