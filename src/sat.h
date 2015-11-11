@@ -18,6 +18,8 @@
 #ifndef FORMULA_H
 #define FORMULA_H
 
+#define LN_SIZE 1024
+
 typedef struct tVar tVar;           // Type Liste de variables
 
 typedef struct tPtVarSgn tPtVarSgn; // Type Liste de pointeurs (indiquant le signe d'une variable dans une clause)
@@ -65,9 +67,6 @@ tGraphe *sat_new();
 
 // Libère la mémoire occupée par le graphe
 void sat_free(tGraphe **pGraph);
-
-// Charge un fichier dans un graph vide à l'origine
-tGraphe *sat_load_file(char *pNom_fic);
 
 // Teste si une variable existe
 tVar *sat_ex_var(tGraphe *pGraph, unsigned int pIndVar);

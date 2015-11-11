@@ -16,6 +16,7 @@ OBJS    := $(patsubst %.c,$(BUILDDIR)/%.o,$(SRCS))
 
 DEBUG = -ggdb
 CFLAGS = -Wall -pedantic -std=gnu99 -c $(DEBUG) -I$(SRCDIR)
+LDFLAGS = -llog4c
 
 ## GENERAL RULES
 .phony: all clean

@@ -23,8 +23,6 @@
 #include "literal.h"
 #include "utils.h"
 
-#define LN_SIZE 1024
-
 
 // Crée un graphe vide --------------------------------------------------------
 tGraphe *sat_new() {
@@ -62,70 +60,6 @@ void sat_free(tGraphe** p_formula) {
 	(*p_formula) = NULL;
 } // sat_free
  
-
-// Charge un fichier dans un graphe vide à l'origine --------------------------
-tGraphe *sat_load_file(char* pNom_fic) {
-	int *tab;
-	int size=0, i=0, lIndCls=1;
-
-	// Ouverture du fichier
-	FILE* fic = fopen(pNom_fic, "r");
-	if (fic == NULL) {
-		fprintf(stderr, " Ooops: Impossible d'ouvrir le fichier %s.\n", pNom_fic);
-		return NULL;
-	}
-	fprintf(stderr, " Fichier %s ouvert.\n", pNom_fic);
-	
-	// Initialisation de p_formula
-	tGraphe* p_formula = sat_new();
-
-	// Initialisation de str
-	char* str = malloc(LN_SIZE);
-	strcpy(str, "\0");
-	
-	while (!feof(fic)) {
-		// Compteur de ligne
-		i++;
-
-		// lecture de la ligne
-		fgets(str, LN_SIZE, fic);
-		if (feof(fic))
-			break;
-		
-		str[strlen(str)-1] = '\0';
-		fprintf(stderr, "\n Ligne[%d] = |%s|\n", i, str);
-    
-		// Ignore comment lines
-		if (str[0] == 'c')
-			continue;
-    
-		// Ignore project lines
-		if (str[0] == 'p')
-			continue;
-    
-		// Break at '%' lines
-		if (str[0] == '%')
-			break;
-
-		// Transformation string -> tab
-		tab = sat_mk_tabVar(str, &size);
-
-		if (sat_add_clause(p_formula, lIndCls, tab, size)) {
-			fprintf(stderr, " Waouu: Erreur non fatale à l'ajout de la clause.\n");
-			fprintf(stderr, "        La clause n'a pas été ajoutée.\n");
-		}
-		else
-			++lIndCls;
-		free(tab);
-	}
-	printf("]\n");
-	fclose(fic);
-	free(str);
-	fprintf(stderr, " Fichier %s fermé.\n", pNom_fic);
-
-	return p_formula;
-} // sat_load_file
-
 
 // Renvoie le pointeur sur une variable, NULL si elle n'existe pas ------------
 tVar *sat_ex_var(tGraphe *p_formula, unsigned int pIndVar) {
