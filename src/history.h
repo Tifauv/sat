@@ -18,15 +18,20 @@
 #ifndef HISTORY_H
 #define HISTORY_H
 
+#include "literal.h"
 #include "sat.h"
 
+#define OP_REMOVE_CLAUSE              1
+#define OP_REMOVE_LITERAL_FROM_CLAUSE 2
+
+typedef unsigned int Operation;
 typedef struct tEtape tEtape;
 
 // Etape
 struct tEtape {
-  int           op;     // Opération réalisée: 1->sub_cls 2->sub_var_in_cls
+  Operation     op;     // Opération réalisée: OP_REMOVE_CLAUSE ou OP_REMOVE_LITERAL_FROM_CLAUSE
   unsigned int  indCls; // Indice de la clause concernée
-  int          *vars;   // Tableau de littéraux
+  Literal*      vars;   // Tableau de littéraux
   int           size;   // Taille du tableau
   tEtape       *suiv;   // Ptr sur suivant
 };
@@ -50,19 +55,19 @@ int hist_void(tHist *pHist);
 int hist_add_cls(tHist *pHist, tClause *pCls);
 
 // Ajoute une étape 2 en tête
-int hist_add_var(tHist *pHist, int pIndCls, int pVar);
+int hist_add_var(tHist *pHist, int pIndCls, Literal pVar);
 
 // Supprime la première étape
 int hist_rm(tHist *pHist);
 
 // Renvoie le code de première opération
-int hist_get_code(tHist *pHist);
+Operation hist_get_code(tHist *pHist);
 
 // Renvoie l'indice de la première opération
 int hist_get_cls(tHist *pHist);
 
 // Renvoie le tableau de variables de la première opération
-int *hist_get_vars(tHist *pHist);
+Literal* hist_get_vars(tHist *pHist);
 
 // Renvoie la taille du dernier tableau ajouté
 int hist_get_size(tHist *pHist);

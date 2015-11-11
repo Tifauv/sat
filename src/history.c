@@ -35,251 +35,245 @@ tHist *hist_new() {
 
 
 // Libère un historique
-int hist_free(tHist **pHist) {
-  tEtape *lEtape;
+int hist_free(tHist **p_history) {
+  tEtape *etape;
 
-  // Vérification de pHist
-  if (!(*pHist)) {
+  // Vérification de p_history
+  if (!(*p_history)) {
     fprintf(stderr, " Ooops: Le pointeur d'historique est NULL.\n");
     return -1;
   }
 
   // Libération de l'historique...
-  lEtape = (*pHist)->deb;
-  while (lEtape) {
-    hist_rm(*pHist);
-    lEtape = (*pHist)->deb;
+  etape = (*p_history)->deb;
+  while (etape) {
+    hist_rm(*p_history);
+    etape = (*p_history)->deb;
   }
-  free(*pHist);
-  (*pHist) = NULL;
+  free(*p_history);
+  (*p_history) = NULL;
 
   return 0;
 } // hist_free
 
 
 // Teste si l'historique est vide
-int hist_void(tHist *pHist) {
+int hist_void(tHist *p_history) {
 
-  if (!pHist) {
+  if (!p_history) {
     fprintf(stderr, " Ooops: Le pointeur d'historique est NULL.\n");
     return -1;
   }
 
-  return (pHist->deb == NULL);
+  return (p_history->deb == NULL);
 } // hist_void
 
 // Ajoute une étape code 1 en tête
-int hist_add_cls(tHist *pHist, tClause *pCls) {
-  tPtVar *lPtVar;
-  tEtape *lEtape;
-  int    *lVars;
-  int nb_var_in_cls=0, i=0;
-
-  // Vérif de pHist
-  if (!pHist) {
+int hist_add_cls(tHist *p_history, tClause *p_clause) {
+  // Parameters check
+  if (!p_history) {
     fprintf(stderr, " Ooops: Le pointeur d'historique est NULL.\n");
     return -1;
   }
 
-  // Vérif de pCls
-  if (!pCls) {
+  if (!p_clause) {
     fprintf(stderr, " Ooops: Le pointeur de clause est NULL.\n");
     return -2;
   }
 
   // Vérifie que la clause est non vide
-  if (!pCls->vars) {
+  if (!p_clause->vars) {
     fprintf(stderr, " Waouu: La clause à ajouter est vide.\n");
     return -3;
   }
 
-  // Création de lEtape
-  lEtape = (tEtape *) malloc(sizeof(tEtape));
+  // Création de etape
+  tEtape* etape = (tEtape *) malloc(sizeof(tEtape));
 
   // Mise à jour
-  lEtape->op = 1;
-  lEtape->indCls = pCls->indCls;
+  etape->op = OP_REMOVE_CLAUSE;
+  etape->indCls = p_clause->indCls;
 
   // Recherche du nombre de variables
-  lPtVar = pCls->vars;
+  int nb_var_in_cls = 0;
+  tPtVar* lPtVar = p_clause->vars;
   while (lPtVar) {
     nb_var_in_cls++;
     lPtVar = lPtVar->suiv;
   }
 
   // Création du tableau de variables;
-  lVars = (int *) calloc(nb_var_in_cls, sizeof(int));
+  Literal* literals = (int *) calloc(nb_var_in_cls, sizeof(int));
 
   // Initialisation du tableau
-  lPtVar = pCls->vars;
+  int i = 0;
+  lPtVar = p_clause->vars;
   while (lPtVar) {
-    lVars[i++] = lPtVar->var->indVar * sat_get_sign(lPtVar->var, pCls->indCls);
+    literals[i++] = lPtVar->var->indVar * sat_get_sign(lPtVar->var, p_clause->indCls);
     lPtVar = lPtVar->suiv;
   }
   // Ajout du tableau
-  lEtape->vars = lVars;
-  lEtape->size = nb_var_in_cls;
+  etape->vars = literals;
+  etape->size = nb_var_in_cls;
 
   // Chaînage
-  lEtape->suiv = pHist->deb;
+  etape->suiv = p_history->deb;
 
   // Ajout en tête
-  pHist->deb = lEtape;
+  p_history->deb = etape;
   return 0;
 } // hist_add_cls
 
 
 // Ajoute une étape 2 en tête
-int hist_add_var(tHist *pHist, int pIndCls, int pVar) {
-  tEtape *lEtape;
-  int    *lVars;
-  // Vérif de pHist
-  if (!pHist) {
+int hist_add_var(tHist *p_history, int p_clauseId, Literal p_literal) {
+  // Parameters check
+  if (!p_history) {
     fprintf(stderr, " Ooops: Le pointeur d'historique est NULL.\n");
     return -1;
   }
 
-  // Création de lEtape
-  lEtape = (tEtape *) malloc(sizeof(tEtape));
+  // Création de etape
+  tEtape* etape = (tEtape *) malloc(sizeof(tEtape));
 
   // Mise à jour
-  lEtape->op = 2;
-  lEtape->indCls = pIndCls;
+  etape->op = OP_REMOVE_LITERAL_FROM_CLAUSE;
+  etape->indCls = p_clauseId;
 
   // Création du tableau de variables;
-  lVars = (int *) malloc(sizeof(int));
-  lVars[0] = pVar;
+  Literal* literals = (int *) malloc(sizeof(int));
+  literals[0] = p_literal;
 
   // Ajout du tableau
-  lEtape->vars = lVars;
-  lEtape->size = 1;
+  etape->vars = literals;
+  etape->size = 1;
 
   // Chaînage
-  lEtape->suiv = pHist->deb;
+  etape->suiv = p_history->deb;
 
   // Ajout en tête
-  pHist->deb = lEtape;
+  p_history->deb = etape;
   return 0;
 } // hist_add_var
 
 
 // Supprime la première étape
-int hist_rm(tHist *pHist) {
-  tEtape *lEtape;
+int hist_rm(tHist *p_history) {
+  tEtape *etape;
 
-  // Vérif de pHist;
-  if (!pHist) {
+  // Vérif de p_history;
+  if (!p_history) {
     fprintf(stderr, " Ooops: Le pointeur d'historique est NULL.\n");
     return -1;
   }
 
   // Vérif de taille
-  if (!pHist->deb) {
+  if (!p_history->deb) {
     fprintf(stderr, " Waouu: L'historique est NULL.\n");
     return -2;
   }
 
-  lEtape = pHist->deb;
+  etape = p_history->deb;
 
   // MàJ du ptr de début de liste
-  pHist->deb = lEtape->suiv;
+  p_history->deb = etape->suiv;
 
   // On libère le tableau de variables
-  free(lEtape->vars);
+  free(etape->vars);
 
-  // On libère lEtape
-  free(lEtape);
+  // On libère etape
+  free(etape);
 
   return 0;
 } // hist_rm
 
 
 // Renvoie le code de première opération
-int hist_get_code(tHist *pHist) {
+Operation hist_get_code(tHist *p_history) {
 
-  // Vérif de pHist
-  if (!pHist) {
+  // Vérif de p_history
+  if (!p_history) {
     fprintf(stderr, " Ooops: Le pointeur d'historique est NULL.\n");
     return -1;
   }
 
   // Vérif de hist non vide
-  if (!pHist->deb) {
+  if (!p_history->deb) {
     fprintf(stderr, " Ooops: L'historique est vide.\n");
     return -2;
   }
 
   // Retourne le code de la dernière opération effectuée
-  return pHist->deb->op;
+  return p_history->deb->op;
 } // hist_get_code
 
 
 // Renvoie l'indice de la première opération
-int hist_get_cls(tHist *pHist) {
+int hist_get_cls(tHist *p_history) {
 
-  // Vérif de pHist
-  if (!pHist) {
+  // Vérif de p_history
+  if (!p_history) {
     fprintf(stderr, " Ooops: Le pointeur d'historique est NULL.\n");
     return -1;
   }
 
   // Vérif de hist non vide
-  if (!pHist->deb) {
+  if (!p_history->deb) {
     fprintf(stderr, " Ooops: L'historique est vide.\n");
     return -2;
   }
 
   // Retourne l'indice de la dernière clause modifiée
-  return pHist->deb->indCls;
+  return p_history->deb->indCls;
 } // hist_get_cls
 
 
 // Renvoie le tableau de variables de la première opération
-int *hist_get_vars(tHist *pHist) {
+int *hist_get_vars(tHist *p_history) {
 
-  // Vérif de pHist
-  if (!pHist) {
+  // Vérif de p_history
+  if (!p_history) {
     fprintf(stderr, " Ooops: Le pointeur d'historique est NULL.\n");
     return NULL;
   }
 
   // Vérif de hist non vide
-  if (!pHist->deb) {
+  if (!p_history->deb) {
     fprintf(stderr, " Ooops: L'historique est vide.\n");
     return NULL;
   }
 
   // Retourne la liste des variables de la dernière clause modifiée
-  return pHist->deb->vars;
+  return p_history->deb->vars;
 } // hist_get_vars
 
 
 // Renvoie la taille du dernier tableau ajouté
-int hist_get_size(tHist *pHist) {
+int hist_get_size(tHist *p_history) {
 
-  // Vérif de pHist
-  if (!pHist) {
+  // Vérif de p_history
+  if (!p_history) {
     fprintf(stderr, " Ooops: Le pointeur d'historique est NULL.\n");
     return -1;
   }
 
   // Vérif de hist non vide
-  if (!pHist->deb) {
+  if (!p_history->deb) {
     fprintf(stderr, " Ooops: L'historique est vide.\n");
     return -2;
   }
 
   // Retourne la taille du tab
-  return pHist->deb->size;
+  return p_history->deb->size;
 } // hist_get_size
 
 
 // Ré-effectue les modifications de l'historique
-int hist_redo(tHist *pHist, tGraphe **pGraph) {
+int hist_redo(tHist *p_history, tGraphe **pGraph) {
   int var;
 
-  // Vérif de pHist
-  if (!pHist) {
+  // Vérif de p_history
+  if (!p_history) {
     fprintf(stderr, "    Ooops: Le pointeur d'historique est NULL.\n");
     return -1;
   }
@@ -293,24 +287,24 @@ int hist_redo(tHist *pHist, tGraphe **pGraph) {
   }
 
   fprintf(stderr, "    Reconstruction...\n");
-  while (!hist_void(pHist)) {
-    switch (hist_get_code(pHist)) {
-    case 1: // Ajouter une clause
-      fprintf(stderr, "\n    Ajout de la clause n°%d.\n\n", hist_get_cls(pHist));
-      sat_add_clause(*pGraph, hist_get_cls(pHist), hist_get_vars(pHist), hist_get_size(pHist));
+  while (!hist_void(p_history)) {
+    switch (hist_get_code(p_history)) {
+    case OP_REMOVE_CLAUSE: // Ajouter une clause
+      fprintf(stderr, "\n    Ajout de la clause n°%d.\n\n", hist_get_cls(p_history));
+      sat_add_clause(*pGraph, hist_get_cls(p_history), hist_get_vars(p_history), hist_get_size(p_history));
       break;
-    case 2: // Ajouter une variable à une clause
+    case OP_REMOVE_LITERAL_FROM_CLAUSE: // Ajouter une variable à une clause
       fprintf(stderr, "\n    Ajout de ");
-      var = (*hist_get_vars(pHist));
+      var = (*hist_get_vars(p_history));
       if (var < 0) fprintf(stderr, "¬");
-      fprintf(stderr, "X%d à la clause n°%d...\n\n", abs(var), hist_get_cls(pHist));
-      sat_add_var_to_cls(*pGraph, hist_get_cls(pHist), var);
+      fprintf(stderr, "X%d à la clause n°%d...\n\n", abs(var), hist_get_cls(p_history));
+      sat_add_var_to_cls(*pGraph, hist_get_cls(p_history), var);
       break;
     default:
       fprintf(stderr, "\n     Waouu: Une opération non conforme a été enregistrée dans l'historique.\n");
       fprintf(stderr, "            Continue...\n");
     }
-    hist_rm(pHist);
+    hist_rm(p_history);
   }
   //  fprintf(stderr, "\n    Graphe reconstruit:\n");
   //  sat_see(*pGraph);
