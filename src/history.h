@@ -1,5 +1,5 @@
-/* EN-têtes de la libHIST -- Librairie de gestion d'historiques de graphes SAT
-   Copyright (C) 2002 Olivier Serve, Mickaël Sibelle & Philippe Strelezki
+/* Copyright (C) 2002 Olivier Serve, Mickaël Sibelle & Philippe Strelezki
+   Copyright (C) 2015 Olivier Serve
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,6 +18,8 @@
 #ifndef HISTORY_H
 #define HISTORY_H
 
+#include <stddef.h>
+#include "clause.h"
 #include "literal.h"
 #include "sat.h"
 
@@ -25,54 +27,113 @@
 #define OP_REMOVE_LITERAL_FROM_CLAUSE 2
 
 typedef unsigned int Operation;
-typedef struct tEtape tEtape;
+typedef struct HistoryStep HistoryStep;
 
-// Etape
-struct tEtape {
-  Operation     op;     // Opération réalisée: OP_REMOVE_CLAUSE ou OP_REMOVE_LITERAL_FROM_CLAUSE
-  unsigned int  indCls; // Indice de la clause concernée
-  Literal*      vars;   // Tableau de littéraux
-  int           size;   // Taille du tableau
-  tEtape       *suiv;   // Ptr sur suivant
+/** A History step. */
+struct HistoryStep {
+  Operation     operation;
+  ClauseId      clauseId;
+  Literal*      literals;
+  size_t        size;
+  HistoryStep*  next;
 };
 
-// Historique
+/** A History. */
 typedef struct {
-  tEtape *deb; // Début de liste
-} tHist;
+  HistoryStep* last;
+} History;
 
 
-// Crée un historique
-tHist *hist_new();
+/**
+ * Creates a new history.
+ * 
+ * @return a new history
+ */
+History* sat_history_new();
 
-// Libère un historique
-int hist_free(tHist **pHist);
 
-// Teste si l'historique est vide
-int hist_void(tHist *pHist);
+/**
+ * Frees the memory used by an history.
+ *
+ * @param p_history
+ *            the history
+ *
+ * @return -1 if p_history is NULL,
+ *          0 if p_history was freed
+ */
+int sat_history_free(History** p_history);
 
-// Ajoute une étape 1 en tête
-int hist_add_cls(tHist *pHist, tClause *pCls);
 
-// Ajoute une étape 2 en tête
-int hist_add_var(tHist *pHist, int pIndCls, Literal pVar);
+/**
+ * Checks whether an history is empty.
+ *
+ * @param p_history
+ *            the history to check
+ *
+ * @return -1 if p_history is NULL,
+ *          0 if p_history is not empty,
+ *          1 if p_history is empty
+ */
+int sat_history_is_empty(History* p_history);
 
-// Supprime la première étape
-int hist_rm(tHist *pHist);
 
-// Renvoie le code de première opération
-Operation hist_get_code(tHist *pHist);
+/**
+ * Adds an operation of type OP_REMOVE_CLAUSE as last step of the history.
+ *
+ * @param p_history
+ *            the history
+ * @param p_clause
+ *            the clause to save
+ *
+ * @return -3 if p_clause is empty,
+ *         -2 if p_clause is NULL,
+ *         -1 if p_history is NULL,
+ *          0 if the new step was added
+ */
+int sat_history_add_clause(History* p_history, tClause* p_clause);
 
-// Renvoie l'indice de la première opération
-int hist_get_cls(tHist *pHist);
 
-// Renvoie le tableau de variables de la première opération
-Literal* hist_get_vars(tHist *pHist);
+/**
+ * Adds an operation of type OP_REMOVE_LITERAL_FROM_CLAUSE as last step of the history.
+ *
+ * @param p_history
+ *            the history
+ * @param p_clause_id
+ *            the id of the clause
+ * @param p_literal
+ *            the literal to save
+ *
+ * @return -1 if p_history is NULL,
+ *          0 if the new step was added
+ */
+int sat_history_add_literal(History* p_history, ClauseId p_clauseId, Literal p_literal);
 
-// Renvoie la taille du dernier tableau ajouté
-int hist_get_size(tHist *pHist);
 
-// Ré-effectue les modifications de l'historique
-int hist_redo(tHist *pHist, tGraphe **pGraph);
+/**
+ * Removes and frees the last step of the history.
+ *
+ * @param p_history
+ *            the history
+ *
+ * @return -2 if p_history is empty,
+ *         -1 if p_history is NULL,
+ *          0 if the last step could be removed
+ */
+int sat_history_remove_last_step(History* p_history);
+
+
+/**
+ * Replays the modifications stored in the history.
+ *
+ * @param p_history
+ *            the operations to replay
+ * @param p_formula
+ *            the formula in which to replay the operations
+ *
+ * @return -1 if p_history is NULL,
+ *         -2 if p_formula is NULL,
+ *          0 if the replay was done.
+ */
+int sat_history_replay(History* p_history, tGraphe** p_formula);
 
 #endif // HISTORY_H

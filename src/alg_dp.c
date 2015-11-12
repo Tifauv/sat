@@ -56,7 +56,7 @@ tIntr* alg_solve(tGraphe** p_formula) {
  */
 tIntr* dp_main(tGraphe** p_formula, tIntr* p_interpretation) {
 	tIntr* intr;
-	tHist* history;
+	History* history;
 
 	/* Check parameters */
 	if (isNull(*p_formula)) {
@@ -90,7 +90,7 @@ tIntr* dp_main(tGraphe** p_formula, tIntr* p_interpretation) {
 	 * First reduction
 	 */
 	fprintf(stderr, " Première tentative de réduction...\n");
-	history = hist_new();
+	history = sat_history_new();
 	dp_reduce(p_formula, chosen_literal, history);
 	intr = dp_test_sat(p_formula, chosen_literal, p_interpretation);
 
@@ -99,7 +99,7 @@ tIntr* dp_main(tGraphe** p_formula, tIntr* p_interpretation) {
 	 * We can return the current interpretation.
 	 */
 	if (!intr_is_insatisfiable(intr)) {
-		hist_free(&history);
+		sat_history_free(&history);
 		return p_interpretation;
 	}
 	intr_free(&intr);
@@ -108,7 +108,7 @@ tIntr* dp_main(tGraphe** p_formula, tIntr* p_interpretation) {
 	 * The interpretation is not satisfiable: we try with the opposite literal.
 	 */
 	fprintf(stderr, " Reconstruction des formules pour seconde tentative...\n");
-	hist_redo(history, p_formula);
+	sat_history_replay(history, p_formula);
 	sat_see(*p_formula);
 	intr_see(p_interpretation);
  
@@ -124,8 +124,8 @@ tIntr* dp_main(tGraphe** p_formula, tIntr* p_interpretation) {
 
 	// Reconstruction du graphe & destruction de l'historique
 	fprintf(stderr, "  Rebuilding the formula...\n");
-	hist_redo(history, p_formula);
-	hist_free(&history);
+	sat_history_replay(history, p_formula);
+	sat_history_free(&history);
 
 	fprintf(stderr, "  Rebuilt data:\n");
 	sat_see(*p_formula);
@@ -199,7 +199,7 @@ tIntr* dp_test_sat(tGraphe** p_formula, Literal p_literal, tIntr* p_interpretati
  * @param p_history
  *            the backtracking history
  */
-void dp_reduce(tGraphe **p_formula, Literal p_literal, tHist *p_history) {
+void dp_reduce(tGraphe **p_formula, Literal p_literal, History *p_history) {
 	tClause *clause, *clause2;
 	int result;
 	
@@ -221,7 +221,7 @@ void dp_reduce(tGraphe **p_formula, Literal p_literal, tHist *p_history) {
 			fprintf(stderr, "  Sauvegarde du graphe actuel dans l'historique...\n");
 			clause2 = (*p_formula)->clauses;
 			while (clause2) {
-				result = hist_add_cls(p_history, clause2); 
+				result = sat_history_add_clause(p_history, clause2); 
 				if (result == -3) 
 					fprintf(stderr, "   La clause n°%u est vide et n'a pas été ajoutée.\n", clause2->indCls);
 				else if (result == 0) 
@@ -267,7 +267,7 @@ void dp_reduce(tGraphe **p_formula, Literal p_literal, tHist *p_history) {
  *          0 nothing happened,
  *         -1 if the given clause is NULL,
  */
-int dp_reduce_clause(tClause* p_clause, Literal p_literal, tGraphe* p_formula, tHist* p_history) {
+int dp_reduce_clause(tClause* p_clause, Literal p_literal, tGraphe* p_formula, History* p_history) {
 	tPtVar* literal_iterator;
 
 	/* Parameter checking */
@@ -290,7 +290,7 @@ int dp_reduce_clause(tClause* p_clause, Literal p_literal, tGraphe* p_formula, t
 
 				// Enregistrement de la suppression dans l'historique
 				fprintf(stderr, "    Sauvegarde de la clause n°%u dans l'historique.\n", p_clause->indCls);
-				hist_add_cls(p_history, p_clause);
+				sat_history_add_clause(p_history, p_clause);
 
 				// Suppression de la clause
 				sat_sub_clause(p_formula, p_clause->indCls);
@@ -302,7 +302,7 @@ int dp_reduce_clause(tClause* p_clause, Literal p_literal, tGraphe* p_formula, t
 
 				// Enregistrement de la suppression dans l'historique
 				fprintf(stderr, "    Sauvegarde du littéral %sx%d pour la clause n°%u dans l'historique.\n", (p_literal >= 0 ? "¬" : ""), abs(p_literal), p_clause->indCls);
-				hist_add_var(p_history, p_clause->indCls, literal_iterator->var->indVar * (-sat_sign(p_literal)));
+				sat_history_add_literal(p_history, p_clause->indCls, literal_iterator->var->indVar * (-sat_sign(p_literal)));
 
 				// Suppression de la chosen_literal de la clause
 				// retourne: 2 si la clause est non vide (après traitement)

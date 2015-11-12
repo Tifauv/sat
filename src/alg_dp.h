@@ -76,7 +76,7 @@ tIntr* dp_test_sat(tGraphe** p_formula, Literal p_literal, tIntr* p_interpretati
  * @param p_history
  *            the backtracking history
  */
-void dp_reduce(tGraphe** p_formula, Literal p_literal, tHist* p_history);
+void dp_reduce(tGraphe** p_formula, Literal p_literal, History* p_history);
 
 
 /**
@@ -98,6 +98,6 @@ void dp_reduce(tGraphe** p_formula, Literal p_literal, tHist* p_history);
  *          0 nothing happened,
  *         -1 if the given clause is NULL,
  */
-int dp_reduce_clause(tClause* p_clause, Literal p_literal, tGraphe* p_formula, tHist* p_history);
+int dp_reduce_clause(tClause* p_clause, Literal p_literal, tGraphe* p_formula, History* p_history);
 
 #endif // DAVIS_PUTNAM_H
