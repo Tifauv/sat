@@ -43,16 +43,11 @@ History* sat_history_new() {
  *
  * @param p_history
  *            the history
- *
- * @return -1 if p_history is NULL,
- *          0 if p_history was freed
  */
-int sat_history_free(History** p_history) {
+void sat_history_free(History** p_history) {
 	// Parameters check
-	if (isNull(*p_history)) {
-		log4c_category_log(log_history(), LOG4C_PRIORITY_ERROR, "The history pointer is NULL.");
-		return -1;
-	}
+	if (isNull(*p_history))
+		return;
 
 	// Free each step...
 	HistoryStep* step = (*p_history)->last;
@@ -64,8 +59,6 @@ int sat_history_free(History** p_history) {
 	// Free the top structure
 	free(*p_history);
 	(*p_history) = NULL;
-
-	return 0;
 }
 
 
@@ -91,7 +84,7 @@ int sat_history_is_empty(History* p_history) {
 
 
 /**
- * Adds an operation of type OP_REMOVE_CLAUSE as last step of the history.
+ * Adds an operation of type OP_ADD_CLAUSE as last step of the history.
  *
  * @param p_history
  *            the history
@@ -140,7 +133,7 @@ int sat_history_add_clause(History* p_history, tClause* p_clause) {
 
 	// Create the new step
 	HistoryStep* newStep = (HistoryStep*) malloc(sizeof(HistoryStep));
-	newStep->operation = OP_REMOVE_CLAUSE;
+	newStep->operation = OP_ADD_CLAUSE;
 	newStep->clauseId = p_clause->indCls;
 	newStep->literals = literals;
 	newStep->size = nbLiterals;
@@ -154,7 +147,7 @@ int sat_history_add_clause(History* p_history, tClause* p_clause) {
 
 
 /**
- * Adds an operation of type OP_REMOVE_LITERAL_FROM_CLAUSE as last step of the history.
+ * Adds an operation of type OP_ADD_LITERAL_TO_CLAUSE as last step of the history.
  *
  * @param p_history
  *            the history
@@ -179,7 +172,7 @@ int sat_history_add_literal(History *p_history, ClauseId p_clauseId, Literal p_l
 
 	// Create the new step
 	HistoryStep* newStep = (HistoryStep*) malloc(sizeof(HistoryStep));
-	newStep->operation = OP_REMOVE_LITERAL_FROM_CLAUSE;
+	newStep->operation = OP_ADD_LITERAL_TO_CLAUSE;
 	newStep->clauseId = p_clauseId;
 	newStep->literals = literals;
 	newStep->size = 1;
@@ -197,29 +190,23 @@ int sat_history_add_literal(History *p_history, ClauseId p_clauseId, Literal p_l
  *
  * @param p_history
  *            the history
- *
- * @return -2 if p_history is empty,
- *         -1 if p_history is NULL,
- *          0 if the last step could be removed
  */
-int sat_history_remove_last_step(History* p_history) {
+void sat_history_remove_last_step(History* p_history) {
 	// Parameters check
 	if (isNull(p_history)) {
 		log4c_category_log(log_history(), LOG4C_PRIORITY_ERROR, "The history pointer is NULL.");
-		return -1;
+		return;
 	}
 
 	if (isNull(p_history->last)) {
 		log4c_category_log(log_history(), LOG4C_PRIORITY_ERROR, "The history is empty.");
-		return -2;
+		return;
 	}
 
 	HistoryStep* last_step = p_history->last;
 	p_history->last = last_step->next;
 	free(last_step->literals);
 	free(last_step);
-
-	return 0;
 }
 
 
@@ -230,16 +217,12 @@ int sat_history_remove_last_step(History* p_history) {
  *            the operations to replay
  * @param p_formula
  *            the formula in which to replay the operations
- *
- * @return -1 if p_history is NULL,
- *         -2 if p_formula is NULL,
- *          0 if the replay was done.
  */
-int sat_history_replay(History* p_history, tGraphe** p_formula) {
+void sat_history_replay(History* p_history, tGraphe** p_formula) {
 	// Parameters check
 	if (isNull(p_history)) {
 		log4c_category_log(log_history(), LOG4C_PRIORITY_ERROR, "The history pointer is NULL.");
-		return -1;
+		return;
 	}
 
 	if (isNull(*p_formula)) {
@@ -256,12 +239,12 @@ int sat_history_replay(History* p_history, tGraphe** p_formula) {
 		size_t literalsSize = p_history->last->size;
 
 		switch (p_history->last->operation) {
-		case OP_REMOVE_CLAUSE:
+		case OP_ADD_CLAUSE:
 			sat_add_clause(*p_formula, clauseId, literals, literalsSize);
 			log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "Added clause %u", clauseId);
 			break;
 
-		case OP_REMOVE_LITERAL_FROM_CLAUSE:
+		case OP_ADD_LITERAL_TO_CLAUSE:
 			sat_add_var_to_cls(*p_formula, clauseId, *literals);
 			log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "Added %sx%u to clause %u", (*literals < 0 ? "¬" : ""), abs(*literals), clauseId);
 			break;
@@ -277,6 +260,5 @@ int sat_history_replay(History* p_history, tGraphe** p_formula) {
 	log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "History replayed.");
 	//fprintf(stderr, "\n    Graphe reconstruit:\n");
 	//sat_see(*p_formula);
-	return 0;
 }
 

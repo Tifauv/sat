@@ -52,11 +52,8 @@ tIntr* intr_new();
  * 
  * @param p_interpretation
  *            the interpretation
- * 
- * @return -1 if p_interpretation is NULL,
- *          0 otherwise
  */
-int intr_free(tIntr** p_interpretation);
+void intr_free(tIntr** p_interpretation);
 
 
 /**
@@ -79,12 +76,8 @@ int intr_push(tIntr* p_interpretation, Literal p_literal);
  * 
  * @param p_interpretation
  *            the interpretation
- * 
- * @return -2 if p_interpretation is empty,
- *         -1 if p_interpretation is NULL,
- *          0 if the last literal could be removed
  */          
-int intr_poke(tIntr** p_interpretation);
+void intr_poke(tIntr* p_interpretation);
 
 
 /**
@@ -105,11 +98,8 @@ int intr_is_insatisfiable(tIntr* p_interpretation);
  * 
  * @param p_interpretation
  *            the interpretation
- * 
- * @return -1 if p_interpretation is NULL,
- *          0 if p_interpretation could be set unsatisfiable
  */
-int intr_set_insatisfiable(tIntr** p_interpretation);
+void intr_set_insatisfiable(tIntr* p_interpretation);
 
 
 /**
@@ -117,6 +107,6 @@ int intr_set_insatisfiable(tIntr** p_interpretation);
  * 
  * @param p_interpretation
  */
-void intr_see(tIntr* p_interpretation);
+void intr_print(tIntr* p_interpretation);
 
 #endif // INTERPRETATION_H

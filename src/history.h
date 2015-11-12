@@ -23,8 +23,8 @@
 #include "literal.h"
 #include "sat.h"
 
-#define OP_REMOVE_CLAUSE              1
-#define OP_REMOVE_LITERAL_FROM_CLAUSE 2
+#define OP_ADD_CLAUSE            1
+#define OP_ADD_LITERAL_TO_CLAUSE 2
 
 typedef unsigned int Operation;
 typedef struct HistoryStep HistoryStep;
@@ -57,11 +57,8 @@ History* sat_history_new();
  *
  * @param p_history
  *            the history
- *
- * @return -1 if p_history is NULL,
- *          0 if p_history was freed
  */
-int sat_history_free(History** p_history);
+void sat_history_free(History** p_history);
 
 
 /**
@@ -78,7 +75,7 @@ int sat_history_is_empty(History* p_history);
 
 
 /**
- * Adds an operation of type OP_REMOVE_CLAUSE as last step of the history.
+ * Adds an operation of type OP_ADD_CLAUSE as last step of the history.
  *
  * @param p_history
  *            the history
@@ -94,7 +91,7 @@ int sat_history_add_clause(History* p_history, tClause* p_clause);
 
 
 /**
- * Adds an operation of type OP_REMOVE_LITERAL_FROM_CLAUSE as last step of the history.
+ * Adds an operation of type OP_ADD_LITERAL_TO_CLAUSE as last step of the history.
  *
  * @param p_history
  *            the history
@@ -114,12 +111,8 @@ int sat_history_add_literal(History* p_history, ClauseId p_clauseId, Literal p_l
  *
  * @param p_history
  *            the history
- *
- * @return -2 if p_history is empty,
- *         -1 if p_history is NULL,
- *          0 if the last step could be removed
  */
-int sat_history_remove_last_step(History* p_history);
+void sat_history_remove_last_step(History* p_history);
 
 
 /**
@@ -129,11 +122,7 @@ int sat_history_remove_last_step(History* p_history);
  *            the operations to replay
  * @param p_formula
  *            the formula in which to replay the operations
- *
- * @return -1 if p_history is NULL,
- *         -2 if p_formula is NULL,
- *          0 if the replay was done.
  */
-int sat_history_replay(History* p_history, tGraphe** p_formula);
+void sat_history_replay(History* p_history, tGraphe** p_formula);
 
 #endif // HISTORY_H

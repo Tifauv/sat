@@ -19,7 +19,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <log4c.h>
+
 #include "utils.h"
+#include "log.h"
 
 
 /**
@@ -28,12 +31,8 @@
  * @return an empty interpretation
  */
 tIntr* intr_new() {
-	tIntr* interpretation;
-
 	// Création de la liste
-	interpretation = (tIntr*) malloc(sizeof(tIntr));
-
-	// Initialisation
+	tIntr* interpretation = (tIntr*) malloc(sizeof(tIntr));
 	interpretation->insatisfiable = SATISFIABLE;
 	interpretation->deb = NULL;
 	interpretation->fin = NULL;
@@ -47,27 +46,21 @@ tIntr* intr_new() {
  * 
  * @param p_interpretation
  *            the interpretation
- * 
- * @return -1 if p_interpretation is NULL,
- *          0 otherwise
  */
-int intr_free(tIntr** p_interpretation) {
-	// Vérification de l
-	if (isNull(*p_interpretation)) {
-		fprintf(stderr, " Ooops: Le pointeur de liste est NULL.\n");
-		return -1;
-	}
+void intr_free(tIntr** p_interpretation) {
+	// Parameters check
+	if (isNull(*p_interpretation))
+		return;
 
-	// Suppression des éléments
-	tLitt* e = (*p_interpretation)->deb;
-	while (notNull(e)) {
-		intr_poke(p_interpretation);
-		e = (*p_interpretation)->deb;
+	// Remove all the list elements
+	tLitt* element = (*p_interpretation)->deb;
+	while (notNull(element)) {
+		intr_poke(*p_interpretation);
+		element = (*p_interpretation)->deb;
 	}
 
 	free(*p_interpretation);
 	*p_interpretation = NULL;
-	return 0;
 }
 
 
@@ -84,34 +77,31 @@ int intr_free(tIntr** p_interpretation) {
  *          1 if the literal was appended and the satisfiability status reset
  */
 int intr_push(tIntr* p_interpretation, Literal p_literal) {
-	// Vérification de p_interpretation
+	// Parameters check
 	if (isNull(p_interpretation)) {
-		fprintf(stderr, " Ooops: Le pointeur d'interprétation est NULL.\n");
+		log4c_category_log(log_interpretation(), LOG4C_PRIORITY_ERROR, "The interpretation pointer is NULL.");
 		return -1;
 	}
 
-	// Création de e
-	tLitt* e = (tLitt *) malloc(sizeof(tLitt));
+	// Create the element to add
+	tLitt* element = (tLitt*) malloc(sizeof(tLitt));
+	element->litt = p_literal;
+	element->suiv = NULL;
 
-	// Initialisation de e
-	e->litt = p_literal;
-	e->suiv = NULL;
-
-	if (isNull(p_interpretation->deb)) {
-		// Si vide
-		p_interpretation->deb = e;
-		p_interpretation->fin = e;
+	if (isNull(p_interpretation->deb)) { // interpretation is empty
+		p_interpretation->deb = element;
+		p_interpretation->fin = element;
 	}
-	else {
-		// Ptr de p_interpretation
-		p_interpretation->fin->suiv = e;
-		p_interpretation->fin = e;
+	else { // Append the element
+		p_interpretation->fin->suiv = element;
+		p_interpretation->fin = element;
 	}
+	log4c_category_log(log_interpretation(), LOG4C_PRIORITY_INFO, "Literal %sx%u added to the interpretation.", (p_literal < 0 ? "¬" : ""), abs(p_literal));
 
+	// Reset the satisfiability status
 	if (p_interpretation->insatisfiable == UNSATISFIABLE) {
-		fprintf(stderr, " Waouu: L'interprétation était insatisfiable.\n");
 		p_interpretation->insatisfiable = SATISFIABLE;
-		fprintf(stderr, "        Elle est maintenant satisfiable");
+		log4c_category_log(log_interpretation(), LOG4C_PRIORITY_WARN, "The interpretation was unsatisfiable, and has now been marked satisfiable.");
 		return 1;
 	}
 
@@ -124,42 +114,45 @@ int intr_push(tIntr* p_interpretation, Literal p_literal) {
  * 
  * @param p_interpretation
  *            the interpretation
- * 
- * @return -2 if p_interpretation is empty,
- *         -1 if p_interpretation is NULL,
- *          0 if the last literal could be removed
  */          
-int intr_poke(tIntr** p_interpretation) {
+void intr_poke(tIntr* p_interpretation) {
 	// Parameters check
-	if (isNull(*p_interpretation)) {
-		fprintf(stderr, " Ooops: Le pointeur d'interprétation est NULL.\n");
-		return -1;
+	if (isNull(p_interpretation)) {
+		log4c_category_log(log_interpretation(), LOG4C_PRIORITY_ERROR, "The interpretation pointer is NULL.");
+		return;
 	}
 
-	// Check the size
-	if (isNull((*p_interpretation)->deb)) {
-		fprintf(stderr, " Waouu: L'interprétation est vide: rien à supprimer.\n");
-		return -2;
+	if (isNull(p_interpretation->deb)) {
+		log4c_category_log(log_interpretation(), LOG4C_PRIORITY_DEBUG, "The interpretation is empty, nothing to remove.");
+		return;
 	}
  
 	// One element only : remove it
-	if ((*p_interpretation)->deb == (*p_interpretation)->fin) {
-		tLitt* e = (*p_interpretation)->deb;
-		(*p_interpretation)->deb = NULL;
-		(*p_interpretation)->fin = NULL;
-		free(e);
+	Literal literal = 0;
+	if (p_interpretation->deb == p_interpretation->fin) {
+		tLitt* element = p_interpretation->deb;
+		p_interpretation->deb = NULL;
+		p_interpretation->fin = NULL;
+		literal = element->litt;
+		free(element);
 	}
-	// List of elements : get the last element and remove it
+	// List of elements : remove the last element and set the penultimate as new last
 	else {
-		tLitt* e  = (*p_interpretation)->fin;
-		tLitt* e2 = (*p_interpretation)->deb;
-		while (e2->suiv != e)
-			e2 = e2->suiv;
-		(*p_interpretation)->fin = e2;
-		(*p_interpretation)->fin->suiv = NULL;
-		free(e);
+		// The element to remove
+		tLitt* lastElement  = p_interpretation->fin;
+		
+		// Find the penultimate element
+		tLitt* currentElement = p_interpretation->deb;
+		while (currentElement->suiv != lastElement)
+			currentElement = currentElement->suiv;
+		
+		// Link the penultimate as new last element
+		p_interpretation->fin = currentElement;
+		p_interpretation->fin->suiv = NULL;
+		literal = lastElement->litt;
+		free(lastElement);
 	}
-	return 0;
+	log4c_category_log(log_interpretation(), LOG4C_PRIORITY_INFO, "Literal %sx%u removed from the interpretation.", (literal < 0 ? "¬" : ""), abs(literal));
 }
 
 
@@ -176,7 +169,7 @@ int intr_poke(tIntr** p_interpretation) {
 int intr_is_insatisfiable(tIntr* p_interpretation) {
 	// Parameters check
 	if (isNull(p_interpretation)) {
-		fprintf(stderr, " Ooops: Le pointeur d'interprétation est NULL.\n");
+		log4c_category_log(log_interpretation(), LOG4C_PRIORITY_ERROR, "The interpretation pointer is NULL.");
 		return -1;
 	}
 
@@ -189,19 +182,15 @@ int intr_is_insatisfiable(tIntr* p_interpretation) {
  * 
  * @param p_interpretation
  *            the interpretation
- * 
- * @return -1 if p_interpretation is NULL,
- *          0 if p_interpretation could be set unsatisfiable
  */
-int intr_set_insatisfiable(tIntr** p_interpretation) {
+void intr_set_insatisfiable(tIntr* p_interpretation) {
 	// Parameters check
-	if (isNull(*p_interpretation)) {
-		fprintf(stderr, " Ooops: Le pointeur d'interprétation est NULL.\n");
-		return -1;
+	if (isNull(p_interpretation)) {
+		log4c_category_log(log_interpretation(), LOG4C_PRIORITY_ERROR, "The interpretation pointer is NULL.");
+		return;
 	}
 
-	(*p_interpretation)->insatisfiable = UNSATISFIABLE;
-	return 0;
+	p_interpretation->insatisfiable = UNSATISFIABLE;
 }
 
 
@@ -210,25 +199,28 @@ int intr_set_insatisfiable(tIntr** p_interpretation) {
  * 
  * @param p_interpretation
  */
-void intr_see(tIntr* p_interpretation) {
+void intr_print(tIntr* p_interpretation) {
 	// Parameters check
 	if (isNull(p_interpretation)) {
-		fprintf(stderr, "  Ooops: Le pointeur d'interprétation est NULL.\n");
+		log4c_category_log(log_interpretation(), LOG4C_PRIORITY_ERROR, "The interpretation pointer is NULL.");
 		return;
 	}
 
 	// Tests if unsatisfiable
 	if (p_interpretation->insatisfiable == UNSATISFIABLE) {
-		fprintf(stderr, "  L'interprétation est insatisfiable.\n");
+		log4c_category_log(log_interpretation(), LOG4C_PRIORITY_INFO, "The interpretation is unsatisfiable.");
+		printf("The interpretation is unsatisfiable.\n");
 		return;
 	}
 
 	// Browses the literals...
-	fprintf(stderr, "  Interprétation = (");
+	log4c_category_log(log_interpretation(), LOG4C_PRIORITY_INFO, "Interpretation:");
+	printf("Interpretation: (");
 	tLitt* litteral = p_interpretation->deb;
 	while (notNull(litteral)) {
-		fprintf(stderr, " %sx%d", (litteral->litt < 0 ? "¬" : ""), abs(litteral->litt));
+		log4c_category_log(log_interpretation(), LOG4C_PRIORITY_INFO, "  %sx%u", (litteral->litt < 0 ? "¬" : ""), abs(litteral->litt));
+		printf(" %sx%d", (litteral->litt < 0 ? "¬" : ""), abs(litteral->litt));
 		litteral = litteral->suiv;
 	}
-	fprintf(stderr, " )\n");
+	printf(" )\n");
 }

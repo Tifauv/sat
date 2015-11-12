@@ -26,12 +26,12 @@
 
 // Crée un graphe vide --------------------------------------------------------
 tGraphe *sat_new() {
-	tGraphe *lGraph;
-	lGraph = (tGraphe *) malloc(sizeof(tGraphe));
-	lGraph -> clauses = NULL;
-	lGraph -> vars = NULL;
-	return lGraph;
-} // sat_new
+	tGraphe *formula;
+	formula = (tGraphe*) malloc(sizeof(tGraphe));
+	formula->clauses = NULL;
+	formula->vars = NULL;
+	return formula;
+}
 
 
 // Libère le graphe

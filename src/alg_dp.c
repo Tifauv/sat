@@ -71,7 +71,7 @@ tIntr* dp_main(tGraphe** p_formula, tIntr* p_interpretation) {
 
 	fprintf(stderr, "\n\n Davis-Putnam...\n");
 	sat_see(*p_formula);
-	intr_see(p_interpretation);
+	intr_print(p_interpretation);
 
 	/*
 	 * Stop case: if there is no clause to process, we are done.
@@ -110,7 +110,7 @@ tIntr* dp_main(tGraphe** p_formula, tIntr* p_interpretation) {
 	fprintf(stderr, " Reconstruction des formules pour seconde tentative...\n");
 	sat_history_replay(history, p_formula);
 	sat_see(*p_formula);
-	intr_see(p_interpretation);
+	intr_print(p_interpretation);
  
 	// Seconde réduction et test du résultat
 	fprintf(stderr, " Seconde tentative de réduction...\n");
@@ -120,7 +120,7 @@ tIntr* dp_main(tGraphe** p_formula, tIntr* p_interpretation) {
 	/* Restoring state before backtracking. */
 	fprintf(stderr, " Restoring state before backtracking...\n");
 	// Remove the current literal from the interpretation
-	intr_poke(&p_interpretation);
+	intr_poke(p_interpretation);
 
 	// Reconstruction du graphe & destruction de l'historique
 	fprintf(stderr, "  Rebuilding the formula...\n");
@@ -129,7 +129,7 @@ tIntr* dp_main(tGraphe** p_formula, tIntr* p_interpretation) {
 
 	fprintf(stderr, "  Rebuilt data:\n");
 	sat_see(*p_formula);
-	intr_see(p_interpretation);
+	intr_print(p_interpretation);
 	
 	return intr;
 }
@@ -168,7 +168,7 @@ tIntr* dp_test_sat(tGraphe** p_formula, Literal p_literal, tIntr* p_interpretati
 	if (isNull(*p_formula)) {
 		fprintf(stderr, "Insatisfiable\n");
 		intr = intr_new();
-		intr_set_insatisfiable(&intr);
+		intr_set_insatisfiable(intr);
 		return intr;
 	}
 

@@ -18,6 +18,9 @@
 #ifndef FORMULA_H
 #define FORMULA_H
 
+#include "literal.h"
+#include "clause.h"
+
 #define LN_SIZE 1024
 
 typedef struct tVar tVar;           // Type Liste de variables
@@ -30,14 +33,14 @@ typedef struct tPtVar tPtVar;       // Type Liste de pointeurs vers une variable
 
 // Type Liste de clauses
 struct tClause {
-   unsigned int indCls; // Indice de la clause : entier non-signé (0 -> 255)
+   ClauseId      indCls; // Indice de la clause : entier non-signé (0 -> 255)
    tPtVar       *vars  ; // Pointeur sur la liste des variables de la clause
    tClause      *suiv  ; // Pointeur chaînant
 };
 
 // Type Liste de variables
 struct tVar {
-   unsigned int  indVar; // Indice de la variable
+   Literal        indVar; // Indice de la variable
    tPtVarSgn     *clsPos; // Pointeur vers les clauses dans lesquelles la variable est positive
    tPtVarSgn     *clsNeg; // Pointeur vers les clauses dans lesquelles la variable est négative
    tVar          *suiv  ; // Pointeur chaînant

@@ -140,15 +140,13 @@ int main(int p_argc, char* p_argv[]) {
 	free(nom_fic);
 	sat_see(formula);
 
-	printf("\n\n> Résolution:\n");
+	printf("\n> Solving...\n");
 	tIntr* interpretation = alg_solve(&formula);
-	intr_see(interpretation);
+	printf("\n> Result:\n");
+	intr_print(interpretation);
 
-	printf("\n\n> Libération de la mémoire:\n");
 	intr_free(&interpretation);
 	sat_free(&formula);
-
-	printf("\n\n> Terminé\n\n");
 
 	// Clean the logging system
 	if (log4c_fini())
