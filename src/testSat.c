@@ -45,17 +45,17 @@ void usage() {
  *         the formula loaded otherwise
  */
 tGraphe* load_cnf_file(char* p_filename) {
-	log4c_category_t* loader = log4c_category_get(LOG_CATEGORY_LOADER_CNF);
+	log4c_category_t* category = log4c_category_get(LOG_CATEGORY_LOADER_CNF);
 
-	log4c_category_log(loader, LOG4C_PRIORITY_DEBUG, "Loading problem from CNF file '%s'...", p_filename);
+	log4c_category_log(category, LOG4C_PRIORITY_DEBUG, "Loading problem from CNF file '%s'...", p_filename);
 
 	// Ouverture du fichier
 	FILE* fic = fopen(p_filename, "r");
 	if (fic == NULL) {
-		log4c_category_log(loader, LOG4C_PRIORITY_ERROR, "Could not open file '%s'.", p_filename);
+		log4c_category_log(category, LOG4C_PRIORITY_ERROR, "Could not open file '%s'.", p_filename);
 		return NULL;
 	}
-	log4c_category_log(loader, LOG4C_PRIORITY_DEBUG, "File '%s' opened.", p_filename);
+	log4c_category_log(category, LOG4C_PRIORITY_DEBUG, "File '%s' opened.", p_filename);
 	
 	// Initialisation de p_formula
 	tGraphe* p_formula = sat_new();
@@ -76,7 +76,7 @@ tGraphe* load_cnf_file(char* p_filename) {
 			break;
 		
 		str[strlen(str)-1] = '\0';
-		log4c_category_log(loader, LOG4C_PRIORITY_DEBUG, "Line #%02d: |%s|", lineNo, str);
+		log4c_category_log(category, LOG4C_PRIORITY_DEBUG, "Line #%02d: |%s|", lineNo, str);
     
 		// Ignore comment lines
 		if (str[0] == 'c')
@@ -95,15 +95,15 @@ tGraphe* load_cnf_file(char* p_filename) {
 		int* tab = sat_mk_tabVar(str, &size);
 
 		if (sat_add_clause(p_formula, clauseId, tab, size))
-			log4c_category_log(loader, LOG4C_PRIORITY_INFO, "Clause for line %u was not added.", lineNo);
+			log4c_category_log(category, LOG4C_PRIORITY_INFO, "Clause for line %u was not added.", lineNo);
 		else
 			++clauseId;
 		free(tab);
 	}
 	fclose(fic);
 	free(str);
-	log4c_category_log(loader, LOG4C_PRIORITY_DEBUG, "File '%s' closed.", p_filename);
-	log4c_category_log(loader, LOG4C_PRIORITY_INFO, "Problem loaded from CNF file '%s'.", p_filename);
+	log4c_category_log(category, LOG4C_PRIORITY_DEBUG, "File '%s' closed.", p_filename);
+	log4c_category_log(category, LOG4C_PRIORITY_INFO, "Problem loaded from CNF file '%s'.", p_filename);
 
 	return p_formula;
 }

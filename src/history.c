@@ -19,7 +19,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <log4c.h>
+
 #include "utils.h"
+#include "log.h"
+
 
 
 /**
@@ -30,7 +34,6 @@
 History* sat_history_new() {
 	History* history = (History*) malloc(sizeof(History));
 	history->last = NULL;
-
 	return history;
 }
 
@@ -47,7 +50,7 @@ History* sat_history_new() {
 int sat_history_free(History** p_history) {
 	// Parameters check
 	if (isNull(*p_history)) {
-		fprintf(stderr, " Ooops: Le pointeur d'historique est NULL.\n");
+		log4c_category_log(log_history(), LOG4C_PRIORITY_ERROR, "The history pointer is NULL.");
 		return -1;
 	}
 
@@ -79,7 +82,7 @@ int sat_history_free(History** p_history) {
 int sat_history_is_empty(History* p_history) {
 	// Parameters check
 	if (isNull(p_history)) {
-		fprintf(stderr, " Ooops: Le pointeur d'historique est NULL.\n");
+		log4c_category_log(log_history(), LOG4C_PRIORITY_ERROR, "The history pointer is NULL.");
 		return -1;
 	}
 
@@ -103,18 +106,18 @@ int sat_history_is_empty(History* p_history) {
 int sat_history_add_clause(History* p_history, tClause* p_clause) {
 	// Parameters check
 	if (isNull(p_history)) {
-		fprintf(stderr, " Ooops: Le pointeur d'historique est NULL.\n");
+		log4c_category_log(log_history(), LOG4C_PRIORITY_ERROR, "The history pointer is NULL.");
 		return -1;
 	}
 
 	if (isNull(p_clause)) {
-		fprintf(stderr, " Ooops: Le pointeur de clause est NULL.\n");
+		log4c_category_log(log_history(), LOG4C_PRIORITY_ERROR, "The clause pointer is NULL.");
 		return -2;
 	}
 
 	// Check the clause is not empty
 	if (isNull(p_clause->vars)) {
-		fprintf(stderr, " Waouu: La clause à ajouter est vide.\n");
+		log4c_category_log(log_history(), LOG4C_PRIORITY_ERROR, "The clause to add is empty.");
 		return -3;
 	}
 
@@ -166,7 +169,7 @@ int sat_history_add_clause(History* p_history, tClause* p_clause) {
 int sat_history_add_literal(History *p_history, ClauseId p_clauseId, Literal p_literal) {
 	// Parameters check
 	if (isNull(p_history)) {
-		fprintf(stderr, " Ooops: Le pointeur d'historique est NULL.\n");
+		log4c_category_log(log_history(), LOG4C_PRIORITY_ERROR, "The history pointer is NULL.");
 		return -1;
 	}
 
@@ -202,12 +205,12 @@ int sat_history_add_literal(History *p_history, ClauseId p_clauseId, Literal p_l
 int sat_history_remove_last_step(History* p_history) {
 	// Parameters check
 	if (isNull(p_history)) {
-		fprintf(stderr, " Ooops: Le pointeur d'historique est NULL.\n");
+		log4c_category_log(log_history(), LOG4C_PRIORITY_ERROR, "The history pointer is NULL.");
 		return -1;
 	}
 
 	if (isNull(p_history->last)) {
-		fprintf(stderr, " Waouu: L'historique est NULL.\n");
+		log4c_category_log(log_history(), LOG4C_PRIORITY_ERROR, "The history is empty.");
 		return -2;
 	}
 
@@ -235,18 +238,18 @@ int sat_history_remove_last_step(History* p_history) {
 int sat_history_replay(History* p_history, tGraphe** p_formula) {
 	// Parameters check
 	if (isNull(p_history)) {
-		fprintf(stderr, "    Ooops: Le pointeur d'historique est NULL.\n");
+		log4c_category_log(log_history(), LOG4C_PRIORITY_ERROR, "The history pointer is NULL.");
 		return -1;
 	}
 
 	if (isNull(*p_formula)) {
-		fprintf(stderr, "    Waouu: Le graphe est vide.\n");
-		fprintf(stderr, "    Initialisation...\n");
+		log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "The formula is NULL.");
 		(*p_formula) = sat_new();
+		log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "New formula created.");
 	}
 
 	// Replaying...
-	fprintf(stderr, "    Reconstruction...\n");
+	log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "Replaying the history...");
 	while (!sat_history_is_empty(p_history)) {
 		ClauseId clauseId   = p_history->last->clauseId;
 		Literal* literals   = p_history->last->literals;
@@ -254,24 +257,24 @@ int sat_history_replay(History* p_history, tGraphe** p_formula) {
 
 		switch (p_history->last->operation) {
 		case OP_REMOVE_CLAUSE:
-			fprintf(stderr, "\n    Ajout de la clause n°%u.\n\n", clauseId);
 			sat_add_clause(*p_formula, clauseId, literals, literalsSize);
+			log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "Added clause %u", clauseId);
 			break;
 
 		case OP_REMOVE_LITERAL_FROM_CLAUSE:
-			fprintf(stderr, "\n    Ajout de %sx%u à la clause n°%d.\n\n", (*literals < 0 ? "¬" : ""), abs(*literals), clauseId);
 			sat_add_var_to_cls(*p_formula, clauseId, *literals);
+			log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "Added %sx%u to clause %u", (*literals < 0 ? "¬" : ""), abs(*literals), clauseId);
 			break;
 
 		default:
-			fprintf(stderr, "\n     Waouu: Une opération non conforme a été enregistrée dans l'historique.\n");
-			fprintf(stderr, "            Continue...\n");
+			log4c_category_log(log_history(), LOG4C_PRIORITY_WARN, "An unknown operation code (%u) has been found in the history, skipping.", p_history->last->operation);
 		}
 
 		sat_history_remove_last_step(p_history);
 	}
 
 	// Result
+	log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "History replayed.");
 	//fprintf(stderr, "\n    Graphe reconstruit:\n");
 	//sat_see(*p_formula);
 	return 0;
