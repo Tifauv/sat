@@ -17,9 +17,22 @@
 #ifndef LITERAL_H
 #define LITERAL_H
 
-/**
- * A literal is represented as an int.
- */
+
+/** A literal id is an unsigned int. */
+typedef unsigned int LiteralId;
+
+/** A literal is represented as an int. */
 typedef int Literal;
+
+
+/**
+ * Gives the id of a literal.
+ *
+ * @param p_literal
+ *            the literal
+ *
+ * @return the literal's identifier
+ */
+LiteralId sat_literal_id(Literal p_literal);
 
 #endif // LITERAL_H

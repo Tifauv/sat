@@ -36,7 +36,7 @@
  * @return the interpretation found,
  *         of NULL if p_formula or p_intr is NULL
  */
-tIntr* dp_main(tGraphe** p_formula, tIntr* p_intr); 
+Interpretation* dp_main(tGraphe** p_formula, Interpretation* p_intr); 
 
 
 /**
@@ -62,7 +62,7 @@ int dp_choose_literal(tGraphe* p_formula);
  * 
  * @return 
  */
-tIntr* dp_test_sat(tGraphe** p_formula, Literal p_literal, tIntr* p_interpretation);
+Interpretation* dp_test_sat(tGraphe** p_formula, Literal p_literal, Interpretation* p_interpretation);
 
 
 /**

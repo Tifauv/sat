@@ -246,7 +246,7 @@ void sat_history_replay(History* p_history, tGraphe** p_formula) {
 
 		case OP_ADD_LITERAL_TO_CLAUSE:
 			sat_add_var_to_cls(*p_formula, clauseId, *literals);
-			log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "Added %sx%u to clause %u", (*literals < 0 ? "¬" : ""), abs(*literals), clauseId);
+			log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "Added %sx%u to clause %u", (*literals < 0 ? "¬" : ""), sat_literal_id(*literals), clauseId);
 			break;
 
 		default:
@@ -258,7 +258,6 @@ void sat_history_replay(History* p_history, tGraphe** p_formula) {
 
 	// Result
 	log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "History replayed.");
-	//fprintf(stderr, "\n    Graphe reconstruit:\n");
 	//sat_see(*p_formula);
 }
 

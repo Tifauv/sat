@@ -18,6 +18,7 @@
 #ifndef FORMULA_H
 #define FORMULA_H
 
+#include <stdlib.h>
 #include "literal.h"
 #include "clause.h"
 
@@ -40,7 +41,7 @@ struct tClause {
 
 // Type Liste de variables
 struct tVar {
-   Literal        indVar; // Indice de la variable
+   LiteralId      indVar; // Indice de la variable
    tPtVarSgn     *clsPos; // Pointeur vers les clauses dans lesquelles la variable est positive
    tPtVarSgn     *clsNeg; // Pointeur vers les clauses dans lesquelles la variable est négative
    tVar          *suiv  ; // Pointeur chaînant
@@ -66,58 +67,58 @@ typedef struct tGraphe {
 
 
 // Renvoie un graphe vide
-tGraphe *sat_new();
+tGraphe* sat_new();
 
 // Libère la mémoire occupée par le graphe
-void sat_free(tGraphe **pGraph);
+void sat_free(tGraphe** p_formula);
 
 // Teste si une variable existe
-tVar *sat_ex_var(tGraphe *pGraph, unsigned int pIndVar);
+tVar* sat_ex_var(tGraphe* p_formula, LiteralId p_literalId);
 
 // Lie une variable à une clause et inversement
-void sat_lnk_clsVar(tClause *pCls, tVar *pVar, int pSignVar);
+void sat_lnk_clsVar(tClause* p_clause, tVar* p_literal, int p_literalSignVar);
 
 // Construit un tableau de variables
-int *sat_mk_tabVar(char *pStr, int *pSize);
+Literal* sat_mk_tabVar(char* pStr, size_t* p_nbLiterals);
 
 // Renvoie le signe d'un entier
 int sat_sign(int pNbe);
 
 // Crée et ajoute une variable à la liste des variables
-tVar *sat_add_var(tGraphe *pGraph, int pIndVar);
+tVar* sat_add_var(tGraphe* p_formula, LiteralId p_literalId);
 
 // Ajoute une variable à une clause
-int sat_add_var_to_cls(tGraphe *pGraph, unsigned int pIndCls, int pVar);
+int sat_add_var_to_cls(tGraphe* p_formula, ClauseId p_clauseId, Literal p_literal);
 
 // Ajoute une clause à un graphe
-int sat_add_clause(tGraphe *pGraph, unsigned int pIndCls, int *pTabVar, int pSize);
+int sat_add_clause(tGraphe* p_formula, ClauseId p_clauseId, Literal* p_literals, size_t p_nbLiterals);
 
 // Renvoie le signe d'une variable appartenant à une clause
-int sat_get_sign(tVar *pVar, unsigned int pIndCls);
+int sat_get_sign(tVar* p_literal, ClauseId p_clauseId);
 
 // Affiche les clauses
-void sat_see(tGraphe *pGraph);
+void sat_see(tGraphe* p_formula);
 
 // Supprime une variable
-int sat_sub_var(tGraphe *pGraph, unsigned int pIndVar);
+int sat_sub_var(tGraphe* p_formula, LiteralId p_literalId);
 
 // Supprime une variable dans une clause
-int sat_sub_var_in_cls(tPtVar *pPtVar, int pSign, tClause *pCls, tGraphe *pGraph);
+int sat_sub_var_in_cls(tPtVar* pPtVar, int p_literalSign, tClause* p_clause, tGraphe* p_formula);
 
 // Renvoie le pointeur sur la cellule de la variable pointant sur la clause
-tPtVarSgn *sat_get_ptr_varSgn(tPtVarSgn *pVarSgn, tClause *pCls);
+tPtVarSgn* sat_get_ptr_varSgn(tPtVarSgn* p_signedLiteral, tClause* p_clause);
 
 // Recherche et supprime la cellule de la variable pointant sur la clause
-int sat_unlnk_varSgn_cls(tVar *pVar, int pSign, tClause *pCls);
+int sat_unlnk_varSgn_cls(tVar* p_literal, int p_literalSign, tClause* p_clause);
 
 // Enlève les liens entre une clause et sa première variable
-int sat_unlnk_cls_var(tGraphe *pGraph, tClause *pCls);
+int sat_unlnk_cls_var(tGraphe* p_formula, tClause* p_clause);
  
 // Supprime une clause
-int sat_sub_clause(tGraphe *pGraph, unsigned int pIndCls);
+int sat_sub_clause(tGraphe* p_formula, ClauseId p_clauseId);
 
 // Renvoie la variable de la première clause unitaire trouvée
 //  0 si non trouvée
-int sat_get_var_cls_unit(tGraphe *pGraph);
+int sat_get_var_cls_unit(tGraphe* p_formula);
 
 #endif // FORMULA_H

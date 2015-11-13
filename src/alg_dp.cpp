@@ -32,14 +32,14 @@
  * @return an interpretation (satisfiable or not),
  *         or NULL if p_formula is NULL
  */
-tIntr* alg_solve(tGraphe** p_formula) {
-	/* Check parameters */
+Interpretation* alg_solve(tGraphe** p_formula) {
+	// Parameters check
 	if (isNull(p_formula)) {
 		fprintf(stderr, " Ooops: Le pointeur de formule est NULL.\n");
 		return NULL;
 	}
 
-	return dp_main(p_formula, intr_new());
+	return dp_main(p_formula, new Interpretation());
 }
 
 
@@ -54,10 +54,7 @@ tIntr* alg_solve(tGraphe** p_formula) {
  * @return the interpretation found,
  *         of NULL if p_formula or p_interpretation is NULL
  */
-tIntr* dp_main(tGraphe** p_formula, tIntr* p_interpretation) {
-	tIntr* intr;
-	History* history;
-
+Interpretation* dp_main(tGraphe** p_formula, Interpretation* p_interpretation) {
 	/* Check parameters */
 	if (isNull(*p_formula)) {
 		fprintf(stderr, " Ooops: Le pointeur de formule est NULL.\n");
@@ -71,7 +68,7 @@ tIntr* dp_main(tGraphe** p_formula, tIntr* p_interpretation) {
 
 	fprintf(stderr, "\n\n Davis-Putnam...\n");
 	sat_see(*p_formula);
-	intr_print(p_interpretation);
+	p_interpretation->print();
 
 	/*
 	 * Stop case: if there is no clause to process, we are done.
@@ -90,19 +87,19 @@ tIntr* dp_main(tGraphe** p_formula, tIntr* p_interpretation) {
 	 * First reduction
 	 */
 	fprintf(stderr, " Première tentative de réduction...\n");
-	history = sat_history_new();
+	History* history = sat_history_new();
 	dp_reduce(p_formula, chosen_literal, history);
-	intr = dp_test_sat(p_formula, chosen_literal, p_interpretation);
+	Interpretation* partialInterpretation = dp_test_sat(p_formula, chosen_literal, p_interpretation);
 
 	/*
 	 * The interpretation is satisfiable: we are done.
 	 * We can return the current interpretation.
 	 */
-	if (!intr_is_insatisfiable(intr)) {
+	if (partialInterpretation->isSatisfiable()) {
 		sat_history_free(&history);
 		return p_interpretation;
 	}
-	intr_free(&intr);
+	delete partialInterpretation;
 	
 	/*
 	 * The interpretation is not satisfiable: we try with the opposite literal.
@@ -110,17 +107,17 @@ tIntr* dp_main(tGraphe** p_formula, tIntr* p_interpretation) {
 	fprintf(stderr, " Reconstruction des formules pour seconde tentative...\n");
 	sat_history_replay(history, p_formula);
 	sat_see(*p_formula);
-	intr_print(p_interpretation);
+	p_interpretation->print();
  
 	// Seconde réduction et test du résultat
 	fprintf(stderr, " Seconde tentative de réduction...\n");
 	dp_reduce(p_formula, -chosen_literal, history);
-	intr = dp_test_sat(p_formula, -chosen_literal, p_interpretation);
+	partialInterpretation = dp_test_sat(p_formula, -chosen_literal, p_interpretation);
 
 	/* Restoring state before backtracking. */
 	fprintf(stderr, " Restoring state before backtracking...\n");
 	// Remove the current literal from the interpretation
-	intr_poke(p_interpretation);
+	p_interpretation->pop();
 
 	// Reconstruction du graphe & destruction de l'historique
 	fprintf(stderr, "  Rebuilding the formula...\n");
@@ -129,9 +126,9 @@ tIntr* dp_main(tGraphe** p_formula, tIntr* p_interpretation) {
 
 	fprintf(stderr, "  Rebuilt data:\n");
 	sat_see(*p_formula);
-	intr_print(p_interpretation);
+	p_interpretation->print();
 	
-	return intr;
+	return partialInterpretation;
 }
 
 
@@ -160,21 +157,19 @@ Literal dp_choose_literal(tGraphe* p_formula) {
  * 
  * @return 
  */
-tIntr* dp_test_sat(tGraphe** p_formula, Literal p_literal, tIntr* p_interpretation) {
-	tIntr* intr;
-
+Interpretation* dp_test_sat(tGraphe** p_formula, Literal p_literal, Interpretation* p_interpretation) {
 	fprintf(stderr, "\n  Test de satisfiabilité: ");
 	// Si insatisfiable...
 	if (isNull(*p_formula)) {
 		fprintf(stderr, "Insatisfiable\n");
-		intr = intr_new();
-		intr_set_insatisfiable(intr);
-		return intr;
+		Interpretation* interpretation = new Interpretation();
+		interpretation->setUnsatisfiable();
+		return interpretation;
 	}
 
 	// Ajout du littéral à l'interprétation
-	fprintf(stderr, "  Ajout de %sx%d à l'interprétation.\n", (p_literal < 0 ? "¬" : ""), abs(p_literal));
-	intr_push(p_interpretation, p_literal);
+	fprintf(stderr, "  Ajout de %sx%d à l'interprétation.\n", (p_literal < 0 ? "¬" : ""), sat_literal_id(p_literal));
+	p_interpretation->push(p_literal);
 
 	// Si le graphe est vide, l'interprétation est terminée
 	if (isNull((*p_formula)->clauses)) {
@@ -281,7 +276,7 @@ int dp_reduce_clause(tClause* p_clause, Literal p_literal, tGraphe* p_formula, H
 	
 	literal_iterator = p_clause->vars;
 	while (literal_iterator) {
-		if (literal_iterator->var->indVar == abs(p_literal)) {
+		if (literal_iterator->var->indVar == sat_literal_id(p_literal)) {
 			
 			/* Test de polarité */
 			if (sat_sign(p_literal) == sat_get_sign(literal_iterator->var, p_clause->indCls)) {

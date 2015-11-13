@@ -31,6 +31,6 @@
  * @return NULL if p_formula is NULL,
  *         or an interpretation (satisfiable or not)
  */
-tIntr *alg_solve(tGraphe** p_formula);
+Interpretation* alg_solve(tGraphe** p_formula);
 
 #endif // SOLVER_H

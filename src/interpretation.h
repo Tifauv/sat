@@ -19,94 +19,70 @@
 #define INTERPRETATION_H
 
 #include "literal.h"
+#include <list>
 
-#define SATISFIABLE   0
-#define UNSATISFIABLE 1
 
-typedef struct tLitt tLitt;
+/**
+ * A SAT interpretation is a list of literals.
+ * Additionnaly, it can be marked unsatisfiable.
+ */
+class Interpretation {
+	
+public:
+	/**
+	 * Creates an empty satisfiable interpretation.
+	 */
+	Interpretation();
 
-// Littéral
-struct tLitt {
-  Literal litt; // Valeur dans la liste
-  tLitt*  suiv; // Ptr sur le suivant
+	/**
+	 * Deletes the interpretation.
+	 */
+	~Interpretation();
+
+	/**
+	 * Tells whether this interpretation is satisfiable.
+	 */
+	bool isSatisfiable() const;
+
+	/**
+	 * Tells whether this interpretation is unsatisfiable.
+	 */
+	bool isUnsatisfiable() const;
+
+	/**
+	 * Sets the interpretation satisfiable.
+	 */
+	void setSatisfiable();
+
+	/**
+	 * Sets the interpretation unsatisfiable.
+	 */
+	void setUnsatisfiable();
+
+	/**
+	 * Appends a literal.
+	 * 
+	 * @param p_literal
+	 *            the literal
+	 */
+	void push(Literal p_literal);
+
+	/**
+	 * Removes the last literal.
+	 */          
+	void pop();
+
+	/**
+	 * Prints the interpretation to stdout.
+	 */
+	void print();
+
+private:
+	/** The satisfiability flag. */
+	bool m_unsatisfiable;
+	
+	/** The list of literals. */
+	std::list<Literal> m_literals;
 };
-
-// Interprétation
-typedef struct {
-  int insatisfiable; // Si 1, insatisfiable; sinon satisfiable
-  tLitt *deb; // ptr sur début de liste
-  tLitt *fin; // ptr sur fin de liste
-} tIntr;
-
-
-/**
- * Creates an empty interpretation.
- * 
- * @return an empty interpretation
- */
-tIntr* intr_new();
-
-
-/**
- * Deletes an interpretation.
- * 
- * @param p_interpretation
- *            the interpretation
- */
-void intr_free(tIntr** p_interpretation);
-
-
-/**
- * Appends a literal to an interpretation.
- * 
- * @param p_interpretation
- *            the interpretation
- * @param p_literal
- *            the literal
- * 
- * @return -1 if p_interpretation is NULL,
- *          0 if the literal was appended,
- *          1 if the literal was appended and the satisfiability status reset
- */
-int intr_push(tIntr* p_interpretation, Literal p_literal);
-
-
-/**
- * Removes the last literal of the interpretation.
- * 
- * @param p_interpretation
- *            the interpretation
- */          
-void intr_poke(tIntr* p_interpretation);
-
-
-/**
- * Gives the value of the 'unsatisfiable' bit of an interpretation.
- * 
- * @param p_interpretation
- *            the interpretation
- * 
- * @return -1 if p_interpretation is NULL,
- *          0 if p_interpretation is satisfiable,
- *          1 if p_interpretation is unsatisfiable
- */
-int intr_is_insatisfiable(tIntr* p_interpretation);
-
-
-/**
- * Marks the interpretation as unsatisfiable.
- * 
- * @param p_interpretation
- *            the interpretation
- */
-void intr_set_insatisfiable(tIntr* p_interpretation);
-
-
-/**
- * Prints an interpretation to stderr.
- * 
- * @param p_interpretation
- */
-void intr_print(tIntr* p_interpretation);
 
 #endif // INTERPRETATION_H

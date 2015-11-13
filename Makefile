@@ -10,12 +10,12 @@ APP = testSat
 SRCDIR = src
 BUILDDIR = build
 
-SRCS    := $(shell find $(SRCDIR) -name '*.c')
-SRCDIRS := $(shell find . -name '*.c' -exec dirname {} \; | uniq)
-OBJS    := $(patsubst %.c,$(BUILDDIR)/%.o,$(SRCS))
+SRCS    := $(shell find $(SRCDIR) -name '*.cpp')
+SRCDIRS := $(shell find . -name '*.cpp' -exec dirname {} \; | uniq)
+OBJS    := $(patsubst %.cpp,$(BUILDDIR)/%.o,$(SRCS))
 
 DEBUG = -ggdb
-CFLAGS = -Wall -pedantic -std=gnu99 -c $(DEBUG) -I$(SRCDIR)
+CXXFLAGS = -Wall -pedantic -std=c++11 -c $(DEBUG) -I$(SRCDIR)
 LDFLAGS = -llog4c
 
 ## GENERAL RULES
@@ -25,13 +25,13 @@ all: $(BUILDDIR)/$(APP)
 
 $(BUILDDIR)/$(APP): buildrepo $(OBJS)
 	@echo "Linking $@..."
-	@$(CC) $(OBJS) $(LDFLAGS) -o $@
+	@$(CXX) $(OBJS) $(LDFLAGS) -o $@
 
-$(BUILDDIR)/%.o: %.c
+$(BUILDDIR)/%.o: %.cpp
 	@echo "Generating dependencies for $<..."
 	@$(call make-depend,$<,$@,$(subst .o,.d,$@))
 	@echo "Compiling $<..."
-	@$(CC) $(CFLAGS) $< -o $@
+	@$(CXX) $(CXXFLAGS) $< -o $@
 
 clean:
 	$(RM) -r $(BUILDDIR)
@@ -50,10 +50,10 @@ endef
 ##
 # Usage: $(call make-depend, source-file, object-file, depend-file)
 define make-depend
-	$(CC) -MM	\
+	$(CXX) -MM	\
 		-MF $3	\
 		-MP	\
 		-MT $2	\
-		$(CFLAGS) \
+		$(CXXFLAGS) \
 		$1
 endef

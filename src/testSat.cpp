@@ -61,7 +61,7 @@ tGraphe* load_cnf_file(char* p_filename) {
 	tGraphe* p_formula = sat_new();
 
 	// Initialisation de str
-	char* str = malloc(LN_SIZE);
+	char* str = (char*) malloc(LN_SIZE);
 	strcpy(str, "\0");
 
 	unsigned int lineNo = 0;
@@ -91,7 +91,7 @@ tGraphe* load_cnf_file(char* p_filename) {
 			break;
 
 		// Transformation string -> tab
-		int size = 0;
+		size_t size = 0;
 		int* tab = sat_mk_tabVar(str, &size);
 
 		if (sat_add_clause(p_formula, clauseId, tab, size))
@@ -134,18 +134,18 @@ int main(int p_argc, char* p_argv[]) {
 		exit(2);
 	}
 
-	char* nom_fic = malloc(32);
+	char* nom_fic = (char*) malloc(32);
 	strcpy(nom_fic, p_argv[1]);
 	tGraphe* formula = load_cnf_file(nom_fic);
 	free(nom_fic);
 	sat_see(formula);
 
 	printf("\n> Solving...\n");
-	tIntr* interpretation = alg_solve(&formula);
+	Interpretation* interpretation = alg_solve(&formula);
 	printf("\n> Result:\n");
-	intr_print(interpretation);
+	interpretation->print();
 
-	intr_free(&interpretation);
+	delete interpretation;
 	sat_free(&formula);
 
 	// Clean the logging system
