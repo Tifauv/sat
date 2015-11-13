@@ -168,7 +168,7 @@ Interpretation* dp_test_sat(tGraphe** p_formula, Literal p_literal, Interpretati
 	}
 
 	// Ajout du littéral à l'interprétation
-	fprintf(stderr, "  Ajout de %sx%d à l'interprétation.\n", (p_literal < 0 ? "¬" : ""), sat_literal_id(p_literal));
+	fprintf(stderr, "  Ajout de %sx%u à l'interprétation.\n", (p_literal < 0 ? "¬" : ""), sat_literal_id(p_literal));
 	p_interpretation->push(p_literal);
 
 	// Si le graphe est vide, l'interprétation est terminée

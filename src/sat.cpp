@@ -117,7 +117,7 @@ void sat_lnk_clsVar(tClause* p_clause, tVar* p_litteral, int p_literalSign) {
 int sat_test_prev_var(Literal* p_literals, Literal p_litteral, size_t p_nbLiterals) {
 	for (unsigned int i=0; i<p_nbLiterals; ++i) {
 		if (sat_literal_id(p_litteral) == sat_literal_id(p_literals[i]) ) {
-			fprintf(stderr, "   Littéral x%u déjà en position %d (%d).\n", sat_literal_id(p_litteral), i, p_literals[i]);
+			fprintf(stderr, "   Littéral x%u déjà en position %u (%d).\n", sat_literal_id(p_litteral), i, p_literals[i]);
 			return sat_sign(p_litteral * p_literals[i]);
 		}
 	}
