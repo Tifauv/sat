@@ -17,9 +17,11 @@
 */
 #include "alg_dp.h"
 
-#include <stdio.h>
 #include <stdlib.h>
+#include <log4c.h>
+
 #include "utils.h"
+#include "log.h"
 
 
 /**
@@ -35,10 +37,11 @@
 Interpretation* alg_solve(tGraphe** p_formula) {
 	// Parameters check
 	if (isNull(p_formula)) {
-		fprintf(stderr, " Ooops: Le pointeur de formule est NULL.\n");
+		log4c_category_log(log_dpll(), LOG4C_PRIORITY_DEBUG, "The formula pointer is NULL.");
 		return NULL;
 	}
 
+	log4c_category_log(log_dpll(), LOG4C_PRIORITY_DEBUG, "Starting the DPLL algorithm.");
 	return dp_main(p_formula, new Interpretation());
 }
 
@@ -57,16 +60,16 @@ Interpretation* alg_solve(tGraphe** p_formula) {
 Interpretation* dp_main(tGraphe** p_formula, Interpretation* p_interpretation) {
 	/* Check parameters */
 	if (isNull(*p_formula)) {
-		fprintf(stderr, " Ooops: Le pointeur de formule est NULL.\n");
+		log4c_category_log(log_dpll(), LOG4C_PRIORITY_DEBUG, "The formula pointer is NULL.");
 		return NULL;
 	}
 
 	if (isNull(p_interpretation)) {
-		fprintf(stderr, " Ooops: Le pointeur de l'interprétation est NULL.\n");
+		log4c_category_log(log_dpll(), LOG4C_PRIORITY_DEBUG, "The interpretation pointer is NULL.");
 		return NULL;
 	}
 
-	fprintf(stderr, "\n\n Davis-Putnam...\n");
+	log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "Current state:");
 	sat_see(*p_formula);
 	p_interpretation->print();
 
@@ -86,7 +89,7 @@ Interpretation* dp_main(tGraphe** p_formula, Interpretation* p_interpretation) {
 	/*
 	 * First reduction
 	 */
-	fprintf(stderr, " Première tentative de réduction...\n");
+	log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "First reduction attempt...");
 	History* history = new History();
 	dp_reduce(p_formula, chosen_literal, history);
 	Interpretation* partialInterpretation = dp_test_sat(p_formula, chosen_literal, p_interpretation);
@@ -104,27 +107,27 @@ Interpretation* dp_main(tGraphe** p_formula, Interpretation* p_interpretation) {
 	/*
 	 * The interpretation is not satisfiable: we try with the opposite literal.
 	 */
-	fprintf(stderr, " Reconstruction des formules pour seconde tentative...\n");
+	log4c_category_log(log_dpll(), LOG4C_PRIORITY_DEBUG, "Rebuilding the formula before second attempt...");
 	history->replay(p_formula);
 	sat_see(*p_formula);
 	p_interpretation->print();
  
 	// Seconde réduction et test du résultat
-	fprintf(stderr, " Seconde tentative de réduction...\n");
+	log4c_category_log(log_dpll(), LOG4C_PRIORITY_DEBUG, "Second reduction attempt...");
 	dp_reduce(p_formula, -chosen_literal, history);
 	partialInterpretation = dp_test_sat(p_formula, -chosen_literal, p_interpretation);
 
 	/* Restoring state before backtracking. */
-	fprintf(stderr, " Restoring state before backtracking...\n");
+	log4c_category_log(log_dpll(), LOG4C_PRIORITY_DEBUG, "Restoring state before backtracking...");
 	// Remove the current literal from the interpretation
 	p_interpretation->pop();
 
 	// Reconstruction du graphe & destruction de l'historique
-	fprintf(stderr, "  Rebuilding the formula...\n");
+	log4c_category_log(log_dpll(), LOG4C_PRIORITY_DEBUG, "Rebuilding the formula...");
 	history->replay(p_formula);
 	delete history;
 
-	fprintf(stderr, "  Rebuilt data:\n");
+	log4c_category_log(log_dpll(), LOG4C_PRIORITY_DEBUG, "Restored state:");
 	sat_see(*p_formula);
 	p_interpretation->print();
 	
@@ -158,27 +161,26 @@ Literal dp_choose_literal(tGraphe* p_formula) {
  * @return 
  */
 Interpretation* dp_test_sat(tGraphe** p_formula, Literal p_literal, Interpretation* p_interpretation) {
-	fprintf(stderr, "\n  Test de satisfiabilité: ");
 	// Si insatisfiable...
 	if (isNull(*p_formula)) {
-		fprintf(stderr, "Insatisfiable\n");
+		log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "The current interpretation is unsatisfiable.");
 		Interpretation* interpretation = new Interpretation();
 		interpretation->setUnsatisfiable();
 		return interpretation;
 	}
 
 	// Ajout du littéral à l'interprétation
-	fprintf(stderr, "  Ajout de %sx%u à l'interprétation.\n", (p_literal < 0 ? "¬" : ""), sat_literal_id(p_literal));
 	p_interpretation->push(p_literal);
-
+	log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "Added %sx%u to the interpretation.", (p_literal < 0 ? "¬" : ""), sat_literal_id(p_literal));
+	
 	// Si le graphe est vide, l'interprétation est terminée
 	if (isNull((*p_formula)->clauses)) {
-		fprintf(stderr, "Plus de clauses\n");
+		log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "No more clauses.");
 		return p_interpretation;
 	}
 
 	// Il reste des clauses : ajout du littéral à l'interprétation
-	fprintf(stderr, "Il reste des clauses\n");
+	log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "There are clauses remaining.");
 	return dp_main(p_formula, p_interpretation);
 }
 
@@ -196,29 +198,29 @@ Interpretation* dp_test_sat(tGraphe** p_formula, Literal p_literal, Interpretati
  */
 void dp_reduce(tGraphe **p_formula, Literal p_literal, History *p_history) {
 	if (isNull(*p_formula)) {
-		fprintf(stderr, "  Waouu: Le pointeur de graphe est NULL.\n");
+		log4c_category_log(log_dpll(), LOG4C_PRIORITY_DEBUG, "The formula pointer is NULL.");
 		return;
 	}
 
-	fprintf(stderr, "  Réduction par %sx%d...\n", (p_literal < 0 ? "¬" : ""), abs(p_literal));
+	log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "Reduction using literal %sx%u...", (p_literal < 0 ? "¬" : ""), sat_literal_id(p_literal));
 	tClause* clause = (*p_formula)->clauses;
 	while (clause) {
 		tClause* clause2 = clause->suiv;
 		switch (dp_reduce_clause(clause, p_literal, (*p_formula), p_history)) {
 		case 3: // Clause vide produite: insatisfiable
-			fprintf(stderr, "  Insatisfiable.\n");
+			log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "The produced clause is unsatisfiable.");
 				
 			// Sauvegarde des modifs dans l'historique
-			fprintf(stderr, "  Sauvegarde du graphe actuel dans l'historique...\n");
+			log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "Dumping the current formula to the history.");
 			clause2 = (*p_formula)->clauses;
 			while (clause2) {
 				p_history->addClause(clause2); 
-				fprintf(stderr, "   Clause n°%u mise dans l'historique.\n", clause2->indCls);
+				log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "Clause %u added to the history.", clause2->indCls);
 				clause2 = clause2->suiv;
 			}
 			
 			// Suppression du graphe
-			fprintf(stderr, "  Suppression du graphe...\n");
+			log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "Deleting the current formula.");
 			sat_free(p_formula);
 			
 			// Pour sortir du while
@@ -256,28 +258,26 @@ void dp_reduce(tGraphe **p_formula, Literal p_literal, History *p_history) {
  *         -1 if the given clause is NULL,
  */
 int dp_reduce_clause(tClause* p_clause, Literal p_literal, tGraphe* p_formula, History* p_history) {
-	tPtVar* literal_iterator;
-
 	/* Parameter checking */
 	if (isNull(p_clause)) {
-		fprintf(stderr, " Ooops: Le pointeur de clause est NULL.\n");
+		log4c_category_log(log_dpll(), LOG4C_PRIORITY_DEBUG, "The clause pointer is NULL.");
 		return -1;
 	}
 
-	fprintf(stderr, "\n   Réduction de la clause n°%u par %sx%d.\n", p_clause->indCls, (p_literal < 0 ? "¬" : ""), abs(p_literal));
+	log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "Reducing clause %u by %sx%u.", p_clause->indCls, (p_literal < 0 ? "¬" : ""), sat_literal_id(p_literal));
 	sat_see(p_formula);
-	
-	literal_iterator = p_clause->vars;
+
+	tPtVar* literal_iterator = p_clause->vars;
 	while (literal_iterator) {
 		if (literal_iterator->var->indVar == sat_literal_id(p_literal)) {
 			
 			/* Test de polarité */
 			if (sat_literal_sign(p_literal) == sat_get_sign(literal_iterator->var, p_clause->indCls)) {
 				// même polarité: on vire la clause
-				fprintf(stderr, "    %sx%d found in the clause.\n", (p_literal < 0 ? "¬" : ""), abs(p_literal));
+				log4c_category_log(log_dpll(), LOG4C_PRIORITY_DEBUG, "    %sx%u found in the clause.", (p_literal < 0 ? "¬" : ""), abs(p_literal));
 
 				// Enregistrement de la suppression dans l'historique
-				fprintf(stderr, "    Sauvegarde de la clause n°%u dans l'historique.\n", p_clause->indCls);
+				log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "Saving clause %u in the history.", p_clause->indCls);
 				p_history->addClause(p_clause);
 
 				// Suppression de la clause
@@ -289,7 +289,7 @@ int dp_reduce_clause(tClause* p_clause, Literal p_literal, tGraphe* p_formula, H
 				fprintf(stderr, "    %sx%d found in the clause.\n", (p_literal >= 0 ? "¬" : ""), abs(p_literal));
 
 				// Enregistrement de la suppression dans l'historique
-				fprintf(stderr, "    Sauvegarde du littéral %sx%d pour la clause n°%u dans l'historique.\n", (p_literal >= 0 ? "¬" : ""), abs(p_literal), p_clause->indCls);
+				log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "Saving literal %sx%u of clause %u in the history.", (p_literal >= 0 ? "¬" : ""), abs(p_literal), p_clause->indCls);
 				p_history->addLiteral(p_clause->indCls, literal_iterator->var->indVar * (-sat_literal_sign(p_literal)));
 
 				// Suppression de la chosen_literal de la clause
