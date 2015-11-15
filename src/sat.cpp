@@ -113,14 +113,6 @@ void sat_lnk_clsVar(tClause* p_clause, tVar* p_litteral, int p_literalSign) {
 }
 
 
-// Renvoie le signe d'un entier -----------------------------------------------
-int sat_sign(int pNbe) {
-	if (pNbe < 0)
-		return -1;
-	return 1;
-}
- 
-
 // Ajoute une variable au graphe ----------------------------------------------
 tVar* sat_add_var(tGraphe* p_formula, LiteralId p_literalId) {
 	// Création de var
@@ -170,7 +162,7 @@ int sat_add_var_to_cls(tGraphe* p_formula, ClauseId p_clauseId, Literal p_litera
 	}
 
 	// Lien entre la variable et la clause
-	sat_lnk_clsVar(clause, lVar, sat_sign(p_literal));
+	sat_lnk_clsVar(clause, lVar, sat_literal_sign(p_literal));
 	return 0;
 }
 
@@ -202,7 +194,7 @@ int sat_add_clause(tGraphe* p_formula, ClauseId p_clauseId, std::list<Literal>& 
 			lVar = sat_add_var(p_formula, sat_literal_id(*literal));
 		
 		// Linkage Clause <--> Variable    
-		sat_lnk_clsVar(clause, lVar, sat_sign(*literal));
+		sat_lnk_clsVar(clause, lVar, sat_literal_sign(*literal));
 	}
 	fprintf(stderr, "  Clause %u initialisée.\n", p_clauseId);
 	

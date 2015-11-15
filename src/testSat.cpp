@@ -53,7 +53,7 @@ void usage() {
 int cnf_exists_literal(Literal p_literal, std::list<Literal>& p_literals) {
 	for (auto literal = p_literals.cbegin(); literal != p_literals.cend(); ++literal)
 		if ( sat_literal_id(p_literal) == sat_literal_id(*literal) )
-			return sat_sign(p_literal * *literal);
+			return sat_literal_sign(p_literal * *literal);
 	return 0;
 }
 

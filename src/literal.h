@@ -18,11 +18,26 @@
 #define LITERAL_H
 
 
+#define SIGN_POSITIVE  1
+#define SIGN_NEGATIVE -1
+
 /** A literal id is an unsigned int. */
 typedef unsigned int LiteralId;
 
 /** A literal is represented as an int. */
 typedef int Literal;
+
+
+/**
+ * Tells whether a literal is positive or negative.
+ * 
+ * @param p_literal
+ *            the literal
+ *
+ * @return SIGN_NEGATIVE if p_literal < 0,
+ *         SIGN_POSITIVE otherwise
+ */
+int sat_literal_sign(Literal p_literal);
 
 
 /**

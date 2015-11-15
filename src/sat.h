@@ -79,8 +79,8 @@ tVar* sat_ex_var(tGraphe* p_formula, LiteralId p_literalId);
 // Lie une variable à une clause et inversement
 void sat_lnk_clsVar(tClause* p_clause, tVar* p_literal, int p_literalSignVar);
 
-// Renvoie le signe d'un entier
-int sat_sign(int pNbe);
+// Renvoie le signe d'une variable appartenant à une clause
+int sat_get_sign(tVar* p_literal, ClauseId p_clauseId);
 
 // Crée et ajoute une variable à la liste des variables
 tVar* sat_add_var(tGraphe* p_formula, LiteralId p_literalId);
@@ -90,9 +90,6 @@ int sat_add_var_to_cls(tGraphe* p_formula, ClauseId p_clauseId, Literal p_litera
 
 // Ajoute une clause à un graphe
 int sat_add_clause(tGraphe* p_formula, ClauseId p_clauseId, std::list<Literal>& p_literals);
-
-// Renvoie le signe d'une variable appartenant à une clause
-int sat_get_sign(tVar* p_literal, ClauseId p_clauseId);
 
 // Affiche les clauses
 void sat_see(tGraphe* p_formula);

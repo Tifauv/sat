@@ -272,7 +272,7 @@ int dp_reduce_clause(tClause* p_clause, Literal p_literal, tGraphe* p_formula, H
 		if (literal_iterator->var->indVar == sat_literal_id(p_literal)) {
 			
 			/* Test de polarité */
-			if (sat_sign(p_literal) == sat_get_sign(literal_iterator->var, p_clause->indCls)) {
+			if (sat_literal_sign(p_literal) == sat_get_sign(literal_iterator->var, p_clause->indCls)) {
 				// même polarité: on vire la clause
 				fprintf(stderr, "    %sx%d found in the clause.\n", (p_literal < 0 ? "¬" : ""), abs(p_literal));
 
@@ -290,12 +290,12 @@ int dp_reduce_clause(tClause* p_clause, Literal p_literal, tGraphe* p_formula, H
 
 				// Enregistrement de la suppression dans l'historique
 				fprintf(stderr, "    Sauvegarde du littéral %sx%d pour la clause n°%u dans l'historique.\n", (p_literal >= 0 ? "¬" : ""), abs(p_literal), p_clause->indCls);
-				p_history->addLiteral(p_clause->indCls, literal_iterator->var->indVar * (-sat_sign(p_literal)));
+				p_history->addLiteral(p_clause->indCls, literal_iterator->var->indVar * (-sat_literal_sign(p_literal)));
 
 				// Suppression de la chosen_literal de la clause
 				// retourne: 2 si la clause est non vide (après traitement)
 				//           3 si elle est vide (insatisfiable).
-				return sat_sub_var_in_cls(literal_iterator, -sat_sign(p_literal), p_clause, p_formula);
+				return sat_sub_var_in_cls(literal_iterator, -sat_literal_sign(p_literal), p_clause, p_formula);
 			}
 		}
 		else {
