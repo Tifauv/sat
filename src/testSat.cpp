@@ -16,7 +16,7 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
 */
 
-#include <stdio.h>
+#include <iostream>
 #include <stdlib.h>
 #include <string.h>
 #include <log4c.h>
@@ -27,12 +27,13 @@
 #include "utils.h"
 #include "log.h"
 
+using namespace std;
 
 /**
  * Displays the usage message.
  */
 void usage() {
-	printf("Usage: testSat <cnf_file>\n");
+	cout << "Usage: testSat <cnf_file>" << endl;
 }
 
 
@@ -198,7 +199,7 @@ int main(int p_argc, char* p_argv[]) {
 
 	// Initialize the logging system
 	if (log4c_init()) {
-		printf("Log4c initialization failed, aborting.\n");
+		cout << "Log4c initialization failed, aborting." << endl;
 		exit(2);
 	}
 
@@ -208,9 +209,10 @@ int main(int p_argc, char* p_argv[]) {
 	free(nom_fic);
 	sat_see(formula);
 
-	printf("\n> Solving...\n");
+	cout << "> Solving..." << endl;
 	Interpretation* interpretation = alg_solve(&formula);
-	printf("\n> Result:\n");
+
+	cout << "> Result:" << endl;
 	interpretation->print();
 
 	delete interpretation;
@@ -218,7 +220,7 @@ int main(int p_argc, char* p_argv[]) {
 
 	// Clean the logging system
 	if (log4c_fini())
-		printf("log4c cleanup failed.");
+		cerr << "log4c cleanup failed." << endl;
 
 	return 0;
 }
