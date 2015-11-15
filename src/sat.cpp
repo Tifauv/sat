@@ -113,92 +113,6 @@ void sat_lnk_clsVar(tClause* p_clause, tVar* p_litteral, int p_literalSign) {
 }
 
 
-// Test si la variable actuelle du tableau n'a pas déjà été trouvée
-int sat_test_prev_var(Literal* p_literals, Literal p_litteral, size_t p_nbLiterals) {
-	for (unsigned int i=0; i<p_nbLiterals; ++i) {
-		if (sat_literal_id(p_litteral) == sat_literal_id(p_literals[i]) ) {
-			fprintf(stderr, "   Littéral x%u déjà en position %u (%d).\n", sat_literal_id(p_litteral), i, p_literals[i]);
-			return sat_sign(p_litteral * p_literals[i]);
-		}
-	}
-	return 0;
-}
-
-
-// Construit un tableau de variables ------------------------------------------
-Literal* sat_mk_tabVar(char* pStr, size_t* p_nbLiterals) {
-	int* tab = NULL;
-	char* token = NULL;
-	int nb_tok=0;
-	char *str2, *str1;
-
-	// Sauvegarde de la chaîne originale
-	str1 = (char*) malloc(LN_SIZE);
-	strcpy(str1, pStr);
-	str2 = (char*) malloc(LN_SIZE);
-	strcpy(str2, pStr);
-
-	// I/ Nombre de tokens dans la chaîne
-	token = strtok(str1, " ");
-	while (token) {
-		if (atoi(token) == 0)
-			break;
-		nb_tok++;
-		token = strtok(NULL, " ");
-	}
-	fprintf(stderr, "  %d tokens trouvés:\n", nb_tok);
-
-	if (nb_tok == 0) {
-		free(str2);
-		free(str1);
-		return NULL;
-	}
-  
-	*p_nbLiterals = nb_tok;
-
-	// II/ Création du tableau
-	tab = (int *) calloc(nb_tok, sizeof(int));
-
-	// III/ Initialisation du tableau
-	token = strtok(str2, " ");
-	nb_tok = 0;
-	while (token) {
-		// Parse current token
-		Literal literal = atoi(token);
-		
-		// Prepare next token
-		token = strtok(NULL, " ");
-		
-		// Break for this line if the '0' token has been found
-		if (literal == 0)
-			break;
-		
-		// On teste si l'entier n'apparaît pas déjà dans la variable
-		int rslt = sat_test_prev_var(tab, literal, nb_tok);
-		if (rslt == 1)  { // Le token apparaît 2 fois avec le même "signe" -> pas ajouté cette fois
-			fprintf(stderr, "  Waouu: Le littéral %d a déjà été ajouté.\n", literal);
-			--*p_nbLiterals;
-		}
-		else if (rslt == -1) { // Le token et son contraire apparaîssent -> tab = NIL, p_nbLiterals = 0;
-			fprintf(stderr, "  Waouu: Le littéral %d et son contraire apparaîssent: tableau vide.\n", literal);
-			free(tab);
-			tab = NULL;
-			*p_nbLiterals = 0;
-			break;
-		}
-		else {
-			tab[nb_tok] = literal;
-			fprintf(stderr, "  Ajout de |%d| au rang %d.\n", tab[nb_tok], nb_tok);
-			nb_tok++;
-		}
-	}
-
-	free(str2);
-	free(str1);
-	return tab;
-}
-
-
 // Renvoie le signe d'un entier -----------------------------------------------
 int sat_sign(int pNbe) {
 	if (pNbe < 0)
@@ -229,7 +143,7 @@ tVar* sat_add_var(tGraphe* p_formula, LiteralId p_literalId) {
 
 
 // Ajoute une variable à une clause
-int sat_add_var_to_cls(tGraphe* p_formula, ClauseId p_clauseId, Literal p_litteral) {
+int sat_add_var_to_cls(tGraphe* p_formula, ClauseId p_clauseId, Literal p_literal) {
 	if (isNull(p_formula)) {
 		fprintf(stderr, " Ooops: Le pointeur de graphe est NULL.\n");
 		return -1;
@@ -242,66 +156,61 @@ int sat_add_var_to_cls(tGraphe* p_formula, ClauseId p_clauseId, Literal p_litter
 	
 	if (isNull(clause)) {
 		fprintf(stderr, "  Clause %u non trouvée.\n", p_clauseId);
-		Literal* literals = (Literal*) malloc(sizeof(int));
-		literals[0] = p_litteral;
-		sat_add_clause(p_formula, p_clauseId, literals, 1);
-		free(literals);
+		std::list<Literal> literals = { p_literal };
+		sat_add_clause(p_formula, p_clauseId, literals);
 		return 1;
 	}
 
 	fprintf(stderr, "  Clause %u trouvée.\n", clause->indCls);
 	// Teste si la variable existe
-	tVar* lVar = sat_ex_var(p_formula, sat_literal_id(p_litteral));
+	tVar* lVar = sat_ex_var(p_formula, sat_literal_id(p_literal));
 	if (isNull(lVar)) {
-		fprintf(stderr, "   Littéral x%u non trouvé: ajout.\n", sat_literal_id(p_litteral));
-		lVar = sat_add_var(p_formula, sat_literal_id(p_litteral));
+		fprintf(stderr, "   Littéral x%u non trouvé: ajout.\n", sat_literal_id(p_literal));
+		lVar = sat_add_var(p_formula, sat_literal_id(p_literal));
 	}
 
 	// Lien entre la variable et la clause
-	sat_lnk_clsVar(clause, lVar, sat_sign(p_litteral));
+	sat_lnk_clsVar(clause, lVar, sat_sign(p_literal));
 	return 0;
 }
 
 
 // Ajoute une clause à un graphe ----------------------------------------------
-int sat_add_clause(tGraphe* p_formula, ClauseId p_clauseId, Literal* p_literals, size_t p_nbLiterals) {
-	// Teste si on essaye d'ajouter une clause vide (stupide)
-	if (p_nbLiterals == 0) {
+int sat_add_clause(tGraphe* p_formula, ClauseId p_clauseId, std::list<Literal>& p_literals) {
+	// Parameters check
+	if (p_literals.empty()) {
 		fprintf(stderr, "  Waouu: Tentative d'ajout de la clause vide.\n         Continue...\n");
 		return 1;
 	}
-
-	// Construction et Ajout de la clause
+	
 	// Création de la clause
 	tClause* clause = (tClause*) malloc(sizeof(tClause));
 	fprintf(stderr, "  Clause %u créée.\n", p_clauseId);
-
+	
 	// Màj de l'indice
 	clause->indCls = p_clauseId;
 	clause->suiv = NULL;
 	clause->vars = NULL;
-
-	// Chaînage des variables
-	Literal* lTabVar = p_literals;
+	
 	// Parcours des variables de la clause
-	for (unsigned int i=0; i<p_nbLiterals; i++) {
-		tVar* lVar;
-
-		fprintf(stderr, "  Lien clause %u <-> littéral x%d en cours...\n", p_clauseId, lTabVar[i]);
-
+	for (auto literal = p_literals.cbegin(); literal != p_literals.cend(); ++literal) {
+		fprintf(stderr, "  Lien clause %u <-> littéral x%d en cours...\n", p_clauseId, *literal);
+		
 		// Si la variable n'existe pas, l'ajouter.
-		if ( !(lVar = sat_ex_var(p_formula, sat_literal_id(lTabVar[i]))) )
-			lVar = sat_add_var(p_formula, sat_literal_id(lTabVar[i]));
+		tVar* lVar = sat_ex_var(p_formula, sat_literal_id(*literal));
+		if (isNull(lVar))
+			lVar = sat_add_var(p_formula, sat_literal_id(*literal));
+		
 		// Linkage Clause <--> Variable    
-		sat_lnk_clsVar(clause, lVar, sat_sign(lTabVar[i]));
+		sat_lnk_clsVar(clause, lVar, sat_sign(*literal));
 	}
 	fprintf(stderr, "  Clause %u initialisée.\n", p_clauseId);
-
+	
 	// Chaînage des clauses
 	clause->suiv = p_formula->clauses;
 	p_formula->clauses = clause;
 	fprintf(stderr, "  Clause %u chaînée.\n", p_clauseId);
-
+	
 	return 0;
 }
 

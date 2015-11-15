@@ -87,7 +87,7 @@ Interpretation* dp_main(tGraphe** p_formula, Interpretation* p_interpretation) {
 	 * First reduction
 	 */
 	fprintf(stderr, " Première tentative de réduction...\n");
-	History* history = sat_history_new();
+	History* history = new History();
 	dp_reduce(p_formula, chosen_literal, history);
 	Interpretation* partialInterpretation = dp_test_sat(p_formula, chosen_literal, p_interpretation);
 
@@ -96,7 +96,7 @@ Interpretation* dp_main(tGraphe** p_formula, Interpretation* p_interpretation) {
 	 * We can return the current interpretation.
 	 */
 	if (partialInterpretation->isSatisfiable()) {
-		sat_history_free(&history);
+		delete history;
 		return p_interpretation;
 	}
 	delete partialInterpretation;
@@ -105,7 +105,7 @@ Interpretation* dp_main(tGraphe** p_formula, Interpretation* p_interpretation) {
 	 * The interpretation is not satisfiable: we try with the opposite literal.
 	 */
 	fprintf(stderr, " Reconstruction des formules pour seconde tentative...\n");
-	sat_history_replay(history, p_formula);
+	history->replay(p_formula);
 	sat_see(*p_formula);
 	p_interpretation->print();
  
@@ -121,8 +121,8 @@ Interpretation* dp_main(tGraphe** p_formula, Interpretation* p_interpretation) {
 
 	// Reconstruction du graphe & destruction de l'historique
 	fprintf(stderr, "  Rebuilding the formula...\n");
-	sat_history_replay(history, p_formula);
-	sat_history_free(&history);
+	history->replay(p_formula);
+	delete history;
 
 	fprintf(stderr, "  Rebuilt data:\n");
 	sat_see(*p_formula);
@@ -195,19 +195,15 @@ Interpretation* dp_test_sat(tGraphe** p_formula, Literal p_literal, Interpretati
  *            the backtracking history
  */
 void dp_reduce(tGraphe **p_formula, Literal p_literal, History *p_history) {
-	tClause *clause, *clause2;
-	int result;
-	
 	if (isNull(*p_formula)) {
 		fprintf(stderr, "  Waouu: Le pointeur de graphe est NULL.\n");
 		return;
 	}
 
 	fprintf(stderr, "  Réduction par %sx%d...\n", (p_literal < 0 ? "¬" : ""), abs(p_literal));
-	clause = (*p_formula)->clauses;
-		
+	tClause* clause = (*p_formula)->clauses;
 	while (clause) {
-		clause2 = clause->suiv;
+		tClause* clause2 = clause->suiv;
 		switch (dp_reduce_clause(clause, p_literal, (*p_formula), p_history)) {
 		case 3: // Clause vide produite: insatisfiable
 			fprintf(stderr, "  Insatisfiable.\n");
@@ -216,11 +212,8 @@ void dp_reduce(tGraphe **p_formula, Literal p_literal, History *p_history) {
 			fprintf(stderr, "  Sauvegarde du graphe actuel dans l'historique...\n");
 			clause2 = (*p_formula)->clauses;
 			while (clause2) {
-				result = sat_history_add_clause(p_history, clause2); 
-				if (result == -3) 
-					fprintf(stderr, "   La clause n°%u est vide et n'a pas été ajoutée.\n", clause2->indCls);
-				else if (result == 0) 
-					fprintf(stderr, "   Clause n°%u mise dans l'historique.\n", clause2->indCls);
+				p_history->addClause(clause2); 
+				fprintf(stderr, "   Clause n°%u mise dans l'historique.\n", clause2->indCls);
 				clause2 = clause2->suiv;
 			}
 			
@@ -285,7 +278,7 @@ int dp_reduce_clause(tClause* p_clause, Literal p_literal, tGraphe* p_formula, H
 
 				// Enregistrement de la suppression dans l'historique
 				fprintf(stderr, "    Sauvegarde de la clause n°%u dans l'historique.\n", p_clause->indCls);
-				sat_history_add_clause(p_history, p_clause);
+				p_history->addClause(p_clause);
 
 				// Suppression de la clause
 				sat_sub_clause(p_formula, p_clause->indCls);
@@ -297,7 +290,7 @@ int dp_reduce_clause(tClause* p_clause, Literal p_literal, tGraphe* p_formula, H
 
 				// Enregistrement de la suppression dans l'historique
 				fprintf(stderr, "    Sauvegarde du littéral %sx%d pour la clause n°%u dans l'historique.\n", (p_literal >= 0 ? "¬" : ""), abs(p_literal), p_clause->indCls);
-				sat_history_add_literal(p_history, p_clause->indCls, literal_iterator->var->indVar * (-sat_sign(p_literal)));
+				p_history->addLiteral(p_clause->indCls, literal_iterator->var->indVar * (-sat_sign(p_literal)));
 
 				// Suppression de la chosen_literal de la clause
 				// retourne: 2 si la clause est non vide (après traitement)

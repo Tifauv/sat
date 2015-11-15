@@ -17,8 +17,7 @@
 */
 #include "history.h"
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <iostream>
 #include <log4c.h>
 
 #include "utils.h"
@@ -28,203 +27,93 @@
 
 /**
  * Creates a new history.
- * 
- * @return a new history
  */
-History* sat_history_new() {
-	History* history = (History*) malloc(sizeof(History));
-	history->last = NULL;
-	return history;
+History::History() {
+	log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "New history created.");
 }
 
 
 /**
  * Frees the memory used by an history.
- *
- * @param p_history
- *            the history
  */
-void sat_history_free(History** p_history) {
-	// Parameters check
-	if (isNull(*p_history))
-		return;
-
-	// Free each step...
-	HistoryStep* step = (*p_history)->last;
-	while (step) {
-		sat_history_remove_last_step(*p_history);
-		step = (*p_history)->last;
-	}
-
-	// Free the top structure
-	free(*p_history);
-	(*p_history) = NULL;
+History::~History() {
+	clear();
+	log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "History deleted.");
 }
 
 
 /**
- * Checks whether an history is empty.
+ * Adds an operation of type Operation::AddClause as last step of the history.
  *
- * @param p_history
- *            the history to check
- *
- * @return -1 if p_history is NULL,
- *          0 if p_history is not empty,
- *          1 if p_history is empty
- */
-int sat_history_is_empty(History* p_history) {
-	// Parameters check
-	if (isNull(p_history)) {
-		log4c_category_log(log_history(), LOG4C_PRIORITY_ERROR, "The history pointer is NULL.");
-		return -1;
-	}
-
-	return (p_history->last == NULL);
-}
-
-
-/**
- * Adds an operation of type OP_ADD_CLAUSE as last step of the history.
- *
- * @param p_history
- *            the history
  * @param p_clause
  *            the clause to save
- *
- * @return -3 if p_clause is empty,
- *         -2 if p_clause is NULL,
- *         -1 if p_history is NULL,
- *          0 if the new step was added
  */
-int sat_history_add_clause(History* p_history, tClause* p_clause) {
+void History::addClause(tClause* p_clause) {
 	// Parameters check
-	if (isNull(p_history)) {
-		log4c_category_log(log_history(), LOG4C_PRIORITY_ERROR, "The history pointer is NULL.");
-		return -1;
-	}
-
 	if (isNull(p_clause)) {
-		log4c_category_log(log_history(), LOG4C_PRIORITY_ERROR, "The clause pointer is NULL.");
-		return -2;
+		log4c_category_log(log_history(), LOG4C_PRIORITY_ERROR, "The clause to add is NULL.");
+		return;
 	}
 
 	// Check the clause is not empty
 	if (isNull(p_clause->vars)) {
 		log4c_category_log(log_history(), LOG4C_PRIORITY_ERROR, "The clause to add is empty.");
-		return -3;
-	}
-
-	// Count the number of literals in the clause
-	int nbLiterals = 0;
-	tPtVar* literalIter = p_clause->vars;
-	while (literalIter) {
-		nbLiterals++;
-		literalIter = literalIter->suiv;
+		return;
 	}
 
 	// Create the literals array
-	Literal* literals = (int*) calloc(nbLiterals, sizeof(int));
-	int i = 0;
-	literalIter = p_clause->vars;
-	while (literalIter) {
-		literals[i++] = literalIter->var->indVar * sat_get_sign(literalIter->var, p_clause->indCls);
+	std::list<Literal> literals;
+	tPtVar* literalIter = p_clause->vars;
+	while (notNull(literalIter)) {
+		literals.push_back( literalIter->var->indVar * sat_get_sign(literalIter->var, p_clause->indCls) );
 		literalIter = literalIter->suiv;
 	}
-
+	
 	// Create the new step
-	HistoryStep* newStep = (HistoryStep*) malloc(sizeof(HistoryStep));
-	newStep->operation = OP_ADD_CLAUSE;
+	Step* newStep = new Step();
+	newStep->operation = Operation::AddClause;
 	newStep->clauseId = p_clause->indCls;
 	newStep->literals = literals;
-	newStep->size = nbLiterals;
 
-	// Link the new step
-	newStep->next = p_history->last;
-	p_history->last = newStep;
-
-	return 0;
+	// Add the new step
+	m_steps.push_front(newStep);
+	log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "Clause %u added to the history.", p_clause->indCls);
 }
 
 
 /**
- * Adds an operation of type OP_ADD_LITERAL_TO_CLAUSE as last step of the history.
+ * Adds an operation of type Operation::AddLiteralToClause as last step of the history.
  *
- * @param p_history
- *            the history
  * @param p_clauseId
  *            the id of the clause
  * @param p_literal
  *            the literal to save
- *
- * @return -1 if p_history is NULL,
- *          0 if the new step was added
  */
-int sat_history_add_literal(History *p_history, ClauseId p_clauseId, Literal p_literal) {
-	// Parameters check
-	if (isNull(p_history)) {
-		log4c_category_log(log_history(), LOG4C_PRIORITY_ERROR, "The history pointer is NULL.");
-		return -1;
-	}
-
-	// Create the literals array (of one)
-	Literal* literals = (Literal*) malloc(sizeof(Literal));
-	literals[0] = p_literal;
-
+void History::addLiteral(ClauseId p_clauseId, Literal p_literal) {
+	// Create the literals array
+	std::list<Literal> literals(1);
+	literals.push_front( p_literal );
+	
 	// Create the new step
-	HistoryStep* newStep = (HistoryStep*) malloc(sizeof(HistoryStep));
-	newStep->operation = OP_ADD_LITERAL_TO_CLAUSE;
+	Step* newStep = new Step();
+	newStep->operation = Operation::AddLiteralToClause;
 	newStep->clauseId = p_clauseId;
 	newStep->literals = literals;
-	newStep->size = 1;
-
-	// Linking the new step
-	newStep->next = p_history->last;
-	p_history->last = newStep;
-
-	return 0;
-}
-
-
-/**
- * Removes and frees the last step of the history.
- *
- * @param p_history
- *            the history
- */
-void sat_history_remove_last_step(History* p_history) {
-	// Parameters check
-	if (isNull(p_history)) {
-		log4c_category_log(log_history(), LOG4C_PRIORITY_ERROR, "The history pointer is NULL.");
-		return;
-	}
-
-	if (isNull(p_history->last)) {
-		log4c_category_log(log_history(), LOG4C_PRIORITY_ERROR, "The history is empty.");
-		return;
-	}
-
-	HistoryStep* last_step = p_history->last;
-	p_history->last = last_step->next;
-	free(last_step->literals);
-	free(last_step);
+	
+	// Add the new step
+	m_steps.push_back(newStep);
+	log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "Literal %sx%u of clause %u added to the history.", (p_literal < 0 ? "¬" : ""), sat_literal_id(p_literal), p_clauseId);
 }
 
 
 /**
  * Replays the modifications stored in the history.
  *
- * @param p_history
- *            the operations to replay
  * @param p_formula
  *            the formula in which to replay the operations
  */
-void sat_history_replay(History* p_history, tGraphe** p_formula) {
+void History::replay(tGraphe** p_formula) {
 	// Parameters check
-	if (isNull(p_history)) {
-		log4c_category_log(log_history(), LOG4C_PRIORITY_ERROR, "The history pointer is NULL.");
-		return;
-	}
-
 	if (isNull(*p_formula)) {
 		log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "The formula is NULL.");
 		(*p_formula) = sat_new();
@@ -233,31 +122,43 @@ void sat_history_replay(History* p_history, tGraphe** p_formula) {
 
 	// Replaying...
 	log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "Replaying the history...");
-	while (!sat_history_is_empty(p_history)) {
-		ClauseId clauseId   = p_history->last->clauseId;
-		Literal* literals   = p_history->last->literals;
-		size_t literalsSize = p_history->last->size;
+	for (auto it = m_steps.begin(); it != m_steps.end(); ++it) {
+		ClauseId clauseId = (*it)->clauseId;
+		std::list<Literal> literals = (*it)->literals;
 
-		switch (p_history->last->operation) {
-		case OP_ADD_CLAUSE:
-			sat_add_clause(*p_formula, clauseId, literals, literalsSize);
-			log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "Added clause %u", clauseId);
-			break;
+		switch ((*it)->operation) {
+			case Operation::AddClause:
+				sat_add_clause(*p_formula, clauseId, literals);
+				log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "Added clause %u", clauseId);
+				break;
 
-		case OP_ADD_LITERAL_TO_CLAUSE:
-			sat_add_var_to_cls(*p_formula, clauseId, *literals);
-			log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "Added %sx%u to clause %u", (*literals < 0 ? "¬" : ""), sat_literal_id(*literals), clauseId);
-			break;
+			case Operation::AddLiteralToClause:
+				sat_add_var_to_cls(*p_formula, clauseId, literals.front());
+				log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "Added %sx%u to clause %u", (literals.front() < 0 ? "¬" : ""), sat_literal_id(literals.front()), clauseId);
+				break;
 
-		default:
-			log4c_category_log(log_history(), LOG4C_PRIORITY_WARN, "An unknown operation code (%u) has been found in the history, skipping.", p_history->last->operation);
+			default:
+				log4c_category_log(log_history(), LOG4C_PRIORITY_WARN, "An unknown operation code (%u) has been found in the history, skipping.", (*it)->operation);
 		}
 
-		sat_history_remove_last_step(p_history);
+		//removeLastStep();
 	}
+	clear();
 
 	// Result
 	log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "History replayed.");
 	//sat_see(*p_formula);
 }
 
+
+/**
+ * Removes and frees the last step of the history.
+ */
+void History::clear() {
+	while (!m_steps.empty()) {
+		Step* step = m_steps.back();
+		m_steps.pop_back();
+		delete step;
+	}
+	log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "History cleared.");
+}

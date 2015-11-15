@@ -18,111 +18,80 @@
 #ifndef HISTORY_H
 #define HISTORY_H
 
-#include <stddef.h>
+#include <list>
+
 #include "clause.h"
 #include "literal.h"
 #include "sat.h"
 
-#define OP_ADD_CLAUSE            1
-#define OP_ADD_LITERAL_TO_CLAUSE 2
-
-typedef unsigned int Operation;
-typedef struct HistoryStep HistoryStep;
-
-/** A History step. */
-struct HistoryStep {
-  Operation     operation;
-  ClauseId      clauseId;
-  Literal*      literals;
-  size_t        size;
-  HistoryStep*  next;
+/**
+ * The history manages steps for two operations:
+ *   - add a new clause,
+ *   - add a literal to a clause
+ */
+enum class Operation {
+	AddClause,
+	AddLiteralToClause
 };
 
-/** A History. */
-typedef struct {
-  HistoryStep* last;
-} History;
+
+typedef struct Step {
+	Operation          operation;
+	ClauseId           clauseId;
+	std::list<Literal> literals;
+} Step;
 
 
 /**
- * Creates a new history.
- * 
- * @return a new history
+ * An history is a list of steps.
  */
-History* sat_history_new();
+class History {
+public:
+	/**
+	 * Creates a new history.
+	 */
+	History();
 
+	/**
+	 * Frees the memory used by an history.
+	 */
+	~History();
 
-/**
- * Frees the memory used by an history.
- *
- * @param p_history
- *            the history
- */
-void sat_history_free(History** p_history);
+	/**
+	 * Adds an operation of type OP_ADD_CLAUSE as last step of the history.
+	 *
+	 * @param p_clause
+	 *            the clause to save
+	 */
+	void addClause(tClause* p_clause);
 
+	/**
+	 * Adds an operation of type OP_ADD_LITERAL_TO_CLAUSE as last step of the history.
+	 *
+	 * @param p_clauseId
+	 *            the id of the clause
+	 * @param p_literal
+	 *            the literal to save
+	 */
+	void addLiteral(ClauseId p_clauseId, Literal p_literal);
 
-/**
- * Checks whether an history is empty.
- *
- * @param p_history
- *            the history to check
- *
- * @return -1 if p_history is NULL,
- *          0 if p_history is not empty,
- *          1 if p_history is empty
- */
-int sat_history_is_empty(History* p_history);
+	/**
+	 * Replays the modifications stored in the history.
+	 *
+	 * @param p_formula
+	 *            the formula in which to replay the operations
+	 */
+	void replay(tGraphe** p_formula);
 
+protected:
+	/**
+	 * Removes and frees the steps of the history.
+	 */
+	void clear();
 
-/**
- * Adds an operation of type OP_ADD_CLAUSE as last step of the history.
- *
- * @param p_history
- *            the history
- * @param p_clause
- *            the clause to save
- *
- * @return -3 if p_clause is empty,
- *         -2 if p_clause is NULL,
- *         -1 if p_history is NULL,
- *          0 if the new step was added
- */
-int sat_history_add_clause(History* p_history, tClause* p_clause);
-
-
-/**
- * Adds an operation of type OP_ADD_LITERAL_TO_CLAUSE as last step of the history.
- *
- * @param p_history
- *            the history
- * @param p_clause_id
- *            the id of the clause
- * @param p_literal
- *            the literal to save
- *
- * @return -1 if p_history is NULL,
- *          0 if the new step was added
- */
-int sat_history_add_literal(History* p_history, ClauseId p_clauseId, Literal p_literal);
-
-
-/**
- * Removes and frees the last step of the history.
- *
- * @param p_history
- *            the history
- */
-void sat_history_remove_last_step(History* p_history);
-
-
-/**
- * Replays the modifications stored in the history.
- *
- * @param p_history
- *            the operations to replay
- * @param p_formula
- *            the formula in which to replay the operations
- */
-void sat_history_replay(History* p_history, tGraphe** p_formula);
+private:
+	/** The steps of the history. */
+	std::list<Step*> m_steps;
+};
 
 #endif // HISTORY_H

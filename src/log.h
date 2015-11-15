@@ -6,6 +6,7 @@
 #define LOG_CATEGORY_HISTORY        "sat.history"
 #define LOG_CATEGORY_INTERPRETATION "sat.interpretation"
 
+#define log_cnf()            log4c_category_get(LOG_CATEGORY_LOADER_CNF)
 #define log_history()        log4c_category_get(LOG_CATEGORY_HISTORY)
 #define log_interpretation() log4c_category_get(LOG_CATEGORY_INTERPRETATION)
 
