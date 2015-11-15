@@ -1,13 +1,8 @@
-                 ---==< AUTHORS du projet de Logique >==---
+testSat started as a college project for the logic course.
+It was written at that time (2002) by 3 students:
+  - Olivier Serve
+  - Mickaël Sibelle
+  - Philippe Strelezki
 
-
- Projet de Logique: Graphe SAT et algorithme de Davis-Putnam
- Licence Informatique 2001/2002
- Université d'Angers
-
-
-3 personnes ont contribué à ce projet:
-
- Tifauv : Olivier Serve
- Kimael : Mickaël Sibelle
- Berin  : Philippe Strelezki
+In 2015, Olivier Serve reworked on it, resolved some remaining bugs,
+and migrated it from C to C++.

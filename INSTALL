@@ -1,13 +1,15 @@
-                 ---==< INSTALL du projet de Logique >==---
+          ---==< How to install testSat >==---
 
+1. Requirements
+  - gcc supporting C++11
+  - CMake 3.0
+  - log4c
 
- Projet de Logique: Graphe SAT et algorithme de Davis-Putnam
- Licence Informatique 2001/2002
- Université d'Angers
-
- Pour compiler le programme testSat et toutes les librairies, il suffit de taper
-'make' dans le répertoire où l'archive a été décompressée.
-
- Il n'y a normalement aucun message d'erreur.
-
- La compilation a été testée avec succès avec gcc 2.95 & 3.0
+2. Compiling                 
+Run the 'build.sh' script to automatically build the project,
+or run the following commands:
+	$ mkdir build
+	$ cd build
+	$ cmake ..
+	$ make
+The executable is 'build/src/testSat'.
