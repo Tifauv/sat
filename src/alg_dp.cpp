@@ -97,18 +97,19 @@ void dp_main(tGraphe** p_formula, Interpretation* p_interpretation) {
 	 * The interpretation is satisfiable: we are done.
 	 */
 	if (rc == 0) {
-		//dp_test_sat(p_formula, chosen_literal, p_interpretation);
 		// Add the chosen literal to the current interpretation
 		p_interpretation->push(chosen_literal);
 		log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "Added %sx%u to the interpretation.", (chosen_literal < 0 ?     "¬" : ""), sat_literal_id(chosen_literal));
 
-		// The history is not needed : delete it
-		delete history;
-
 		// Loop again
 		dp_main(p_formula, p_interpretation);
-		//---------------------------------------------------------
-		return;
+		if (p_interpretation->isSatisfiable()) {
+			delete history;
+			return;
+		}
+		else {
+			p_interpretation->pop();
+		}
 	}
 
 	/*
@@ -118,6 +119,7 @@ void dp_main(tGraphe** p_formula, Interpretation* p_interpretation) {
 	log4c_category_log(log_dpll(), LOG4C_PRIORITY_DEBUG, "Rebuilding the formula before second attempt...");
 	history->replay(p_formula);
 	sat_see(*p_formula);
+	p_interpretation->setSatisfiable();
 	p_interpretation->print();
  
 	// Seconde réduction et test du résultat
@@ -128,14 +130,20 @@ void dp_main(tGraphe** p_formula, Interpretation* p_interpretation) {
 	 * The interpretation is satisfiable: we are done. We can return the current interpretation.
 	 */
 	if (rc == 0) {
-		//dp_test_sat(p_formula, -chosen_literal, p_interpretation);
 		// Add the chosen literal to the current interpretation
 		p_interpretation->push(-chosen_literal);
 		log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "Added %sx%u to the interpretation.", (chosen_literal > 0 ?     "¬" : ""), sat_literal_id(chosen_literal));
 
 		// Loop again
 		dp_main(p_formula, p_interpretation);
-		//----------------------------------------------------------
+		if (p_interpretation->isSatisfiable()) {
+			delete history;
+			return;
+		}
+		else {
+			// Remove the current literal from the interpretation
+			p_interpretation->pop();
+		}
 	}
 	else {
 		p_interpretation->setUnsatisfiable();
@@ -143,8 +151,6 @@ void dp_main(tGraphe** p_formula, Interpretation* p_interpretation) {
 
 	/* Restoring state before backtracking. */
 	log4c_category_log(log_dpll(), LOG4C_PRIORITY_DEBUG, "Restoring state before backtracking...");
-	// Remove the current literal from the interpretation
-	p_interpretation->pop();
 
 	// Reconstruction du graphe & destruction de l'historique
 	log4c_category_log(log_dpll(), LOG4C_PRIORITY_DEBUG, "Rebuilding the formula...");
