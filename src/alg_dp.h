@@ -32,11 +32,8 @@
  *            the SAT formula to solve
  * @param p_intr
  *            the current interpretation
- * 
- * @return the interpretation found,
- *         of NULL if p_formula or p_intr is NULL
  */
-Interpretation* dp_main(tGraphe** p_formula, Interpretation* p_intr); 
+void dp_main(tGraphe** p_formula, Interpretation* p_intr); 
 
 
 /**
@@ -51,21 +48,6 @@ int dp_choose_literal(tGraphe* p_formula);
 
 
 /**
- * Renvoie l'interprétation du graphe
- * 
- * @param p_formula
- *            the SAT formula
- * @param p_literal
- *            the reduction literal
- * @param p_interpretation
- *            the current interpretation
- * 
- * @return 
- */
-Interpretation* dp_test_sat(tGraphe** p_formula, Literal p_literal, Interpretation* p_interpretation);
-
-
-/**
  * Reduces all the graph's formulas using a literal.
  * The history is used for backtracking.
  * 
@@ -75,8 +57,12 @@ Interpretation* dp_test_sat(tGraphe** p_formula, Literal p_literal, Interpretati
  *            the literal used to reduce the formula
  * @param p_history
  *            the backtracking history
+ * 
+ * @return -1 if p_formula is NULL,
+ *          0 if the reduction was done to the end,
+ *          1 if an unsatisfiable clause was produced
  */
-void dp_reduce(tGraphe** p_formula, Literal p_literal, History* p_history);
+int dp_reduce(tGraphe** p_formula, Literal p_literal, History* p_history);
 
 
 /**

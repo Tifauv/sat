@@ -42,7 +42,9 @@ Interpretation* alg_solve(tGraphe** p_formula) {
 	}
 
 	log4c_category_log(log_dpll(), LOG4C_PRIORITY_DEBUG, "Starting the DPLL algorithm.");
-	return dp_main(p_formula, new Interpretation());
+	Interpretation* interpretation = new Interpretation();
+	dp_main(p_formula, interpretation);
+	return interpretation;
 }
 
 
@@ -53,20 +55,17 @@ Interpretation* alg_solve(tGraphe** p_formula) {
  *            the SAT formula to solve
  * @param p_interpretation
  *            the current interpretation
- * 
- * @return the interpretation found,
- *         of NULL if p_formula or p_interpretation is NULL
  */
-Interpretation* dp_main(tGraphe** p_formula, Interpretation* p_interpretation) {
+void dp_main(tGraphe** p_formula, Interpretation* p_interpretation) {
 	/* Check parameters */
 	if (isNull(*p_formula)) {
 		log4c_category_log(log_dpll(), LOG4C_PRIORITY_DEBUG, "The formula pointer is NULL.");
-		return NULL;
+		return;
 	}
 
 	if (isNull(p_interpretation)) {
 		log4c_category_log(log_dpll(), LOG4C_PRIORITY_DEBUG, "The interpretation pointer is NULL.");
-		return NULL;
+		return;
 	}
 
 	log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "Current state:");
@@ -74,11 +73,12 @@ Interpretation* dp_main(tGraphe** p_formula, Interpretation* p_interpretation) {
 	p_interpretation->print();
 
 	/*
-	 * Stop case: if there is no clause to process, we are done.
-	 * Return the current interpretation.
+	 * Stop case: if there is no clause left, we are done.
 	 */
-	if (isNull((*p_formula)->clauses))
-		return p_interpretation;
+	if (isNull((*p_formula)->clauses)) {
+		log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "No more clauses.");
+		return;
+	}
 
 	/*
 	 * Choose the reduction literal.
@@ -87,26 +87,34 @@ Interpretation* dp_main(tGraphe** p_formula, Interpretation* p_interpretation) {
 	Literal chosen_literal = dp_choose_literal(*p_formula);
 
 	/*
-	 * First reduction
+	 * First reduction with the chosen literal.
 	 */
 	log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "First reduction attempt...");
 	History* history = new History();
-	dp_reduce(p_formula, chosen_literal, history);
-	Interpretation* partialInterpretation = dp_test_sat(p_formula, chosen_literal, p_interpretation);
-
+	int rc = dp_reduce(p_formula, chosen_literal, history);
+	
 	/*
 	 * The interpretation is satisfiable: we are done.
-	 * We can return the current interpretation.
 	 */
-	if (partialInterpretation->isSatisfiable()) {
+	if (rc == 0) {
+		//dp_test_sat(p_formula, chosen_literal, p_interpretation);
+		// Add the chosen literal to the current interpretation
+		p_interpretation->push(chosen_literal);
+		log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "Added %sx%u to the interpretation.", (chosen_literal < 0 ?     "¬" : ""), sat_literal_id(chosen_literal));
+
+		// The history is not needed : delete it
 		delete history;
-		return p_interpretation;
+
+		// Loop again
+		dp_main(p_formula, p_interpretation);
+		//---------------------------------------------------------
+		return;
 	}
-	delete partialInterpretation;
-	
+
 	/*
 	 * The interpretation is not satisfiable: we try with the opposite literal.
 	 */
+	log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "The current interpretation is unsatisfiable.");
 	log4c_category_log(log_dpll(), LOG4C_PRIORITY_DEBUG, "Rebuilding the formula before second attempt...");
 	history->replay(p_formula);
 	sat_see(*p_formula);
@@ -114,8 +122,24 @@ Interpretation* dp_main(tGraphe** p_formula, Interpretation* p_interpretation) {
  
 	// Seconde réduction et test du résultat
 	log4c_category_log(log_dpll(), LOG4C_PRIORITY_DEBUG, "Second reduction attempt...");
-	dp_reduce(p_formula, -chosen_literal, history);
-	partialInterpretation = dp_test_sat(p_formula, -chosen_literal, p_interpretation);
+	rc = dp_reduce(p_formula, -chosen_literal, history);
+
+	/*
+	 * The interpretation is satisfiable: we are done. We can return the current interpretation.
+	 */
+	if (rc == 0) {
+		//dp_test_sat(p_formula, -chosen_literal, p_interpretation);
+		// Add the chosen literal to the current interpretation
+		p_interpretation->push(-chosen_literal);
+		log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "Added %sx%u to the interpretation.", (chosen_literal > 0 ?     "¬" : ""), sat_literal_id(chosen_literal));
+
+		// Loop again
+		dp_main(p_formula, p_interpretation);
+		//----------------------------------------------------------
+	}
+	else {
+		p_interpretation->setUnsatisfiable();
+	}
 
 	/* Restoring state before backtracking. */
 	log4c_category_log(log_dpll(), LOG4C_PRIORITY_DEBUG, "Restoring state before backtracking...");
@@ -130,8 +154,6 @@ Interpretation* dp_main(tGraphe** p_formula, Interpretation* p_interpretation) {
 	log4c_category_log(log_dpll(), LOG4C_PRIORITY_DEBUG, "Restored state:");
 	sat_see(*p_formula);
 	p_interpretation->print();
-	
-	return partialInterpretation;
 }
 
 
@@ -149,43 +171,6 @@ Literal dp_choose_literal(tGraphe* p_formula) {
 
 
 /**
- * Renvoie l'interprétation du graphe
- * 
- * @param p_formula
- *            the SAT formula
- * @param p_literal
- *            the reduction literal
- * @param p_interpretation
- *            the current interpretation
- * 
- * @return 
- */
-Interpretation* dp_test_sat(tGraphe** p_formula, Literal p_literal, Interpretation* p_interpretation) {
-	// Si insatisfiable...
-	if (isNull(*p_formula)) {
-		log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "The current interpretation is unsatisfiable.");
-		Interpretation* interpretation = new Interpretation();
-		interpretation->setUnsatisfiable();
-		return interpretation;
-	}
-
-	// Ajout du littéral à l'interprétation
-	p_interpretation->push(p_literal);
-	log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "Added %sx%u to the interpretation.", (p_literal < 0 ? "¬" : ""), sat_literal_id(p_literal));
-	
-	// Si le graphe est vide, l'interprétation est terminée
-	if (isNull((*p_formula)->clauses)) {
-		log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "No more clauses.");
-		return p_interpretation;
-	}
-
-	// Il reste des clauses : ajout du littéral à l'interprétation
-	log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "There are clauses remaining.");
-	return dp_main(p_formula, p_interpretation);
-}
-
-
-/**
  * Reduces all the graph's formulas using a literal.
  * The history is used for backtracking.
  * 
@@ -195,21 +180,28 @@ Interpretation* dp_test_sat(tGraphe** p_formula, Literal p_literal, Interpretati
  *            the literal used to reduce the formulas
  * @param p_history
  *            the backtracking history
+ *
+ * @return -1 if p_formula is NULL,
+ *          0 if the reduction was done to the end,
+ *          1 if an unsatisfiable clause was produced
  */
-void dp_reduce(tGraphe **p_formula, Literal p_literal, History *p_history) {
+int dp_reduce(tGraphe** p_formula, Literal p_literal, History* p_history) {
 	if (isNull(*p_formula)) {
 		log4c_category_log(log_dpll(), LOG4C_PRIORITY_DEBUG, "The formula pointer is NULL.");
-		return;
+		return -1;
 	}
 
 	log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "Reduction using literal %sx%u...", (p_literal < 0 ? "¬" : ""), sat_literal_id(p_literal));
+	int rc = 0;
+
 	tClause* clause = (*p_formula)->clauses;
 	while (clause) {
 		tClause* clause2 = clause->suiv;
 		switch (dp_reduce_clause(clause, p_literal, (*p_formula), p_history)) {
 		case 3: // Clause vide produite: insatisfiable
 			log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "The produced clause is unsatisfiable.");
-				
+			
+			/*
 			// Sauvegarde des modifs dans l'historique
 			log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "Dumping the current formula to the history.");
 			clause2 = (*p_formula)->clauses;
@@ -222,6 +214,8 @@ void dp_reduce(tGraphe **p_formula, Literal p_literal, History *p_history) {
 			// Suppression du graphe
 			log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "Deleting the current formula.");
 			sat_free(p_formula);
+			*/
+			rc = 1;
 			
 			// Pour sortir du while
 			clause = NULL;
@@ -235,6 +229,8 @@ void dp_reduce(tGraphe **p_formula, Literal p_literal, History *p_history) {
 			clause = clause->suiv;
 		}
 	}
+
+	return rc;
 }
 
 
