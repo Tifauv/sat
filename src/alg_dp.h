@@ -62,7 +62,7 @@ int dp_choose_literal(tGraphe* p_formula);
  *          0 if the reduction was done to the end,
  *          1 if an unsatisfiable clause was produced
  */
-int dp_reduce(tGraphe** p_formula, Literal p_literal, History* p_history);
+int dp_reduce(tGraphe** p_formula, Literal p_literal, History& p_history);
 
 
 /**
@@ -84,6 +84,6 @@ int dp_reduce(tGraphe** p_formula, Literal p_literal, History* p_history);
  *          0 nothing happened,
  *         -1 if the given clause is NULL,
  */
-int dp_reduce_clause(tClause* p_clause, Literal p_literal, tGraphe* p_formula, History* p_history);
+int dp_reduce_clause(tClause* p_clause, Literal p_literal, tGraphe* p_formula, History& p_history);
 
 #endif // DAVIS_PUTNAM_H
