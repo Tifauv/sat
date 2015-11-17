@@ -112,21 +112,34 @@ void Interpretation::pop() {
 
 
 /**
- * Prints the interpretation to stdout.
+ * Logs the interpretation.
  */
-void Interpretation::print() {
+void Interpretation::log() {
 	if (isUnsatisfiable()) {
 		log4c_category_log(log_interpretation(), LOG4C_PRIORITY_INFO, "The interpretation is unsatisfiable.");
-		std::cout << "The interpretation is unsatisfiable." << std::endl;
 		return;
 	}
 	
 	// Otherwise, print the elements
 	log4c_category_log(log_interpretation(), LOG4C_PRIORITY_INFO, "Interpretation:");
-	std::cout << "Interpretation: (";
-	for (auto it = m_literals.cbegin(); it != m_literals.cend(); ++it) {
+	for (auto it = m_literals.cbegin(); it != m_literals.cend(); ++it)
 		log4c_category_log(log_interpretation(), LOG4C_PRIORITY_INFO, "  %sx%u", (*it < 0 ? "¬" : ""), sat_literal_id(*it));
-		std::cout << " " << (*it < 0 ? "¬" : "") << "x" << sat_literal_id(*it);
+}
+
+
+/**
+ * Prints the interpretation to stdout.
+ */
+void Interpretation::print() {
+	if (isUnsatisfiable()) {
+		std::cout << "s UNSATISFIABLE" << std::endl;
+		return;
 	}
-	std::cout << " )" << std::endl;
+	
+	// Otherwise, print the elements
+	std::cout << "s SATISFIABLE" << std::endl;
+	std::cout << "v";
+	for (auto it = m_literals.cbegin(); it != m_literals.cend(); ++it)
+		std::cout << " " << *it;
+	std::cout << " 0" << std::endl;
 }

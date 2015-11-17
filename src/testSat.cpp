@@ -17,7 +17,6 @@
 */
 
 #include <iostream>
-#include <stdlib.h>
 #include <string.h>
 #include <log4c.h>
 #include <list>
@@ -209,14 +208,12 @@ int main(int p_argc, char* p_argv[]) {
 	free(nom_fic);
 	sat_see(formula);
 
-	cout << "> Solving..." << endl;
-	Interpretation* interpretation = alg_solve(&formula);
-
-	cout << "> Result:" << endl;
+	Interpretation* interpretation = alg_solve(formula);
 	interpretation->print();
 
 	delete interpretation;
-	sat_free(&formula);
+	sat_free(formula);
+	formula = NULL;
 
 	// Clean the logging system
 	if (log4c_fini())

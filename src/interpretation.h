@@ -27,7 +27,6 @@
  * Additionnaly, it can be marked unsatisfiable.
  */
 class Interpretation {
-	
 public:
 	/**
 	 * Creates an empty satisfiable interpretation.
@@ -71,6 +70,11 @@ public:
 	 * Removes the last literal.
 	 */          
 	void pop();
+
+	/**
+	 * Logs the interpretation.
+	 */
+	void log();
 
 	/**
 	 * Prints the interpretation to stdout.

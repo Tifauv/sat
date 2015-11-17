@@ -19,7 +19,6 @@
 #ifndef DAVIS_PUTNAM_H
 #define DAVIS_PUTNAM_H
 
-#include "solver.h"
 #include "literal.h"
 #include "sat.h"
 #include "interpretation.h"
@@ -33,7 +32,7 @@
  * @param p_intr
  *            the current interpretation
  */
-void dp_main(tGraphe** p_formula, Interpretation* p_intr); 
+void dp_main(tGraphe* p_formula, Interpretation* p_intr); 
 
 
 /**
@@ -44,7 +43,7 @@ void dp_main(tGraphe** p_formula, Interpretation* p_intr);
  * 
  * @return the literal
  */
-int dp_choose_literal(tGraphe* p_formula);
+Literal dp_choose_literal(tGraphe* p_formula);
 
 
 /**
@@ -62,7 +61,7 @@ int dp_choose_literal(tGraphe* p_formula);
  *          0 if the reduction was done to the end,
  *          1 if an unsatisfiable clause was produced
  */
-int dp_reduce(tGraphe** p_formula, Literal p_literal, History& p_history);
+int dp_reduce(tGraphe* p_formula, Literal p_literal, History& p_history);
 
 
 /**

@@ -19,7 +19,6 @@
 #define FORMULA_H
 
 #include <list>
-#include <stdlib.h>
 #include "literal.h"
 #include "clause.h"
 
@@ -71,7 +70,7 @@ typedef struct tGraphe {
 tGraphe* sat_new();
 
 // Libère la mémoire occupée par le graphe
-void sat_free(tGraphe** p_formula);
+void sat_free(tGraphe* p_formula);
 
 // Teste si une variable existe
 tVar* sat_ex_var(tGraphe* p_formula, LiteralId p_literalId);

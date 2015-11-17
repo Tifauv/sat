@@ -17,8 +17,8 @@
 */
 #include "sat.h"
 
+#include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
 #include "utils.h"
 
 
@@ -33,22 +33,21 @@ tGraphe* sat_new() {
 
 
 // Libère le graphe
-void sat_free(tGraphe** p_formula) {
+void sat_free(tGraphe* p_formula) {
 	// Parameters check
-	if (isNull(*p_formula))
+	if (isNull(p_formula))
 		return;
   
 	// Suppression des clauses une à une
-	tClause* clause = (*p_formula)->clauses;
+	tClause* clause = p_formula->clauses;
 	while (clause) {
-		sat_sub_clause((*p_formula), clause->indCls);
-		clause = (*p_formula)->clauses;
+		sat_sub_clause(p_formula, clause->indCls);
+		clause = p_formula->clauses;
 	}
 
 	// Normalement, quand toutes les variables sont supprimées
 	// toutes les variables aussi: on peut donc supprimer p_formula
-	free(*p_formula);
-	(*p_formula) = NULL;
+	free(p_formula);
 }
  
 

@@ -19,7 +19,6 @@
 #define HISTORY_H
 
 #include <list>
-
 #include "clause.h"
 #include "literal.h"
 #include "sat.h"
@@ -81,7 +80,7 @@ public:
 	 * @param p_formula
 	 *            the formula in which to replay the operations
 	 */
-	void replay(tGraphe** p_formula);
+	void replay(tGraphe* p_formula);
 
 protected:
 	/**

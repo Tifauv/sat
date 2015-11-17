@@ -19,7 +19,6 @@
 
 #include <iostream>
 #include <log4c.h>
-
 #include "utils.h"
 #include "log.h"
 
@@ -112,28 +111,27 @@ void History::addLiteral(ClauseId p_clauseId, Literal p_literal) {
  * @param p_formula
  *            the formula in which to replay the operations
  */
-void History::replay(tGraphe** p_formula) {
+void History::replay(tGraphe* p_formula) {
 	// Parameters check
-	if (isNull(*p_formula)) {
+	if (isNull(p_formula)) {
 		log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "The formula is NULL.");
-		(*p_formula) = sat_new();
-		log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "New formula created.");
+		return;
 	}
 
 	// Replaying...
 	log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "Replaying the history...");
-	for (auto it = m_steps.begin(); it != m_steps.end(); ++it) {
+	for (auto it = m_steps.begin(); it != m_steps.end(); it = m_steps.erase(it)) {
 		ClauseId clauseId = (*it)->clauseId;
 		std::list<Literal> literals = (*it)->literals;
 
 		switch ((*it)->operation) {
 			case Operation::AddClause:
-				sat_add_clause(*p_formula, clauseId, literals);
+				sat_add_clause(p_formula, clauseId, literals);
 				log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "Added clause %u", clauseId);
 				break;
 
 			case Operation::AddLiteralToClause:
-				sat_add_var_to_cls(*p_formula, clauseId, literals.front());
+				sat_add_var_to_cls(p_formula, clauseId, literals.front());
 				log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "Added %sx%u to clause %u", (literals.front() < 0 ? "¬" : ""), sat_literal_id(literals.front()), clauseId);
 				break;
 
@@ -141,13 +139,12 @@ void History::replay(tGraphe** p_formula) {
 				log4c_category_log(log_history(), LOG4C_PRIORITY_WARN, "An unknown operation code (%u) has been found in the history, skipping.", (*it)->operation);
 		}
 
-		//removeLastStep();
+		// Delete the step
+		delete *it;
 	}
-	clear();
 
 	// Result
 	log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "History replayed.");
-	//sat_see(*p_formula);
 }
 
 
@@ -155,10 +152,7 @@ void History::replay(tGraphe** p_formula) {
  * Removes and frees the last step of the history.
  */
 void History::clear() {
-	while (!m_steps.empty()) {
-		Step* step = m_steps.back();
-		m_steps.pop_back();
-		delete step;
-	}
+	for (auto it = m_steps.begin(); it != m_steps.end(); it = m_steps.erase(it))
+		delete *it;
 	log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "History cleared.");
 }
