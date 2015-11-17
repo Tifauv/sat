@@ -1,8 +1,9 @@
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-include_directories(${CMAKE_CURRENT_INCLUDE_DIR})
+# Declare loc4c as mandatory dependency
+find_package(Log4C REQUIRED)
+include_directories(${LOG4C_INCLUDE_DIRS})
+set(LIBS ${LIBS} ${LOG4C_LIBRARIES})
 
-set (SYSTEM_LIBS log4c)
-
+# The sources of testSat
 set (SRCS
 	literal.cpp
 	interpretation.cpp
@@ -12,6 +13,7 @@ set (SRCS
 	testSat.cpp
 )
 
+# Build testSat
 add_executable (testSat ${SRCS})
 target_compile_options(testSat PRIVATE -Wall -pedantic -std=c++11)
-target_link_libraries (testSat ${SYSTEM_LIBS})
+target_link_libraries (testSat ${LIBS})
