@@ -206,21 +206,6 @@ int dp_reduce(tGraphe** p_formula, Literal p_literal, History* p_history) {
 		switch (dp_reduce_clause(clause, p_literal, (*p_formula), p_history)) {
 		case 3: // Clause vide produite: insatisfiable
 			log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "The produced clause is unsatisfiable.");
-			
-			/*
-			// Sauvegarde des modifs dans l'historique
-			log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "Dumping the current formula to the history.");
-			clause2 = (*p_formula)->clauses;
-			while (clause2) {
-				p_history->addClause(clause2); 
-				log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "Clause %u added to the history.", clause2->indCls);
-				clause2 = clause2->suiv;
-			}
-			
-			// Suppression du graphe
-			log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "Deleting the current formula.");
-			sat_free(p_formula);
-			*/
 			rc = 1;
 			
 			// Pour sortir du while
