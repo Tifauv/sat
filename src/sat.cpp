@@ -219,7 +219,7 @@ int sat_get_sign(tVar* p_litteral, ClauseId p_clauseId) {
 	tPtVarSgn* ps = p_litteral->clsPos;
 	while (ps) {
 		if (ps->clause->indCls == p_clauseId)
-			return 1;
+			return SIGN_POSITIVE;
 		ps = ps->suiv;
 	}
 
@@ -227,7 +227,7 @@ int sat_get_sign(tVar* p_litteral, ClauseId p_clauseId) {
 	ps = p_litteral->clsNeg;
 	while (ps) {
 		if (ps->clause->indCls == p_clauseId)
-			return -1;
+			return SIGN_NEGATIVE;
 		ps = ps->suiv;
 	}
 
@@ -394,11 +394,11 @@ int sat_sub_var_in_cls(tPtVar* pPtVar, int p_literalSign, tClause* p_clause, tGr
 
 			// Suppr lien Var-> cls
 			switch (p_literalSign) {
-			case 1:
+			case SIGN_POSITIVE:
 				lVarSgn = lPtVar->suiv->var->clsPos;
 				break;
 			
-			case -1:
+			case SIGN_NEGATIVE:
 				lVarSgn = lPtVar->suiv->var->clsNeg;
 				break;
 			
@@ -409,31 +409,32 @@ int sat_sub_var_in_cls(tPtVar* pPtVar, int p_literalSign, tClause* p_clause, tGr
 
 			// II/ Suppression du lien Variable -> Clause -------------------------
 			if (isNull(lVarSgn)) {
-				fprintf(stderr, "      Waouu: Le littéral %sx%u n'est pas utilisé.\n", (p_literalSign == -1 ? "¬" : ""), lPtVar->suiv->var->indVar);
+				fprintf(stderr, "      Waouu: Le littéral %sx%u n'est pas utilisé.\n", (p_literalSign == SIGN_NEGATIVE ? "¬" : ""), lPtVar->suiv->var->indVar);
 				return 2;
 			}
 
 			if (lVarSgn->clause == p_clause) { // teste si la première clause correspond
 				// Chaînage de la précédente avec la suivante
-				if (p_literalSign == 1) // Chaînage des positifs
+				if (p_literalSign == SIGN_POSITIVE) // Chaînage des positifs
 					lPtVar->suiv->var->clsPos = lVarSgn->suiv;
 				else
 					lPtVar->suiv->var->clsNeg = lVarSgn->suiv;
 				// Libération de la cellule de la variable
 				free(lVarSgn);
-				fprintf(stderr, "      Lien littéral %sx%u -> clause %u détruit.\n", (p_literalSign == -1 ? "¬" : ""), lPtVar->suiv->var->indVar, p_clause->indCls);
+				fprintf(stderr, "      Lien littéral %sx%u -> clause %u détruit.\n", (p_literalSign == SIGN_NEGATIVE ? "¬" : ""), lPtVar->suiv->var->indVar, p_clause->indCls);
 			}
 			else { // la clause n'est pas la première
 				lVarSgn = sat_get_ptr_varSgn(lVarSgn, p_clause);
 				if (notNull(lVarSgn)) { // cellule trouvée
+					tPtVarSgn* toDelete = lVarSgn->suiv;
 					// Lien préc <-> suiv
 					lVarSgn->suiv = lVarSgn->suiv->suiv;
 					// Libération de la cellule
-					free(lVarSgn->suiv);
-					fprintf(stderr, "      Lien littéral %sx%u -> clause %u détruit.\n", (p_literalSign == -1 ? "¬" : ""), lPtVar->suiv->var->indVar, p_clause->indCls);
+					free(toDelete);
+					fprintf(stderr, "      Lien littéral %sx%u -> clause %u détruit.\n", (p_literalSign == SIGN_NEGATIVE ? "¬" : ""), lPtVar->suiv->var->indVar, p_clause->indCls);
 				}
 				else {
-					fprintf(stderr, "      Waouu: Pas de lien littéral %sx%u -> clause %u trouvé.\n", (p_literalSign == -1 ? "¬" : ""), lPtVar->suiv->var->indVar, p_clause->indCls);
+					fprintf(stderr, "      Waouu: Pas de lien littéral %sx%u -> clause %u trouvé.\n", (p_literalSign == SIGN_NEGATIVE ? "¬" : ""), lPtVar->suiv->var->indVar, p_clause->indCls);
 					return 3;
 				}
 			}
