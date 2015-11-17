@@ -2,7 +2,7 @@
 	"name": "SAT",
 	"files": [ { "git": 1 } ],
 	"build": {
-		"build": "make all",
-		"clean": "make clean"
+		"build": "./build.sh",
+		"clean": "./clean.sh"
 	}
 }
