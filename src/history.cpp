@@ -17,7 +17,6 @@
 */
 #include "history.h"
 
-#include <iostream>
 #include <log4c.h>
 #include "utils.h"
 #include "log.h"
