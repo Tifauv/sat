@@ -288,7 +288,7 @@ int dp_reduce_clause(tClause* p_clause, Literal p_literal, tGraphe* p_formula, H
 			}
 			
 			else { // polarité contraire: on vire le littéral de la clause
-				fprintf(stderr, "    opposite literal %sx%d found in the clause.\n", (p_literal >= 0 ? "¬" : ""), sat_literal_id(p_literal));
+				fprintf(stderr, "    opposite literal %sx%u found in the clause.\n", (p_literal >= 0 ? "¬" : ""), sat_literal_id(p_literal));
 
 				// Enregistrement de la suppression dans l'historique
 				log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "Saving literal %sx%u of clause %u in the history.", (p_literal >= 0 ? "¬" : ""), sat_literal_id(p_literal), p_clause->indCls);
@@ -301,7 +301,7 @@ int dp_reduce_clause(tClause* p_clause, Literal p_literal, tGraphe* p_formula, H
 			}
 		}
 		else {
-			fprintf(stderr, "    literal x%d not found in the clause.\n", sat_literal_id(p_literal));
+			fprintf(stderr, "    literal x%u not found in the clause.\n", sat_literal_id(p_literal));
 			literal_iterator = literal_iterator->suiv;
 		}
 	}

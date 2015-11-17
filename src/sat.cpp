@@ -84,7 +84,7 @@ void sat_lnk_clsVar(tClause* p_clause, tVar* p_litteral, int p_literalSign) {
 
 	//I) Lien Var --> Clause
 	// Création de la cellule
-	ps = (tPtVarSgn *) malloc(sizeof(tPtVarSgn));
+	ps = (tPtVarSgn*) malloc(sizeof(tPtVarSgn));
 
 	// Lien de la variable vers la clause
 	ps->clause = p_clause;
@@ -100,7 +100,7 @@ void sat_lnk_clsVar(tClause* p_clause, tVar* p_litteral, int p_literalSign) {
 
 	//II) Lien Clause --> Var
 	// Création de la cellule
-	pv = (tPtVar *) malloc(sizeof(tPtVar));
+	pv = (tPtVar*) malloc(sizeof(tPtVar));
 
 	// Lien de la clause vers la variable
 	pv->var = p_litteral;
