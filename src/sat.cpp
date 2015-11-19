@@ -361,7 +361,7 @@ int sat_sub_var(tGraphe* p_formula, LiteralId p_literalId) {
 
 
 // Supprime une variable dans une clause
-int sat_sub_var_in_cls(tPtVar* pPtVar, int p_literalSign, tClause* p_clause, tGraphe* p_formula) {
+int sat_sub_var_in_cls(Literal p_literal, tClause* p_clause, tGraphe* p_formula) {
 	// Parameters check
 	if (isNull(p_clause)) {
 		log4c_category_log(log_formula(), LOG4C_PRIORITY_ERROR, "The clause pointer is NULL.");
@@ -374,7 +374,7 @@ int sat_sub_var_in_cls(tPtVar* pPtVar, int p_literalSign, tClause* p_clause, tGr
 	}
 
 	// Premier à supprimer 
-	if (p_clause->vars == pPtVar) {
+	if (p_clause->vars->var->indVar == sat_literal_id(p_literal)) {
 		// Défait les liens et tout et tout
 		sat_unlnk_cls_var(p_formula, p_clause);
 
@@ -391,11 +391,11 @@ int sat_sub_var_in_cls(tPtVar* pPtVar, int p_literalSign, tClause* p_clause, tGr
 	// Recherche du pointeur sur la variable
 	tPtVar* lPtVar = p_clause->vars;
 	while (lPtVar->suiv) {
-		if (lPtVar->suiv == pPtVar) {
+		if (lPtVar->suiv->var->indVar == sat_literal_id(p_literal)) {
 			tPtVarSgn* lVarSgn;
 
 			// Suppr lien Var-> cls
-			switch (p_literalSign) {
+			switch (sat_literal_sign(p_literal)) {
 			case SIGN_POSITIVE:
 				lVarSgn = lPtVar->suiv->var->clsPos;
 				break;
@@ -405,25 +405,25 @@ int sat_sub_var_in_cls(tPtVar* pPtVar, int p_literalSign, tClause* p_clause, tGr
 				break;
 			
 			default:
-				log4c_category_log(log_formula(), LOG4C_PRIORITY_ERROR, "The requested sign (%d) is not valid. Should be either 1 (positive) or -1 (negative).", p_literalSign);
+				log4c_category_log(log_formula(), LOG4C_PRIORITY_ERROR, "The requested sign (%d) is not valid. Should be either 1 (positive) or -1 (negative).", sat_literal_sign(p_literal));
 				return 1;
 			}
 
 			// II/ Suppression du lien Variable -> Clause -------------------------
 			if (isNull(lVarSgn)) {
-				log4c_category_log(log_formula(), LOG4C_PRIORITY_WARN, "The literal %sx%u is unused.", (p_literalSign == SIGN_NEGATIVE ? "¬" : ""), lPtVar->suiv->var->indVar);
+				log4c_category_log(log_formula(), LOG4C_PRIORITY_WARN, "The literal %sx%u is unused.", (sat_literal_sign(p_literal) == SIGN_NEGATIVE ? "¬" : ""), lPtVar->suiv->var->indVar);
 				return 2;
 			}
 
 			if (lVarSgn->clause == p_clause) { // teste si la première clause correspond
 				// Chaînage de la précédente avec la suivante
-				if (p_literalSign == SIGN_POSITIVE) // Chaînage des positifs
+				if (sat_literal_sign(p_literal) == SIGN_POSITIVE) // Chaînage des positifs
 					lPtVar->suiv->var->clsPos = lVarSgn->suiv;
 				else
 					lPtVar->suiv->var->clsNeg = lVarSgn->suiv;
 				// Libération de la cellule de la variable
 				free(lVarSgn);
-				log4c_category_log(log_formula(), LOG4C_PRIORITY_DEBUG, "Link literal %sx%u -> clause %u removed.", (p_literalSign == SIGN_NEGATIVE ? "¬" : ""), lPtVar->suiv->var->indVar, p_clause->indCls);
+				log4c_category_log(log_formula(), LOG4C_PRIORITY_DEBUG, "Link literal %sx%u -> clause %u removed.", (sat_literal_sign(p_literal) == SIGN_NEGATIVE ? "¬" : ""), lPtVar->suiv->var->indVar, p_clause->indCls);
 			}
 			else { // la clause n'est pas la première
 				lVarSgn = sat_get_ptr_varSgn(lVarSgn, p_clause);
@@ -433,10 +433,10 @@ int sat_sub_var_in_cls(tPtVar* pPtVar, int p_literalSign, tClause* p_clause, tGr
 					lVarSgn->suiv = lVarSgn->suiv->suiv;
 					// Libération de la cellule
 					free(toDelete);
-					log4c_category_log(log_formula(), LOG4C_PRIORITY_DEBUG, "Link literal %sx%u -> clause %u removed.", (p_literalSign == SIGN_NEGATIVE ? "¬" : ""), lPtVar->suiv->var->indVar, p_clause->indCls);
+					log4c_category_log(log_formula(), LOG4C_PRIORITY_DEBUG, "Link literal %sx%u -> clause %u removed.", (sat_literal_sign(p_literal) == SIGN_NEGATIVE ? "¬" : ""), lPtVar->suiv->var->indVar, p_clause->indCls);
 				}
 				else {
-					log4c_category_log(log_formula(), LOG4C_PRIORITY_WARN, "No link literal %sx%u -> clause %u.", (p_literalSign == SIGN_NEGATIVE ? "¬" : ""), lPtVar->suiv->var->indVar, p_clause->indCls);
+					log4c_category_log(log_formula(), LOG4C_PRIORITY_WARN, "No link literal %sx%u -> clause %u.", (sat_literal_sign(p_literal) == SIGN_NEGATIVE ? "¬" : ""), lPtVar->suiv->var->indVar, p_clause->indCls);
 					return 3;
 				}
 			}
@@ -669,29 +669,39 @@ int sat_sub_clause(tGraphe* p_formula, ClauseId p_clauseId) {
 }
 
 
-// Renvoie la variable de la première clause unitaire trouvée
+// Renvoie le litéral de la première clause unitaire trouvée
 //  0 si non trouvée
-int sat_get_var_cls_unit(tGraphe* p_formula) {
+Literal sat_find_literal_from_unary_clause(tGraphe* p_formula) {
 	// Parameters check
 	if (isNull(p_formula)) {
 		log4c_category_log(log_formula(), LOG4C_PRIORITY_ERROR, "The formula pointer is NULL.");
-		return 1;
+		return 0;
 	}
-
+	
 	// Recherche...
 	tClause* clause = p_formula->clauses;
-	while (clause) {
-		if (isNull(clause->vars))
-			log4c_category_log(log_formula(), LOG4C_PRIORITY_WARN, "The clause %u is empty.", clause->indCls);
-		else if (isNull(clause->vars->suiv)) {
-			int rslt = sat_get_sign(clause->vars->var, clause->indCls) * clause->vars->var->indVar;
-			log4c_category_log(log_formula(), LOG4C_PRIORITY_ERROR, "The clause %u (%sx%u) is unitary.", clause->indCls, (rslt < 0 ? "¬" : ""), sat_literal_id(rslt));
-			return rslt;
+	while (notNull(clause)) {
+		if (notNull(clause->vars) && isNull(clause->vars->suiv)) {
+			int sign = sat_get_sign(clause->vars->var, clause->indCls);
+			log4c_category_log(log_formula(), LOG4C_PRIORITY_INFO, "The clause %u is unary.", clause->indCls);
+			return sign * clause->vars->var->indVar;
 		}
-		else {
-			log4c_category_log(log_formula(), LOG4C_PRIORITY_ERROR, "The clause %u is not unitary.", clause->indCls);
-			clause = clause->suiv;
-		}
+		
+		log4c_category_log(log_formula(), LOG4C_PRIORITY_DEBUG, "The clause %u is not unary.", clause->indCls);
+		clause = clause->suiv;
+	}
+	
+	return 0;
+}
+
+
+// Renvoie le premier litéral trouvé
+//  0 si non trouvée
+Literal sat_get_first_literal(tGraphe* p_formula) {
+	// Parameters check
+	if (isNull(p_formula)) {
+		log4c_category_log(log_formula(), LOG4C_PRIORITY_ERROR, "The formula pointer is NULL.");
+		return 0;
 	}
 
 	// Pas de clause unitaire trouvée
@@ -699,15 +709,18 @@ int sat_get_var_cls_unit(tGraphe* p_formula) {
 		log4c_category_log(log_formula(), LOG4C_PRIORITY_ERROR, "No more literals in the formula.");
 		return 0;
 	}
-	tVar* lVar = p_formula->vars;
-	if (isNull(lVar->clsPos)) {
-		if (isNull(lVar->clsNeg)) {
-			log4c_category_log(log_formula(), LOG4C_PRIORITY_ERROR, "The literal x%u is unused (not linked to any clause).", lVar->indVar);
+
+	// Recherche...
+	int sign;
+	tVar* first_literal = p_formula->vars;
+	if (isNull(first_literal->clsPos)) {
+		if (isNull(first_literal->clsNeg))
 			return 0;
-		}
-		else
-			return -lVar->indVar;
+		
+		sign = SIGN_NEGATIVE;
 	}
 	else
-		return lVar->indVar;
+		sign = SIGN_POSITIVE;
+
+	return sign * first_literal->indVar;
 }

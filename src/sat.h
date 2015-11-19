@@ -97,7 +97,7 @@ void sat_see(tGraphe* p_formula);
 int sat_sub_var(tGraphe* p_formula, LiteralId p_literalId);
 
 // Supprime une variable dans une clause
-int sat_sub_var_in_cls(tPtVar* pPtVar, int p_literalSign, tClause* p_clause, tGraphe* p_formula);
+int sat_sub_var_in_cls(Literal p_literal, tClause* p_clause, tGraphe* p_formula);
 
 // Renvoie le pointeur sur la cellule de la variable pointant sur la clause
 tPtVarSgn* sat_get_ptr_varSgn(tPtVarSgn* p_signedLiteral, tClause* p_clause);
@@ -111,8 +111,12 @@ int sat_unlnk_cls_var(tGraphe* p_formula, tClause* p_clause);
 // Supprime une clause
 int sat_sub_clause(tGraphe* p_formula, ClauseId p_clauseId);
 
-// Renvoie la variable de la première clause unitaire trouvée
+// Renvoie le litéral de la première clause unitaire trouvée
 //  0 si non trouvée
-int sat_get_var_cls_unit(tGraphe* p_formula);
+Literal sat_find_literal_from_unary_clause(tGraphe* p_formula);
+
+// Renvoie le premier litéral trouvé
+//  0 si non trouvée
+Literal sat_get_first_literal(tGraphe* p_formula);
 
 #endif // FORMULA_H

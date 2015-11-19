@@ -36,14 +36,14 @@ void dp_main(tGraphe* p_formula, Interpretation* p_intr);
 
 
 /**
- * Chooses a literal to be used for the reduction phase.
+ * Selects a literal to be used for the reduction phase.
  * 
  * @param p_formula
  *            the SAT formula
  * 
  * @return the literal
  */
-Literal dp_choose_literal(tGraphe* p_formula);
+Literal dp_select_literal(tGraphe* p_formula);
 
 
 /**
@@ -62,27 +62,5 @@ Literal dp_choose_literal(tGraphe* p_formula);
  *          1 if an unsatisfiable clause was produced
  */
 int dp_reduce(tGraphe* p_formula, Literal p_literal, History& p_history);
-
-
-/**
- * Reduces the clause of a formula using a literal.
- * The history is used for backtracking.
- * 
- * @param p_clause
- *            the clause to reduce
- * @param p_literal
- *            the literal used to reduce the clause
- * @param p_formula
- *            the formula containing the clause
- * @param p_history
- *            the backtracking history
- * 
- * @return  3 if an empty clause has been produced,
- *          2 if the clause was modified but is not empty,
- *          1 if the clause was removed from the formula,
- *          0 nothing happened,
- *         -1 if the given clause is NULL,
- */
-int dp_reduce_clause(tClause* p_clause, Literal p_literal, tGraphe* p_formula, History& p_history);
 
 #endif // DAVIS_PUTNAM_H

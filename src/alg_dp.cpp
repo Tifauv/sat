@@ -83,7 +83,7 @@ void dp_main(tGraphe* p_formula, Interpretation* p_interpretation) {
 	 * Choose the reduction literal.
 	 * This is the crucial step, performance-wise.
 	 */
-	Literal chosen_literal = dp_choose_literal(p_formula);
+	Literal chosen_literal = dp_select_literal(p_formula);
 
 	/*
 	 * First reduction with the chosen literal.
@@ -117,7 +117,7 @@ void dp_main(tGraphe* p_formula, Interpretation* p_interpretation) {
 	sat_see(p_formula);
 	p_interpretation->setSatisfiable();
 	p_interpretation->log();
- 
+
 	// Seconde réduction et test du résultat
 	log4c_category_log(log_dpll(), LOG4C_PRIORITY_DEBUG, "Second reduction attempt...");
 	rc = dp_reduce(p_formula, -chosen_literal, history);
@@ -163,8 +163,14 @@ void dp_main(tGraphe* p_formula, Interpretation* p_interpretation) {
  * 
  * @return the literal
  */
-Literal dp_choose_literal(tGraphe* p_formula) {
-	return sat_get_var_cls_unit(p_formula);
+Literal dp_select_literal(tGraphe* p_formula) {
+	// Search a literal from a unitary clause
+	Literal chosen_literal = sat_find_literal_from_unary_clause(p_formula);
+	if (chosen_literal != 0)
+		return chosen_literal;
+
+	// If there is no unitary clause
+	return sat_get_first_literal(p_formula);
 }
 
 
@@ -192,95 +198,69 @@ int dp_reduce(tGraphe* p_formula, Literal p_literal, History& p_history) {
 	log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "Reduction using literal %sx%u...", (p_literal < 0 ? "¬" : ""), sat_literal_id(p_literal));
 	int rc = 0;
 
-	tClause* clause = p_formula->clauses;
-	while (clause) {
-		tClause* nextClause = clause->suiv;
-		switch (dp_reduce_clause(clause, p_literal, p_formula, p_history)) {
-		case 3: // Clause vide produite: insatisfiable
+	// Retrieve the literal cell
+	tVar* literalPtr = p_formula->vars;
+	while (notNull(literalPtr) && literalPtr->indVar != sat_literal_id(p_literal))
+		literalPtr = literalPtr->suiv;
+	if (literalPtr == NULL)
+		return 0;
+
+	// Remove the clauses that contain the same sign as the given literal
+	log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "Removing clauses that contain the literal %sx%u...", (p_literal < 0 ? "¬" : ""), sat_literal_id(p_literal));
+	tPtVarSgn* clausePtr = NULL;
+	if (sat_literal_sign(p_literal) == SIGN_POSITIVE)
+		clausePtr = literalPtr->clsPos;
+	else
+		clausePtr = literalPtr->clsNeg;
+	while (notNull(clausePtr)) {
+		tClause* clause = clausePtr->clause;
+		tPtVarSgn* nextClausePtr = clausePtr->suiv;
+
+		// Enregistrement de la suppression dans l'historique
+		log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "Saving clause %u in the history.", clause->indCls);
+		p_history.addClause(clause);
+
+		// Suppression de la clause
+		log4c_category_log(log_dpll(), LOG4C_PRIORITY_DEBUG, "Removing clause %u.", clause->indCls);
+		sat_sub_clause(p_formula, clause->indCls);
+
+		// Next
+		clausePtr = nextClausePtr;
+	}
+
+	// Retrieve the literal cell
+	literalPtr = p_formula->vars;
+	while (notNull(literalPtr) && literalPtr->indVar != sat_literal_id(p_literal))
+		literalPtr = literalPtr->suiv;
+	if (literalPtr == NULL)
+		return 0;
+	
+	// Remove the literal from the clauses that contain the oposite sign
+	log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "Removing literal %sx%u from the clauses.", (p_literal > 0 ? "¬" : ""), sat_literal_id(p_literal));
+	if (sat_literal_sign(p_literal) == SIGN_NEGATIVE)
+		clausePtr = literalPtr->clsPos;
+	else
+		clausePtr = literalPtr->clsNeg;
+	while (notNull(clausePtr)) {
+		tClause* clause = clausePtr->clause;
+		tPtVarSgn* nextClausePtr = clausePtr->suiv;
+
+		// Record the removal of the literal in the history
+		log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "Saving literal %sx%u of clause %u in the history.", (p_literal > 0 ? "¬" : ""), sat_literal_id(p_literal), clause->indCls);
+		p_history.addLiteral(clause->indCls, -p_literal);
+
+		// Remove the literal from the clause
+		// returns: 2 if the clause is not empty
+		//          3 if the clause is empty (unsatisfiable)
+		if (sat_sub_var_in_cls(-p_literal, clause, p_formula) == 3) {
 			log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "The produced clause is unsatisfiable.");
 			rc = 1;
-			
-			// Pour sortir du while
-			clause = NULL;
 			break;
-		
-		case 1:
-			clause = nextClause;
-			break;
-			
-		default:
-			clause = clause->suiv;
 		}
+
+		// Next
+		clausePtr = nextClausePtr;
 	}
 
 	return rc;
-}
-
-
-/**
- * Reduces the clause of a formula using a literal.
- * The history is used for backtracking.
- * 
- * @param p_clause
- *            the clause to reduce
- * @param p_literal
- *            the literal used to reduce the clause
- * @param p_formula
- *            the formula containing the clause
- * @param p_history
- *            the backtracking history
- * 
- * @return  3 if an empty clause has been produced,
- *          2 if the clause was modified but is not empty,
- *          1 if the clause was removed from the formula,
- *          0 nothing happened,
- *         -1 if the given clause is NULL,
- */
-int dp_reduce_clause(tClause* p_clause, Literal p_literal, tGraphe* p_formula, History& p_history) {
-	/* Parameter checking */
-	if (isNull(p_clause)) {
-		log4c_category_log(log_dpll(), LOG4C_PRIORITY_DEBUG, "The clause pointer is NULL.");
-		return -1;
-	}
-
-	log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "Reducing clause %u by %sx%u.", p_clause->indCls, (p_literal < 0 ? "¬" : ""), sat_literal_id(p_literal));
-	sat_see(p_formula);
-
-	tPtVar* literal_iterator = p_clause->vars;
-	while (literal_iterator) {
-		if (literal_iterator->var->indVar == sat_literal_id(p_literal)) {
-			
-			/* Test de polarité */
-			if (sat_literal_sign(p_literal) == sat_get_sign(literal_iterator->var, p_clause->indCls)) {
-				// même polarité: on vire la clause
-				log4c_category_log(log_dpll(), LOG4C_PRIORITY_DEBUG, "Literal %sx%u found in the clause.", (p_literal < 0 ? "¬" : ""), sat_literal_id(p_literal));
-
-				// Enregistrement de la suppression dans l'historique
-				log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "Saving clause %u in the history.", p_clause->indCls);
-				p_history.addClause(p_clause);
-
-				// Suppression de la clause
-				sat_sub_clause(p_formula, p_clause->indCls);
-				return 1;
-			}
-			
-			else { // polarité contraire: on vire le littéral de la clause
-				log4c_category_log(log_dpll(), LOG4C_PRIORITY_DEBUG, "Oposite literal %sx%u found in the clause.", (p_literal > 0 ? "¬" : ""), sat_literal_id(p_literal));
-
-				// Enregistrement de la suppression dans l'historique
-				log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "Saving literal %sx%u of clause %u in the history.", (p_literal >= 0 ? "¬" : ""), sat_literal_id(p_literal), p_clause->indCls);
-				p_history.addLiteral(p_clause->indCls, literal_iterator->var->indVar * (-sat_literal_sign(p_literal)));
-
-				// Suppression de la chosen_literal de la clause
-				// retourne: 2 si la clause est non vide (après traitement)
-				//           3 si elle est vide (insatisfiable).
-				return sat_sub_var_in_cls(literal_iterator, -sat_literal_sign(p_literal), p_clause, p_formula);
-			}
-		}
-		else {
-			log4c_category_log(log_dpll(), LOG4C_PRIORITY_DEBUG, "Literal x%u not found in the clause.", sat_literal_id(p_literal));	
-			literal_iterator = literal_iterator->suiv;
-		}
-	}
-	return 0;
 }
