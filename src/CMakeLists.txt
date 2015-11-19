@@ -3,17 +3,34 @@ find_package(Log4C REQUIRED)
 include_directories(${LOG4C_INCLUDE_DIRS})
 set(LIBS ${LIBS} ${LOG4C_LIBRARIES})
 
-# The sources of testSat
-set (SRCS
+# The sources of libSat
+set (LIBSAT_SRCS
 	literal.cpp
 	interpretation.cpp
 	history.cpp
 	sat.cpp
 	alg_dp.cpp
+)
+
+# The sources of solveSat
+set (SOLVESAT_SRCS
+	${LIBSAT_SRCS}
 	testSat.cpp
 )
 
-# Build testSat
-add_executable (testSat ${SRCS})
-target_compile_options(testSat PRIVATE -Wall -pedantic -std=c++11)
-target_link_libraries (testSat ${LIBS})
+# The sources of checkSat
+set (CHECKSAT_SRCS
+	${LIBSAT_SRCS}
+	checkSat.cpp
+)
+
+# Build solveSat
+add_executable (solveSat ${SOLVESAT_SRCS})
+target_compile_options(solveSat PRIVATE -Wall -pedantic -std=c++11)
+target_link_libraries (solveSat ${LIBS})
+
+# Build checkSat
+add_executable (checkSat ${CHECKSAT_SRCS})
+target_compile_options(checkSat PRIVATE -Wall -pedantic -std=c++11)
+target_link_libraries (checkSat ${LIBS})
+
