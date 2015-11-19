@@ -73,7 +73,7 @@ tGraphe* sat_new();
 void sat_free(tGraphe* p_formula);
 
 // Teste si une variable existe
-tVar* sat_ex_var(tGraphe* p_formula, LiteralId p_literalId);
+tVar* sat_ex_var(tGraphe& p_formula, LiteralId p_literalId);
 
 // Lie une variable à une clause et inversement
 void sat_lnk_clsVar(tClause* p_clause, tVar* p_literal, int p_literalSignVar);
@@ -82,13 +82,13 @@ void sat_lnk_clsVar(tClause* p_clause, tVar* p_literal, int p_literalSignVar);
 int sat_get_sign(tVar* p_literal, ClauseId p_clauseId);
 
 // Crée et ajoute une variable à la liste des variables
-tVar* sat_add_var(tGraphe* p_formula, LiteralId p_literalId);
+tVar* sat_add_var(tGraphe& p_formula, LiteralId p_literalId);
 
 // Ajoute une variable à une clause
-int sat_add_var_to_cls(tGraphe* p_formula, ClauseId p_clauseId, Literal p_literal);
+int sat_add_var_to_cls(tGraphe& p_formula, ClauseId p_clauseId, Literal p_literal);
 
 // Ajoute une clause à un graphe
-int sat_add_clause(tGraphe* p_formula, ClauseId p_clauseId, std::list<Literal>& p_literals);
+int sat_add_clause(tGraphe& p_formula, ClauseId p_clauseId, std::list<Literal>& p_literals);
 
 // Affiche les clauses
 void sat_log(tGraphe& p_formula);

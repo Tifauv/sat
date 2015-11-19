@@ -55,12 +55,12 @@ void sat_free(tGraphe* p_formula) {
  
 
 // Renvoie le pointeur sur une variable, NULL si elle n'existe pas ------------
-tVar* sat_ex_var(tGraphe *p_formula, LiteralId p_literalId) {
+tVar* sat_ex_var(tGraphe& p_formula, LiteralId p_literalId) {
 	tVar* lVar;
 	int trouve = 0;
 
 	// Recherche
-	lVar = p_formula->vars;
+	lVar = p_formula.vars;
 	while (notNull(lVar) && (trouve == 0)) {
 		if (lVar->indVar == p_literalId)
 			trouve = 1;
@@ -116,7 +116,7 @@ void sat_lnk_clsVar(tClause* p_clause, tVar* p_litteral, int p_literalSign) {
 
 
 // Ajoute une variable au graphe ----------------------------------------------
-tVar* sat_add_var(tGraphe* p_formula, LiteralId p_literalId) {
+tVar* sat_add_var(tGraphe& p_formula, LiteralId p_literalId) {
 	// Création de var
 	tVar* var = (tVar*) malloc(sizeof(tVar));
 
@@ -128,8 +128,8 @@ tVar* sat_add_var(tGraphe* p_formula, LiteralId p_literalId) {
 	log4c_category_log(log_formula(), LOG4C_PRIORITY_DEBUG, "Literal x%u created.", p_literalId);
 
 	// Chaînage
-	var->suiv = p_formula->vars;
-	p_formula->vars = var;
+	var->suiv = p_formula.vars;
+	p_formula.vars = var;
 		log4c_category_log(log_formula(), LOG4C_PRIORITY_DEBUG, "Literal x%u added.", p_literalId);
 
 	return var;
@@ -137,14 +137,9 @@ tVar* sat_add_var(tGraphe* p_formula, LiteralId p_literalId) {
 
 
 // Ajoute une variable à une clause
-int sat_add_var_to_cls(tGraphe* p_formula, ClauseId p_clauseId, Literal p_literal) {
-	if (isNull(p_formula)) {
-		log4c_category_log(log_formula(), LOG4C_PRIORITY_ERROR, "The formula pointer is NULL.");
-		return -1;
-	}
-
+int sat_add_var_to_cls(tGraphe& p_formula, ClauseId p_clauseId, Literal p_literal) {
 	// I) Recherche de la clause...
-	tClause* clause = p_formula->clauses;
+	tClause* clause = p_formula.clauses;
 	while (clause && (clause->indCls != p_clauseId))
 		clause = clause->suiv;
 	
@@ -170,7 +165,7 @@ int sat_add_var_to_cls(tGraphe* p_formula, ClauseId p_clauseId, Literal p_litera
 
 
 // Ajoute une clause à un graphe ----------------------------------------------
-int sat_add_clause(tGraphe* p_formula, ClauseId p_clauseId, std::list<Literal>& p_literals) {
+int sat_add_clause(tGraphe& p_formula, ClauseId p_clauseId, std::list<Literal>& p_literals) {
 	// Parameters check
 	if (p_literals.empty()) {
 		log4c_category_log(log_formula(), LOG4C_PRIORITY_ERROR, "Attempting to add an empty clause.");
@@ -202,8 +197,8 @@ int sat_add_clause(tGraphe* p_formula, ClauseId p_clauseId, std::list<Literal>& 
 	log4c_category_log(log_formula(), LOG4C_PRIORITY_DEBUG, "Clause %u initialized.", p_clauseId);
 	
 	// Chaînage des clauses
-	clause->suiv = p_formula->clauses;
-	p_formula->clauses = clause;
+	clause->suiv = p_formula.clauses;
+	p_formula.clauses = clause;
 	log4c_category_log(log_formula(), LOG4C_PRIORITY_DEBUG, "Clause %u added.", p_clauseId);
 
 	return 0;

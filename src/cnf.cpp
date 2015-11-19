@@ -152,7 +152,7 @@ void cnf_load_problem(char* p_filename, tGraphe& p_formula) {
 		// Transformation string -> tab
 		std::list<Literal>* literals = cnf_parse_clause(str, LN_SIZE);
 
-		if (sat_add_clause(&p_formula, clauseId, *literals))
+		if (sat_add_clause(p_formula, clauseId, *literals))
 			log4c_category_log(log_cnf(), LOG4C_PRIORITY_INFO, "Clause for line %u was not added.", lineNo);
 		else
 			++clauseId;

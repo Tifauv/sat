@@ -119,12 +119,12 @@ void History::replay(tGraphe& p_formula) {
 
 		switch ((*it)->operation) {
 			case Operation::AddClause:
-				sat_add_clause(&p_formula, clauseId, literals);
+				sat_add_clause(p_formula, clauseId, literals);
 				log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "Added clause %u", clauseId);
 				break;
 
 			case Operation::AddLiteralToClause:
-				sat_add_var_to_cls(&p_formula, clauseId, literals.front());
+				sat_add_var_to_cls(p_formula, clauseId, literals.front());
 				log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "Added %sx%u to clause %u", (literals.front() < 0 ? "¬" : ""), sat_literal_id(literals.front()), clauseId);
 				break;
 
