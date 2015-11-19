@@ -17,7 +17,29 @@
 #ifndef CLAUSE_H
 #define CLAUSE_H
 
+#include <list>
+#include "variable.h"
+
 /** A clause identifier. */
 typedef unsigned int ClauseId;
 
+
+/**
+ * Represents a Horn clause of a CNF formula.
+ */
+class Clause {
+public:
+	Clause(ClauseId p_id);
+	~Clause();
+
+private:
+	/** The clause identifier. */
+	ClauseId m_id;
+
+	/** The list of variables. */
+	std::list<Variable*> m_literals;
+
+	/** Tells whether this clause is in the free list. */
+	bool m_isUnused;
+};
 #endif // CLAUSE_H
