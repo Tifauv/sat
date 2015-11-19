@@ -32,7 +32,7 @@
  * @param p_intr
  *            the current interpretation
  */
-void dp_main(tGraphe* p_formula, Interpretation* p_intr); 
+void dp_main(tGraphe& p_formula, Interpretation& p_intr); 
 
 
 /**
@@ -43,7 +43,7 @@ void dp_main(tGraphe* p_formula, Interpretation* p_intr);
  * 
  * @return the literal
  */
-Literal dp_select_literal(tGraphe* p_formula);
+Literal dp_select_literal(tGraphe& p_formula);
 
 
 /**
@@ -61,6 +61,6 @@ Literal dp_select_literal(tGraphe* p_formula);
  *          0 if the reduction was done to the end,
  *          1 if an unsatisfiable clause was produced
  */
-int dp_reduce(tGraphe* p_formula, Literal p_literal, History& p_history);
+int dp_reduce(tGraphe& p_formula, Literal p_literal, History& p_history);
 
 #endif // DAVIS_PUTNAM_H

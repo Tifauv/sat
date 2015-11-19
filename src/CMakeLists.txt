@@ -10,27 +10,32 @@ set (LIBSAT_SRCS
 	history.cpp
 	sat.cpp
 	alg_dp.cpp
+	cnf.cpp
 )
 
 # The sources of solveSat
 set (SOLVESAT_SRCS
-	${LIBSAT_SRCS}
 	solveSat.cpp
 )
 
 # The sources of checkSat
 set (CHECKSAT_SRCS
-	${LIBSAT_SRCS}
 	checkSat.cpp
 )
+
+# Build libSat
+add_library (sat ${LIBSAT_SRCS})
+target_include_directories (sat PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_options(sat PUBLIC -Wall -pedantic -std=c++11)
+target_link_libraries (sat ${LIBS})
 
 # Build solveSat
 add_executable (solveSat ${SOLVESAT_SRCS})
 target_compile_options(solveSat PRIVATE -Wall -pedantic -std=c++11)
-target_link_libraries (solveSat ${LIBS})
+target_link_libraries (solveSat LINK_PUBLIC sat ${LIBS})
 
 # Build checkSat
 add_executable (checkSat ${CHECKSAT_SRCS})
 target_compile_options(checkSat PRIVATE -Wall -pedantic -std=c++11)
-target_link_libraries (checkSat ${LIBS})
+target_link_libraries (checkSat LINK_PUBLIC sat ${LIBS})
 

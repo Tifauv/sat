@@ -43,7 +43,7 @@ void sat_free(tGraphe* p_formula) {
 	// Suppression des clauses une à une
 	tClause* clause = p_formula->clauses;
 	while (clause) {
-		sat_sub_clause(p_formula, clause->indCls);
+		sat_sub_clause(*p_formula, clause->indCls);
 		clause = p_formula->clauses;
 	}
 
@@ -240,15 +240,9 @@ int sat_get_sign(tVar* p_litteral, ClauseId p_clauseId) {
 
 
 // Affiche les clauses d'un graphe --------------------------------------------
-void sat_see(tGraphe* p_formula) {
-	// Parameters check
-	if (isNull(p_formula)) {
-		log4c_category_log(log_formula(), LOG4C_PRIORITY_ERROR, "The formula pointer is NULL.");
-		return;
-	}
-
+void sat_log(tGraphe& p_formula) {
 	// Initialisation de pc
-	tClause* pc = p_formula->clauses;
+	tClause* pc = p_formula.clauses;
 	log4c_category_log(log_formula(), LOG4C_PRIORITY_DEBUG, "Clauses = {");
 
 	// Parcours des clauses
@@ -277,7 +271,7 @@ void sat_see(tGraphe* p_formula) {
 	log4c_category_log(log_formula(), LOG4C_PRIORITY_DEBUG, "}");
 
 	log4c_category_log(log_formula(), LOG4C_PRIORITY_DEBUG, "Literals = {");
-	tVar* litt_iter = p_formula->vars;
+	tVar* litt_iter = p_formula.vars;
 	while (litt_iter) {
 		// Numéro du litéral
 		std::string line = "   x" + std::to_string(litt_iter->indVar) + " [+ ";
@@ -315,24 +309,18 @@ void sat_see(tGraphe* p_formula) {
 
 
 // Supprime une variable -------------------------------------------
-int sat_sub_var(tGraphe* p_formula, LiteralId p_literalId) {
-	// Parameters check
-	if (isNull(p_formula)) {
-		log4c_category_log(log_formula(), LOG4C_PRIORITY_ERROR, "The formula pointer is NULL, cannot remove a literal.");
-		return -1;
-	}
-
-	if (isNull(p_formula->vars)) {
+int sat_sub_var(tGraphe& p_formula, LiteralId p_literalId) {
+	if (isNull(p_formula.vars)) {
 		log4c_category_log(log_formula(), LOG4C_PRIORITY_ERROR, "The literals list of the formula is empty, cannot remove one.");
 		return 2;
 	}
 
 	// Teste si c'est la première variable
-	tVar* lVar = p_formula->vars;
+	tVar* lVar = p_formula.vars;
 	if (lVar->indVar == p_literalId) {
 		log4c_category_log(log_formula(), LOG4C_PRIORITY_DEBUG, "Removing literal x%u.", lVar->indVar);
 		// Chaînage préc <-> suiv
-		p_formula->vars = lVar->suiv;
+		p_formula.vars = lVar->suiv;
 		// Libération de la variable
 		free(lVar);
 	}
@@ -361,16 +349,11 @@ int sat_sub_var(tGraphe* p_formula, LiteralId p_literalId) {
 
 
 // Supprime une variable dans une clause
-int sat_sub_var_in_cls(Literal p_literal, tClause* p_clause, tGraphe* p_formula) {
+int sat_sub_var_in_cls(Literal p_literal, tClause* p_clause, tGraphe& p_formula) {
 	// Parameters check
 	if (isNull(p_clause)) {
 		log4c_category_log(log_formula(), LOG4C_PRIORITY_ERROR, "The clause pointer is NULL.");
 		return -1;
-	}
-
-	if (isNull(p_formula)) {
-		log4c_category_log(log_formula(), LOG4C_PRIORITY_ERROR, "The formula pointer is NULL.");
-		return -2;
 	}
 
 	// Premier à supprimer 
@@ -574,7 +557,7 @@ int sat_unlnk_varSgn_cls(tVar* p_literal, int p_literalSign, tClause* p_clause) 
 
 
 // Enlève les liens entre une clause et sa première variable
-int sat_unlnk_cls_var(tGraphe* p_formula, tClause* p_clause) {
+int sat_unlnk_cls_var(tGraphe& p_formula, tClause* p_clause) {
 	// Parameters check
 	if (isNull(p_clause)) {
 		log4c_category_log(log_formula(), LOG4C_PRIORITY_ERROR, "The clause is NULL.");
@@ -614,15 +597,9 @@ int sat_unlnk_cls_var(tGraphe* p_formula, tClause* p_clause) {
 
 
 // Enlève les liens entre une clause et toutes ses variables
-int sat_sub_clause(tGraphe* p_formula, ClauseId p_clauseId) {
-	// Parameters check
-	if (isNull(p_formula)) {
-		log4c_category_log(log_formula(), LOG4C_PRIORITY_ERROR, "The formula is NULL, cannot remove a clause.");
-		return 1;
-	}
-
+int sat_sub_clause(tGraphe& p_formula, ClauseId p_clauseId) {
 	// Initialisation
-	tClause* cls = p_formula->clauses;
+	tClause* cls = p_formula.clauses;
 	if (isNull(cls)) {
 		log4c_category_log(log_formula(), LOG4C_PRIORITY_ERROR, "The formula has no clause.");
 		return 2;
@@ -639,7 +616,7 @@ int sat_sub_clause(tGraphe* p_formula, ClauseId p_clauseId) {
 			ptVars = cls->vars;
 		}
 		// On re-chaîne
-		p_formula->clauses = cls->suiv;
+		p_formula.clauses = cls->suiv;
 		// On libère cls
 		free(cls);
 		log4c_category_log(log_formula(), LOG4C_PRIORITY_DEBUG, "Clause %u deleted.", p_clauseId);
@@ -671,15 +648,8 @@ int sat_sub_clause(tGraphe* p_formula, ClauseId p_clauseId) {
 
 // Renvoie le litéral de la première clause unitaire trouvée
 //  0 si non trouvée
-Literal sat_find_literal_from_unary_clause(tGraphe* p_formula) {
-	// Parameters check
-	if (isNull(p_formula)) {
-		log4c_category_log(log_formula(), LOG4C_PRIORITY_ERROR, "The formula pointer is NULL.");
-		return 0;
-	}
-	
-	// Recherche...
-	tClause* clause = p_formula->clauses;
+Literal sat_find_literal_from_unary_clause(tGraphe& p_formula) {
+	tClause* clause = p_formula.clauses;
 	while (notNull(clause)) {
 		if (notNull(clause->vars) && isNull(clause->vars->suiv)) {
 			int sign = sat_get_sign(clause->vars->var, clause->indCls);
@@ -697,22 +667,15 @@ Literal sat_find_literal_from_unary_clause(tGraphe* p_formula) {
 
 // Renvoie le premier litéral trouvé
 //  0 si non trouvée
-Literal sat_get_first_literal(tGraphe* p_formula) {
-	// Parameters check
-	if (isNull(p_formula)) {
-		log4c_category_log(log_formula(), LOG4C_PRIORITY_ERROR, "The formula pointer is NULL.");
-		return 0;
-	}
-
-	// Pas de clause unitaire trouvée
-	if (isNull(p_formula->vars)) {
+Literal sat_get_first_literal(tGraphe& p_formula) {
+	if (isNull(p_formula.vars)) {
 		log4c_category_log(log_formula(), LOG4C_PRIORITY_ERROR, "No more literals in the formula.");
 		return 0;
 	}
 
 	// Recherche...
 	int sign;
-	tVar* first_literal = p_formula->vars;
+	tVar* first_literal = p_formula.vars;
 	if (isNull(first_literal->clsPos)) {
 		if (isNull(first_literal->clsNeg))
 			return 0;

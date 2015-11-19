@@ -110,13 +110,7 @@ void History::addLiteral(ClauseId p_clauseId, Literal p_literal) {
  * @param p_formula
  *            the formula in which to replay the operations
  */
-void History::replay(tGraphe* p_formula) {
-	// Parameters check
-	if (isNull(p_formula)) {
-		log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "The formula is NULL.");
-		return;
-	}
-
+void History::replay(tGraphe& p_formula) {
 	// Replaying...
 	log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "Replaying the history...");
 	for (auto it = m_steps.begin(); it != m_steps.end(); it = m_steps.erase(it)) {
@@ -125,12 +119,12 @@ void History::replay(tGraphe* p_formula) {
 
 		switch ((*it)->operation) {
 			case Operation::AddClause:
-				sat_add_clause(p_formula, clauseId, literals);
+				sat_add_clause(&p_formula, clauseId, literals);
 				log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "Added clause %u", clauseId);
 				break;
 
 			case Operation::AddLiteralToClause:
-				sat_add_var_to_cls(p_formula, clauseId, literals.front());
+				sat_add_var_to_cls(&p_formula, clauseId, literals.front());
 				log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "Added %sx%u to clause %u", (literals.front() < 0 ? "¬" : ""), sat_literal_id(literals.front()), clauseId);
 				break;
 

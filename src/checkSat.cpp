@@ -21,10 +21,7 @@
 #include <log4c.h>
 #include <list>
 
-#include "sat.h"
-#include "alg_dp.h"
-#include "utils.h"
-#include "log.h"
+#include "cnf.h"
 
 using namespace std;
 
@@ -35,227 +32,6 @@ void usage() {
 	cout << "Usage: checkSat <cnf_file> <sat_file>" << endl;
 	cout << "    <cnf_file>  a CNF problem" << endl;
 	cout << "    <sat_file>  a CNF solution" << endl;
-}
-
-
-/**
- * Searches a literal in a list of literals.
- * 
- * @param p_literal
- *            the literal to search
- * @param p_literals
- *            the list of literals
- * 
- * @return -1 if -p_literal appears in p_literals
- *          0 if p_literal does not appear in p_literals
- *          1 if p_literal appears in p_literals
- */
-// Test si la variable actuelle du tableau n'a pas déjà été trouvée
-int cnf_exists_literal(Literal p_literal, std::list<Literal>& p_literals) {
-	for (auto literal = p_literals.cbegin(); literal != p_literals.cend(); ++literal)
-		if ( sat_literal_id(p_literal) == sat_literal_id(*literal) )
-			return sat_literal_sign(p_literal * *literal);
-	return 0;
-}
-
-
-/**
- * Parses a clause line from a cnf file.
- * 
- */
-std::list<Literal>* cnf_parse_clause(char* p_line, size_t p_size) {
-	// Sauvegarde de la chaîne originale
-	char* lineCopy = (char*) malloc(p_size);
-	strcpy(lineCopy, p_line);
-	
-	// I/ Création du tableau
-	auto literals = new std::list<Literal>();
-	
-	// III/ Initialisation du tableau
-	char* token = strtok(lineCopy, " ");
-	while (token && notNull(literals)) {
-		// Parse current token
-		Literal literal = atoi(token);
-		
-		// Prepare next token
-		token = strtok(NULL, " ");
-		
-		// Break for this line if the '0' token has been found
-		if (literal == 0)
-			break;
-		
-		// On teste si l'entier n'apparaît pas déjà dans la variable
-		int exists = cnf_exists_literal(literal, *literals);
-		switch (exists) {
-			case 1: // Le token apparaît 2 fois avec le même "signe" -> pas ajouté cette fois
-				log4c_category_log(log_cnf(), LOG4C_PRIORITY_DEBUG, "  - Literal %sx%u already parsed in that clause, skipped.", (literal < 0 ? "¬" : ""), sat_literal_id(literal));
-				break;
-				
-			case -1: // Le token et son contraire apparaîssent -> literals = NULL
-				log4c_category_log(log_cnf(), LOG4C_PRIORITY_DEBUG, "   - Literal %sx%u already parsed in that clause so it is always true.", (literal < 0 ? "¬" : ""), sat_literal_id(literal));
-				delete literals;
-				literals = NULL;
-				break;
-				
-			default:
-				literals->push_back(literal);
-				log4c_category_log(log_cnf(), LOG4C_PRIORITY_DEBUG, "  - Literal %sx%u parsed.", (literal < 0 ? "¬" : ""), sat_literal_id(literal));
-		}
-	}
-	
-	free(lineCopy);
-	return literals;
-}
-
-
-/**
- * Loads a SAT problem from a CNF file.
- * 
- * @param p_filename
- *            the name of the file to load
- * 
- * @return NULL if p_filename is NULL,
- *         the formula loaded otherwise
- */
-tGraphe* cnf_load_problem(char* p_filename) {
-	log4c_category_log(log_cnf(), LOG4C_PRIORITY_DEBUG, "Loading problem from CNF file '%s'...", p_filename);
-
-	// Ouverture du fichier
-	FILE* fic = fopen(p_filename, "r");
-	if (fic == NULL) {
-		log4c_category_log(log_cnf(), LOG4C_PRIORITY_ERROR, "Could not open file '%s'.", p_filename);
-		return NULL;
-	}
-	log4c_category_log(log_cnf(), LOG4C_PRIORITY_DEBUG, "File '%s' opened.", p_filename);
-	
-	// Initialisation de formula
-	tGraphe* formula = sat_new();
-
-	// Initialisation de str
-	char* str = (char*) malloc(LN_SIZE);
-	strcpy(str, "\0");
-
-	unsigned int lineNo = 0;
-	unsigned int clauseId = 1;
-	while (!feof(fic)) {
-		// Compteur de ligne
-		lineNo++;
-
-		// lecture de la ligne
-		fgets(str, LN_SIZE, fic);
-		if (feof(fic))
-			break;
-		
-		str[strlen(str)-1] = '\0';
-		log4c_category_log(log_cnf(), LOG4C_PRIORITY_DEBUG, "Line #%02d: |%s|", lineNo, str);
-    
-		// Ignore comment lines
-		if (str[0] == 'c')
-			continue;
-    
-		// Ignore project lines
-		if (str[0] == 'p')
-			continue;
-    
-		// Break at '%' lines
-		if (str[0] == '%')
-			break;
-
-		// Transformation string -> tab
-		std::list<Literal>* literals = cnf_parse_clause(str, LN_SIZE);
-
-		if (sat_add_clause(formula, clauseId, *literals))
-			log4c_category_log(log_cnf(), LOG4C_PRIORITY_INFO, "Clause for line %u was not added.", lineNo);
-		else
-			++clauseId;
-		delete literals;
-	}
-	fclose(fic);
-	free(str);
-	log4c_category_log(log_cnf(), LOG4C_PRIORITY_DEBUG, "File '%s' closed.", p_filename);
-	log4c_category_log(log_cnf(), LOG4C_PRIORITY_INFO, "Problem loaded from CNF file '%s'.", p_filename);
-
-	return formula;
-}
-
-
-/**
- * Loads a SAT solution from a SAT file.
- * 
- * @param p_filename
- *            the name of the file to load
- * 
- * @return NULL if p_filename is NULL,
- *         the interpretation loaded otherwise
- */
-std::list<Literal>* cnf_load_solution(char* p_filename) {
-	log4c_category_log(log_cnf(), LOG4C_PRIORITY_DEBUG, "Loading solution from SAT file '%s'...", p_filename);
-
-	// Ouverture du fichier
-	FILE* fic = fopen(p_filename, "r");
-	if (fic == NULL) {
-		log4c_category_log(log_cnf(), LOG4C_PRIORITY_ERROR, "Could not open file '%s'.", p_filename);
-		return NULL;
-	}
-	log4c_category_log(log_cnf(), LOG4C_PRIORITY_DEBUG, "File '%s' opened.", p_filename);
-	
-	// Initialisation de formula
-	std::list<Literal>* solution = NULL;
-
-	// Initialisation de str
-	char* str = (char*) malloc(LN_SIZE);
-	strcpy(str, "\0");
-
-	unsigned int lineNo = 0;
-	while (!feof(fic)) {
-		// lecture de la ligne
-		fgets(str, LN_SIZE, fic);
-		if (feof(fic))
-			break;
-		
-		str[strlen(str)-1] = '\0';
-		log4c_category_log(log_cnf(), LOG4C_PRIORITY_DEBUG, "Line #%02d: |%s|", lineNo, str);
-    
-		// Ignore comment lines
-		if (str[0] == 'c')
-			continue;
-    
-		// Ignore project lines
-		if (str[0] == 'p')
-			continue;
-    
-		// Solution
-		if (str[0] == 'v') {
-			solution = cnf_parse_clause(str+2, LN_SIZE); // +2 to skip the two first characters: "v "
-			break;
-		}
-	}
-	fclose(fic);
-	free(str);
-	log4c_category_log(log_cnf(), LOG4C_PRIORITY_DEBUG, "File '%s' closed.", p_filename);
-	log4c_category_log(log_cnf(), LOG4C_PRIORITY_INFO, "Solution loaded from SAT file '%s'.", p_filename);
-
-	return solution;
-}
-
-
-bool cnf_check_solution(tGraphe* p_formula, std::list<Literal>* p_solution) {
-	History history;
-	for (auto literal = p_solution->cbegin(); literal != p_solution->cend(); ++literal) {
-		if (dp_reduce(p_formula, *literal, history) == 1) {
-			cout << "An unsatisfiable clause was obtained." << endl;
-			return false;
-		}
-	}
-
-	if (isNull(p_formula->clauses)) {
-		cout << "All clauses could be interpreted." << endl;
-		return true;
-	}
-	else {
-		cout << "Some clauses could not be interpreted." << endl;
-		return false;
-	}
 }
 
 
@@ -284,12 +60,15 @@ int main(int p_argc, char* p_argv[]) {
 		exit(-2);
 	}
 
+	// Create the formula
+	tGraphe* formula = sat_new();
+
 	// Load the CNF problem file
 	char* cnfFilename = (char*) malloc(32);
 	strcpy(cnfFilename, p_argv[1]);
-	tGraphe* formula = cnf_load_problem(cnfFilename);
+	cnf_load_problem(cnfFilename, *formula);
 	free(cnfFilename);
-	sat_see(formula);
+	sat_log(*formula);
 
 	// Load the SAT solution file
 	char* satFilename = (char*) malloc(32);
@@ -299,7 +78,7 @@ int main(int p_argc, char* p_argv[]) {
 
 	// Check the solution
 	int rc = 0;
-	if (cnf_check_solution(formula, solution)) {
+	if (cnf_check_solution(*formula, solution)) {
 		rc = 0;
 		cout << "The solution is valid." << endl;
 	}

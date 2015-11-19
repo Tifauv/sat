@@ -33,16 +33,10 @@
  * @return an interpretation (satisfiable or not),
  *         or NULL if p_formula is NULL
  */
-Interpretation* alg_solve(tGraphe* p_formula) {
-	// Parameters check
-	if (isNull(p_formula)) {
-		log4c_category_log(log_dpll(), LOG4C_PRIORITY_DEBUG, "The formula pointer is NULL.");
-		return NULL;
-	}
-
+Interpretation* alg_solve(tGraphe& p_formula) {
 	log4c_category_log(log_dpll(), LOG4C_PRIORITY_DEBUG, "Starting the DPLL algorithm.");
 	Interpretation* interpretation = new Interpretation();
-	dp_main(p_formula, interpretation);
+	dp_main(p_formula, *interpretation);
 	return interpretation;
 }
 
@@ -55,26 +49,15 @@ Interpretation* alg_solve(tGraphe* p_formula) {
  * @param p_interpretation
  *            the current interpretation
  */
-void dp_main(tGraphe* p_formula, Interpretation* p_interpretation) {
-	/* Check parameters */
-	if (isNull(p_formula)) {
-		log4c_category_log(log_dpll(), LOG4C_PRIORITY_DEBUG, "The formula pointer is NULL.");
-		return;
-	}
-
-	if (isNull(p_interpretation)) {
-		log4c_category_log(log_dpll(), LOG4C_PRIORITY_DEBUG, "The interpretation pointer is NULL.");
-		return;
-	}
-
+void dp_main(tGraphe& p_formula, Interpretation& p_interpretation) {
 	log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "Current state:");
-	sat_see(p_formula);
-	p_interpretation->log();
+	sat_log(p_formula);
+	p_interpretation.log();
 
 	/*
 	 * Stop case: if there is no clause left, we are done.
 	 */
-	if (isNull((p_formula)->clauses)) {
+	if (isNull(p_formula.clauses)) {
 		log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "No more clauses.");
 		return;
 	}
@@ -97,15 +80,15 @@ void dp_main(tGraphe* p_formula, Interpretation* p_interpretation) {
 	 */
 	if (rc == 0) {
 		// Add the chosen literal to the current interpretation
-		p_interpretation->push(chosen_literal);
+		p_interpretation.push(chosen_literal);
 		log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "Added %sx%u to the interpretation.", (chosen_literal < 0 ? "¬" : ""), sat_literal_id(chosen_literal));
 
 		// Loop again
 		dp_main(p_formula, p_interpretation);
-		if (p_interpretation->isSatisfiable())
+		if (p_interpretation.isSatisfiable())
 			return;
 		else // Remove the current literal from the interpretation
-			p_interpretation->pop();
+			p_interpretation.pop();
 	}
 
 	/*
@@ -114,9 +97,9 @@ void dp_main(tGraphe* p_formula, Interpretation* p_interpretation) {
 	log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "The current interpretation is unsatisfiable.");
 	log4c_category_log(log_dpll(), LOG4C_PRIORITY_DEBUG, "Rebuilding the formula before second attempt...");
 	history.replay(p_formula);
-	sat_see(p_formula);
-	p_interpretation->setSatisfiable();
-	p_interpretation->log();
+	sat_log(p_formula);
+	p_interpretation.setSatisfiable();
+	p_interpretation.log();
 
 	// Seconde réduction et test du résultat
 	log4c_category_log(log_dpll(), LOG4C_PRIORITY_DEBUG, "Second reduction attempt...");
@@ -127,21 +110,21 @@ void dp_main(tGraphe* p_formula, Interpretation* p_interpretation) {
 	 */
 	if (rc == 0) {
 		// Add the chosen literal to the current interpretation
-		p_interpretation->push(-chosen_literal);
+		p_interpretation.push(-chosen_literal);
 		log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "Added %sx%u to the interpretation.", (chosen_literal > 0 ? "¬" : ""), sat_literal_id(chosen_literal));
 
 		// Loop again
 		dp_main(p_formula, p_interpretation);
-		if (p_interpretation->isSatisfiable())
+		if (p_interpretation.isSatisfiable())
 			return;
 		else // Remove the current literal from the interpretation
-			p_interpretation->pop();
+			p_interpretation.pop();
 	}
 	/*
 	 * The interpretation is also unsatisfiable with the opposite literal.
 	 */
 	else
-		p_interpretation->setUnsatisfiable();
+		p_interpretation.setUnsatisfiable();
 
 	/* Restoring state before backtracking. */
 	log4c_category_log(log_dpll(), LOG4C_PRIORITY_DEBUG, "Restoring state before backtracking...");
@@ -150,8 +133,8 @@ void dp_main(tGraphe* p_formula, Interpretation* p_interpretation) {
 	history.replay(p_formula);
 
 	log4c_category_log(log_dpll(), LOG4C_PRIORITY_DEBUG, "Restored state:");
-	sat_see(p_formula);
-	p_interpretation->log();
+	sat_log(p_formula);
+	p_interpretation.log();
 }
 
 
@@ -163,7 +146,7 @@ void dp_main(tGraphe* p_formula, Interpretation* p_interpretation) {
  * 
  * @return the literal
  */
-Literal dp_select_literal(tGraphe* p_formula) {
+Literal dp_select_literal(tGraphe& p_formula) {
 	// Search a literal from a unitary clause
 	Literal chosen_literal = sat_find_literal_from_unary_clause(p_formula);
 	if (chosen_literal != 0)
@@ -189,17 +172,12 @@ Literal dp_select_literal(tGraphe* p_formula) {
  *          0 if the reduction was done to the end,
  *          1 if an unsatisfiable clause was produced
  */
-int dp_reduce(tGraphe* p_formula, Literal p_literal, History& p_history) {
-	if (isNull(p_formula)) {
-		log4c_category_log(log_dpll(), LOG4C_PRIORITY_DEBUG, "The formula pointer is NULL.");
-		return -1;
-	}
-
+int dp_reduce(tGraphe& p_formula, Literal p_literal, History& p_history) {
 	log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "Reduction using literal %sx%u...", (p_literal < 0 ? "¬" : ""), sat_literal_id(p_literal));
 	int rc = 0;
 
 	// Retrieve the literal cell
-	tVar* literalPtr = p_formula->vars;
+	tVar* literalPtr = p_formula.vars;
 	while (notNull(literalPtr) && literalPtr->indVar != sat_literal_id(p_literal))
 		literalPtr = literalPtr->suiv;
 	if (literalPtr == NULL)
@@ -229,7 +207,7 @@ int dp_reduce(tGraphe* p_formula, Literal p_literal, History& p_history) {
 	}
 
 	// Retrieve the literal cell
-	literalPtr = p_formula->vars;
+	literalPtr = p_formula.vars;
 	while (notNull(literalPtr) && literalPtr->indVar != sat_literal_id(p_literal))
 		literalPtr = literalPtr->suiv;
 	if (literalPtr == NULL)

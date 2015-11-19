@@ -91,13 +91,13 @@ int sat_add_var_to_cls(tGraphe* p_formula, ClauseId p_clauseId, Literal p_litera
 int sat_add_clause(tGraphe* p_formula, ClauseId p_clauseId, std::list<Literal>& p_literals);
 
 // Affiche les clauses
-void sat_see(tGraphe* p_formula);
+void sat_log(tGraphe& p_formula);
 
 // Supprime une variable
-int sat_sub_var(tGraphe* p_formula, LiteralId p_literalId);
+int sat_sub_var(tGraphe& p_formula, LiteralId p_literalId);
 
 // Supprime une variable dans une clause
-int sat_sub_var_in_cls(Literal p_literal, tClause* p_clause, tGraphe* p_formula);
+int sat_sub_var_in_cls(Literal p_literal, tClause* p_clause, tGraphe& p_formula);
 
 // Renvoie le pointeur sur la cellule de la variable pointant sur la clause
 tPtVarSgn* sat_get_ptr_varSgn(tPtVarSgn* p_signedLiteral, tClause* p_clause);
@@ -106,17 +106,17 @@ tPtVarSgn* sat_get_ptr_varSgn(tPtVarSgn* p_signedLiteral, tClause* p_clause);
 int sat_unlnk_varSgn_cls(tVar* p_literal, int p_literalSign, tClause* p_clause);
 
 // Enlève les liens entre une clause et sa première variable
-int sat_unlnk_cls_var(tGraphe* p_formula, tClause* p_clause);
+int sat_unlnk_cls_var(tGraphe& p_formula, tClause* p_clause);
  
 // Supprime une clause
-int sat_sub_clause(tGraphe* p_formula, ClauseId p_clauseId);
+int sat_sub_clause(tGraphe& p_formula, ClauseId p_clauseId);
 
 // Renvoie le litéral de la première clause unitaire trouvée
 //  0 si non trouvée
-Literal sat_find_literal_from_unary_clause(tGraphe* p_formula);
+Literal sat_find_literal_from_unary_clause(tGraphe& p_formula);
 
 // Renvoie le premier litéral trouvé
 //  0 si non trouvée
-Literal sat_get_first_literal(tGraphe* p_formula);
+Literal sat_get_first_literal(tGraphe& p_formula);
 
 #endif // FORMULA_H
