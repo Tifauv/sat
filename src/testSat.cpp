@@ -198,13 +198,14 @@ int main(int p_argc, char* p_argv[]) {
 
 	// Initialize the logging system
 	if (log4c_init()) {
-		cout << "Log4c initialization failed, aborting." << endl;
+		cerr << "Log4c initialization failed, aborting." << endl;
 		exit(2);
 	}
 
 	char* nom_fic = (char*) malloc(32);
 	strcpy(nom_fic, p_argv[1]);
 	tGraphe* formula = cnf_load_file(nom_fic);
+	cout << "c Solution to cnf file " << nom_fic << endl;
 	free(nom_fic);
 	sat_see(formula);
 
