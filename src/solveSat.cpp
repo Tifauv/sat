@@ -32,7 +32,7 @@ using namespace std;
  * Displays the usage message.
  */
 void usage() {
-	cout << "Usage: testSat <cnf_file>" << endl;
+	cout << "Usage: solveSat <cnf_file>" << endl;
 }
 
 

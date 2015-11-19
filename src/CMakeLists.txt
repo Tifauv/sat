@@ -15,7 +15,7 @@ set (LIBSAT_SRCS
 # The sources of solveSat
 set (SOLVESAT_SRCS
 	${LIBSAT_SRCS}
-	testSat.cpp
+	solveSat.cpp
 )
 
 # The sources of checkSat
