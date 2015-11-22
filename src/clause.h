@@ -18,28 +18,32 @@
 #define CLAUSE_H
 
 #include <list>
-#include "variable.h"
+#include "formulaobject.h"
+#include "literal.h"
 
-/** A clause identifier. */
-typedef unsigned int ClauseId;
+
+class Literal;
 
 
 /**
  * Represents a Horn clause of a CNF formula.
  */
-class Clause {
+class Clause : public FormulaObject {
 public:
-	Clause(ClauseId p_id);
+	Clause(Id p_id);
 	~Clause();
 
+	void addLiteral(Literal* p_literal);
+
+	bool isUnary() const;
+	Literal* firstLiteral() const;
+
+	std::list<Literal*>::const_iterator beginLiteral() const;
+	std::list<Literal*>::const_iterator endLiteral()   const;
+
 private:
-	/** The clause identifier. */
-	ClauseId m_id;
-
 	/** The list of variables. */
-	std::list<Variable*> m_literals;
-
-	/** Tells whether this clause is in the free list. */
-	bool m_isUnused;
+	std::list<Literal*> m_literals;
 };
+
 #endif // CLAUSE_H

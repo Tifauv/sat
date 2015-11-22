@@ -17,64 +17,38 @@
 #ifndef FORMULA_H
 #define FORMULA_H
 
-#include <list>
+#include <unordered_set>
 #include "clause.h"
-#include "literal.h"
+#include "variable.h"
 
-typedef struct Clause Clause;
-typedef struct Variable Variable;
-
-struct Clause {
-	ClauseId id;
-	std::list<Variable*> literals;
-	bool isFree;
-};
-
-struct Variable {
-	LiteralId id;
-	std::list<Clause*> positiveOccurences;
-	std::list<Clause*> negativeOccurences;
-	bool isFree;
-};
-
-struct Literal {
-	Variable* variable;
-	int sign;
-} Literal;
 
 class Formula {
 public:
 	Formula();
 	~Formula();
 
-	Clause*   createClause(ClauseId p_clauseId);
-	Variable* createVariable(LiteralId p_variableId);
+	Clause* createClause(Id p_clauseId, std::list<CnfLiteral>& p_literals);
 
-	void linkClause(ClauseId p_clauseId, std::list<Literal>& p_literals);
-	void linkClause(ClauseId p_clauseId, Literal p_literal);
-	void linkClause(Clause* p_clause, std::list<Literal>& p_literals);
-	void linkClause(Clause* p_clause, Literal p_literal);
+	Literal* findLiteralFromUnaryClause() const;
+	Literal* selectLiteral() const;
 
-	Literal findLiteralFromUnaryClause() const;
-	Literal getFirstLiteral() const;
+	void removeClause(Clause* p_clause);
+	void removeLiteralFromClause(Clause* p_clause, Literal& p_literal);
 
-	void unlinkClause(ClauseId p_clauseId);
-	void unlinkClause(Clause* p_clause);
-
-	void unlinkLiteralFromClause(ClauseId p_clauseId, Literal& p_literal);
-	void unlinkLiteralFromClause(Clause* p_clause, Literal& p_literal);
+	void addClause(Clause* p_clause, std::list<Literal>& p_literals);
+	void addLiteralToClause(Clause* p_clause, Literal& p_literal);
 
 protected:
-	Clause*   findClause(ClauseId p_clauseId) const;
-	Clause*   findFreeClause(ClauseId p_clauseId) const;
-	Variable* findVariable(VariableId p_variableId) const;
-	Variable* findFreeVariable(VariableId p_variableId) const;
-	
+	Variable* findOrCreateVariable(VariableId p_variableId);
+
+	void removeVariable(Variable* p_variable);
+	void unlinkVariable(Clause* p_clause, Literal* p_literal);
+
 private:
-	std::list<Clause*> m_clauses;
-	std::list<Clause*> m_freeClauses;
-	std::list<Variable*> m_variables;
-	std::list<Variable*> m_freeVariables;
-}
+	std::unordered_set<Clause*> m_clauses;
+	std::unordered_set<Clause*> m_unusedClauses;
+	std::unordered_set<Variable*> m_variables;
+	std::unordered_set<Variable*> m_unusedVariables;
+};
 
 #endif // FORMULA_H

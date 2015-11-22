@@ -14,40 +14,45 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
 */
-#ifndef LITERAL_H
-#define LITERAL_H
-
-#include "variable.h"
-
-typedef unsigned int VariableId;
-class Variable;
+#include "formulaobject.h"
 
 
-class Literal {
-public:
-	Literal(Variable* p_variable, int m_sign);
-	~Literal();
-
-	Variable* var() const;
-	VariableId id() const;
-	int sign() const;
-
-private:
-	Variable* m_variable;
+// CONSTRUCTORS
+/**
+ *
+ */
+FormulaObject::FormulaObject(Id p_id) :
+	m_id(p_id),
+	m_unused(false) {
 	
-	int m_sign;
-};
+}
 
 
-class CnfLiteral {
-public:
-	CnfLiteral(int p_literal);
+// DESTRUCTORS
+/**
+ *
+ */
+FormulaObject::~FormulaObject() {
+	
+}
 
-	VariableId id() const;
-	int sign() const;
 
-private:
-	int m_literal;
-};
+// METHODS
+Id FormulaObject::id() const {
+	return m_id;
+}
 
-#endif // LITERAL_H
+
+bool FormulaObject::isUnused() const {
+	return m_unused;
+}
+
+
+void FormulaObject::setUnused() {
+	m_unused = true;
+}
+
+
+void FormulaObject::setUsed() {
+	m_unused = false;
+}

@@ -14,40 +14,33 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
 */
-#ifndef LITERAL_H
-#define LITERAL_H
-
-#include "variable.h"
-
-typedef unsigned int VariableId;
-class Variable;
+#ifndef FORMULA_OBJECT_H
+#define FORMULA_OBJECT_H
 
 
-class Literal {
+/** A variable id is an unsigned int. */
+typedef unsigned int Id;
+
+/**
+ * 
+ */
+class FormulaObject {
 public:
-	Literal(Variable* p_variable, int m_sign);
-	~Literal();
+	FormulaObject(Id p_id);
+	virtual ~FormulaObject();
 
-	Variable* var() const;
-	VariableId id() const;
-	int sign() const;
+	Id id() const;
+	bool isUnused() const;
+
+	void setUnused();
+	void setUsed();
 
 private:
-	Variable* m_variable;
-	
-	int m_sign;
+	/** The object identifier. */
+	Id m_id;
+
+	/** Is the object currently used ?*/
+	bool m_unused;
 };
 
-
-class CnfLiteral {
-public:
-	CnfLiteral(int p_literal);
-
-	VariableId id() const;
-	int sign() const;
-
-private:
-	int m_literal;
-};
-
-#endif // LITERAL_H
+#endif // FORMULA_OBJECT_H

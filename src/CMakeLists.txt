@@ -5,12 +5,16 @@ set(LIBS ${LIBS} ${LOG4C_LIBRARIES})
 
 # The sources of libSat
 set (LIBSAT_SRCS
-	literal.cpp
-	interpretation.cpp
-	history.cpp
-	sat.cpp
-	alg_dp.cpp
-	cnf.cpp
+	formulaobject.cpp
+	variable.cpp
+	clause.cpp
+	formula.cpp
+	#literal.cpp
+	#interpretation.cpp
+	#history.cpp
+	#sat.cpp
+	#alg_dp.cpp
+	#cnf.cpp
 )
 
 # The sources of solveSat
@@ -30,12 +34,12 @@ target_compile_options(sat PUBLIC -Wall -pedantic -std=c++11)
 target_link_libraries (sat ${LIBS})
 
 # Build solveSat
-add_executable (solveSat ${SOLVESAT_SRCS})
-target_compile_options(solveSat PRIVATE -Wall -pedantic -std=c++11)
-target_link_libraries (solveSat LINK_PUBLIC sat ${LIBS})
+#add_executable (solveSat ${SOLVESAT_SRCS})
+#target_compile_options(solveSat PRIVATE -Wall -pedantic -std=c++11)
+#target_link_libraries (solveSat LINK_PUBLIC sat ${LIBS})
 
 # Build checkSat
-add_executable (checkSat ${CHECKSAT_SRCS})
-target_compile_options(checkSat PRIVATE -Wall -pedantic -std=c++11)
-target_link_libraries (checkSat LINK_PUBLIC sat ${LIBS})
+#add_executable (checkSat ${CHECKSAT_SRCS})
+#target_compile_options(checkSat PRIVATE -Wall -pedantic -std=c++11)
+#target_link_libraries (checkSat LINK_PUBLIC sat ${LIBS})
 

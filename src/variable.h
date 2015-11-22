@@ -14,40 +14,38 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
 */
-#ifndef LITERAL_H
-#define LITERAL_H
+#ifndef VARIABLE_H
+#define VARIABLE_H
 
-#include "variable.h"
+#include <list>
+#include "formulaobject.h"
+#include "clause.h"
 
-typedef unsigned int VariableId;
-class Variable;
+#define SIGN_POSITIVE  1
+#define SIGN_NEGATIVE -1
 
 
-class Literal {
+class Clause;
+
+/**
+ * 
+ */
+class Variable : public FormulaObject {
 public:
-	Literal(Variable* p_variable, int m_sign);
-	~Literal();
+	Variable(Id p_id);
+	~Variable();
 
-	Variable* var() const;
-	VariableId id() const;
-	int sign() const;
+	void addOccurence(Clause* p_clauseId, int p_sign);
+
+	bool hasPositiveOccurence() const;
+	bool hasNegativeOccurence() const;
+
+	void removePositiveOccurence(Clause* p_clause);
+	void removeNegativeOccurence(Clause* p_clause);
 
 private:
-	Variable* m_variable;
-	
-	int m_sign;
+	std::list<Clause*> m_positiveOccurences;
+	std::list<Clause*> m_negativeOccurences;
 };
 
-
-class CnfLiteral {
-public:
-	CnfLiteral(int p_literal);
-
-	VariableId id() const;
-	int sign() const;
-
-private:
-	int m_literal;
-};
-
-#endif // LITERAL_H
+#endif // VARIABLE_H
