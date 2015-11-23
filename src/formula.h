@@ -33,10 +33,10 @@ public:
 	Literal* selectLiteral() const;
 
 	void removeClause(Clause* p_clause);
-	void removeLiteralFromClause(Clause* p_clause, Literal& p_literal);
+	void removeLiteralFromClause(Clause* p_clause, Literal* p_literal);
 
 	void addClause(Clause* p_clause, std::list<Literal>& p_literals);
-	void addLiteralToClause(Clause* p_clause, Literal& p_literal);
+	void addLiteralToClause(Clause* p_clause, Literal* p_literal);
 
 protected:
 	Variable* findOrCreateVariable(VariableId p_variableId);

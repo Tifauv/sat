@@ -46,9 +46,20 @@ void Clause::addLiteral(Literal* p_literal) {
 		log4c_category_log(log_formula(), LOG4C_PRIORITY_ERROR, "Attempted to add a NULL literal to clause %u.", id());
 		return;
 	}
-	
+
 	m_literals.push_back(p_literal);
 	log4c_category_log(log_formula(), LOG4C_PRIORITY_DEBUG, "Literal %sx%u added to clause %u.", (p_literal->sign() == SIGN_NEGATIVE ? "¬" : ""), p_literal->id(), id());
+}
+
+
+void Clause::removeLiteral(Literal* p_literal) {
+	if (isNull(p_literal)) {
+		log4c_category_log(log_formula(), LOG4C_PRIORITY_ERROR, "Attempted to remove a NULL literal from clause %u.", id());
+		return;
+	}
+
+	m_literals.remove(p_literal);
+	log4c_category_log(log_formula(), LOG4C_PRIORITY_DEBUG, "Literal %sx%u removed from clause %u.", (p_literal->sign() == SIGN_NEGATIVE ? "¬" : ""), p_literal->id(), id());
 }
 
 

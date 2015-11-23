@@ -34,6 +34,7 @@ public:
 	~Clause();
 
 	void addLiteral(Literal* p_literal);
+	void removeLiteral(Literal* p_literal);
 
 	bool isUnary() const;
 	Literal* firstLiteral() const;

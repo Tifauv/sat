@@ -22,6 +22,7 @@
 #include "utils.h"
 #include "log.h"
 
+
 // CONSTRUCTORS
 /**
  * Creates an empty formula.
@@ -43,6 +44,7 @@ Formula::~Formula() {
 // METHODS
 /**
  * Creates a clause in the formula.
+ * The needed variables are created if needed.
  *
  * @param p_clauseId
  *            the identifier of the clause
@@ -109,7 +111,10 @@ Variable* Formula::findOrCreateVariable(VariableId p_variableId) {
 
 
 /**
- * 
+ * Retrieves the literal from a unary clause.
+ *
+ * @return the literal found,
+ *         or NULL if there is no unary clause
  */
 Literal* Formula::findLiteralFromUnaryClause() const {
 	// Search an unary clause
@@ -129,7 +134,10 @@ Literal* Formula::findLiteralFromUnaryClause() const {
 
 
 /**
- * 
+ * Select a literal for the reduction phase.
+ *
+ * @return the literal selected,
+ *         or NULL if there is not anymore
  */
 Literal* Formula::selectLiteral() const {
 	// Parameters check
@@ -148,6 +156,12 @@ Literal* Formula::selectLiteral() const {
 }
 
 
+/**
+ * Remove a clause from the list of active ones.
+ *
+ * @param p_clause
+ *            the clause to remove
+ */
 void Formula::removeClause(Clause* p_clause) {
 	// Parameters check
 	if (isNull(p_clause)) {
@@ -156,30 +170,78 @@ void Formula::removeClause(Clause* p_clause) {
 	}
 
 	// Remove all links variable -> clause
-	for (auto it = p_clause->beginLiteral(); it != p_clause->endLiteral(); ++it) {
+	for (auto it = p_clause->beginLiteral(); it != p_clause->endLiteral(); ++it)
 		unlinkVariable(p_clause, *it);
-	}
 	
 	// Move the clause to the unused list
 	m_clauses.erase(p_clause);
 	m_unusedClauses.insert(p_clause);
 	p_clause->setUnused();
+	log4c_category_log(log_formula(), LOG4C_PRIORITY_INFO, "Clause %u removed.", p_clause->id());
 }
 
 
-void Formula::removeLiteralFromClause(Clause* p_clause, Literal& p_literal) {
+/**
+ * Remove a literal from a clause.
+ *
+ * @param p_clause
+ *            the clause
+ * @param p_literal
+ *            the literal
+ */
+void Formula::removeLiteralFromClause(Clause* p_clause, Literal* p_literal) {
+	// Parameters check
+	if (isNull(p_clause)) {
+		log4c_category_log(log_formula(), LOG4C_PRIORITY_ERROR, "Cannot remove a literal from a NULL clause.");
+		return;
+	}
+
+	if (isNull(p_literal)) {
+		log4c_category_log(log_formula(), LOG4C_PRIORITY_ERROR, "Cannot remove a NULL literal from a clause.");
+		return;
+	}
+
+	// Remove the link clause -> variable
+	p_clause->removeLiteral(p_literal);
+	
+	// Remove the link variable -> clause
+	unlinkVariable(p_clause, p_literal);
+	log4c_category_log(log_formula(), LOG4C_PRIORITY_INFO, "Literal %sx%u removed from clause %u.", (p_literal->sign() == SIGN_NEGATIVE ? "¬" : ""), p_literal->id(), p_clause->id());
 }
 
 
+/**
+ * Removes a link from a variable to a clause.
+ *
+ * @param p_clause
+ *            the targetted clause
+ * @param p_literal
+ *            the literal to remove
+ */
 void Formula::unlinkVariable(Clause* p_clause, Literal* p_literal) {
+	// Parameters check
+	if (isNull(p_clause)) {
+		log4c_category_log(log_formula(), LOG4C_PRIORITY_ERROR, "Cannot remove a literal from a NULL clause.");
+		return;
+	}
+
+	if (isNull(p_literal)) {
+		log4c_category_log(log_formula(), LOG4C_PRIORITY_ERROR, "Cannot remove a NULL literal from a clause.");
+		return;
+	}
+
+	// Remove the clause from the variable occurences
 	Variable* variable = p_literal->var();
 	if (p_literal->sign() == SIGN_POSITIVE)
 		variable->removePositiveOccurence(p_clause);
 	else
 		variable->removeNegativeOccurence(p_clause);
 
-	if (!variable->hasPositiveOccurence() && !variable->hasNegativeOccurence())
+	// Auto-remove unused variables
+	if (!variable->hasPositiveOccurence() && !variable->hasNegativeOccurence()) {
+		log4c_category_log(log_formula(), LOG4C_PRIORITY_INFO, "Variable x%u is not used anymore.", variable->id());
 		removeVariable(variable);
+	}
 }
 
 
@@ -193,11 +255,62 @@ void Formula::removeVariable(Variable* p_variable) {
 	m_variables.erase(p_variable);
 	m_unusedVariables.insert(p_variable);
 	p_variable->setUnused();
+	log4c_category_log(log_formula(), LOG4C_PRIORITY_INFO, "Variable x%u has been removed.", p_variable->id());
 }
 
+
+/**
+ * Move a clause from the unused to current list.
+ * 
+ * @param p_clause
+ *            the clause
+ * @param p_literals
+ *            the list of the literals of the clause
+ */
 void Formula::addClause(Clause* p_clause, std::list<Literal>& p_literals) {
+	// Parameters check
+	if (isNull(p_clause)) {
+		log4c_category_log(log_formula(), LOG4C_PRIORITY_ERROR, "Cannot add a NULL clause.");
+		return;
+	}
+
+	// Check the list of literals of the clause
+	/*for (auto it = p_literals.cbegin(); it != p_literals.cend(); ++it) {
+		
+	}*/
+
+	// Move the clause to the current list
+	m_unusedClauses.erase(p_clause);
+	m_clauses.insert(p_clause);
+	p_clause->setUsed();
+	log4c_category_log(log_formula(), LOG4C_PRIORITY_INFO, "Clause %u added.", p_clause->id());
 }
 
 
-void Formula::addLiteralToClause(Clause* p_clause, Literal& p_literal) {
+/**
+ * Add a literal to a clause.
+ * 
+ * @param p_clause
+ *            the clause
+ * @param p_literal
+ *            the literal to add
+ */
+void Formula::addLiteralToClause(Clause* p_clause, Literal* p_literal) {
+	// Parameters check
+	if (isNull(p_clause)) {
+		log4c_category_log(log_formula(), LOG4C_PRIORITY_ERROR, "Cannot add a literal to a NULL clause.");
+		return;
+	}
+
+	if (isNull(p_literal)) {
+		log4c_category_log(log_formula(), LOG4C_PRIORITY_ERROR, "Cannot add a NULL literal to a clause.");
+		return;
+	}
+	
+	// Link clause -> variable
+	p_clause->addLiteral(p_literal);
+
+	// Link variable -> clause
+	p_literal->var()->addOccurence(p_clause, p_literal->sign());
+	log4c_category_log(log_formula(), LOG4C_PRIORITY_DEBUG, "Literal %sx%u added to clause %u.", (p_literal->sign() > 0 ? "¬" : ""), p_literal->id(), p_clause->id());
 }
