@@ -64,7 +64,7 @@ public:
 	 * @param p_literal
 	 *            the literal
 	 */
-	void push(Literal p_literal);
+	void push(Literal& p_literal);
 
 	/**
 	 * Removes the last literal.

@@ -18,7 +18,7 @@
 
 
 // CONSTRUCTORS
-Literal::Literal(Variable* p_variable, int m_sign) :
+Literal::Literal(Variable* p_variable, int p_sign) :
 	m_variable(p_variable),
 	m_sign(p_sign) {
 }

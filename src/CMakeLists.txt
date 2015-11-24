@@ -7,10 +7,10 @@ set(LIBS ${LIBS} ${LOG4C_LIBRARIES})
 set (LIBSAT_SRCS
 	formulaobject.cpp
 	variable.cpp
+	literal.cpp
 	clause.cpp
 	formula.cpp
-	#literal.cpp
-	#interpretation.cpp
+	interpretation.cpp
 	#history.cpp
 	#sat.cpp
 	#alg_dp.cpp

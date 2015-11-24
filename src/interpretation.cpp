@@ -86,9 +86,9 @@ void Interpretation::setUnsatisfiable() {
  * @param p_literal
  *            the literal to add
  */
-void Interpretation::push(Literal p_literal) {
+void Interpretation::push(Literal& p_literal) {
 	m_literals.push_back(p_literal);
-	log4c_category_log(log_interpretation(), LOG4C_PRIORITY_INFO, "Literal %sx%u added to the interpretation.", (p_literal < 0 ? "¬" : ""), sat_literal_id(p_literal));
+	log4c_category_log(log_interpretation(), LOG4C_PRIORITY_INFO, "Literal %sx%u added to the interpretation.", (p_literal.sign() == SIGN_NEGATIVE ? "¬" : ""), p_literal.id());
 	
 	// Reset the satisfiability status
 	if (isUnsatisfiable()) {
@@ -105,9 +105,9 @@ void Interpretation::pop() {
 	if (m_literals.empty())
 		return;
 	
-	Literal literal = m_literals.back();
+	Literal& literal = m_literals.back();
 	m_literals.pop_back();
-	log4c_category_log(log_interpretation(), LOG4C_PRIORITY_INFO, "Literal %sx%u removed from the interpretation.", (literal < 0 ? "¬" : ""), sat_literal_id(literal));
+	log4c_category_log(log_interpretation(), LOG4C_PRIORITY_INFO, "Literal %sx%u removed from the interpretation.", (literal.sign() == SIGN_NEGATIVE ? "¬" : ""), literal.id());
 }
 
 
@@ -122,8 +122,10 @@ void Interpretation::log() {
 	
 	// Otherwise, print the elements
 	log4c_category_log(log_interpretation(), LOG4C_PRIORITY_INFO, "Interpretation:");
-	for (auto it = m_literals.cbegin(); it != m_literals.cend(); ++it)
-		log4c_category_log(log_interpretation(), LOG4C_PRIORITY_INFO, "  %sx%u", (*it < 0 ? "¬" : ""), sat_literal_id(*it));
+	for (auto it = m_literals.cbegin(); it != m_literals.cend(); ++it) {
+		const Literal literal = *it;
+		log4c_category_log(log_interpretation(), LOG4C_PRIORITY_INFO, "  %sx%u", (literal.sign() == SIGN_NEGATIVE ? "¬" : ""), literal.id());
+	}
 }
 
 
@@ -139,7 +141,9 @@ void Interpretation::print() {
 	// Otherwise, print the elements
 	std::cout << "s SATISFIABLE" << std::endl;
 	std::cout << "v";
-	for (auto it = m_literals.cbegin(); it != m_literals.cend(); ++it)
-		std::cout << " " << *it;
+	for (auto it = m_literals.cbegin(); it != m_literals.cend(); ++it) {
+		const Literal literal = *it;
+		std::cout << " " << (literal.sign() * literal.id());
+	}
 	std::cout << " 0" << std::endl;
 }
