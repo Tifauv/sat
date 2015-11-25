@@ -26,7 +26,9 @@ class Clause;
 
 class Literal {
 public:
+	Literal();
 	Literal(Variable* p_variable, int p_sign);
+	Literal(const Literal& p_literal);
 	~Literal();
 
 	Variable*  var()  const;

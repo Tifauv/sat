@@ -88,11 +88,10 @@ protected:
 	 * @param p_history
 	 *            the backtracking history
 	 * 
-	 * @return -1 if p_formula is NULL,
-	 *          0 if the reduction was done to the end,
-	 *          1 if an unsatisfiable clause was produced
+	 * @return true if the reduction is satisfiable
+	 *         false if it is unsatisfiable
 	 */
-	int reduce(Formula& p_formula, Literal p_literal, History& p_history);
+	bool reduce(Formula& p_formula, Literal p_literal, History& p_history);
 
 
 	/**
@@ -103,11 +102,10 @@ protected:
 	 * @param p_literal
 	 *            the raw literal used to reduce the formula
 	 * 
-	 * @return -1 if p_formula is NULL,
-	 *          0 if the reduction was done to the end,
-	 *          1 if an unsatisfiable clause was produced
+	 * @return true if the reduction is satisfiable
+	 *         false if it is unsatisfiable
 	 */
-	int reduce(Formula& p_formula, const RawLiteral& p_literal);
+	bool reduce(Formula& p_formula, const RawLiteral& p_literal);
 };
 
 #endif // DPLL_SOLVER_H

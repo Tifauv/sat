@@ -23,6 +23,8 @@
 #include "rawliteral.h"
 
 
+class History;
+
 class Formula {
 public:
 	Formula();
@@ -33,8 +35,8 @@ public:
 	Literal findLiteralFromUnaryClause() const;
 	Literal selectLiteral() const;
 
-	void removeClause(Clause* p_clause, Literal p_literal);
-	void removeLiteralFromClause(Clause* p_clause, Literal p_literal);
+	void removeClausesWithLiteral(Literal p_literal, History& p_history);
+	bool removeOppositeLiteralFromClauses(Literal p_literal, History& p_history);
 
 	void addClause(Clause* p_clause);
 	void addLiteralToClause(Clause* p_clause, Literal p_literal);
@@ -44,7 +46,8 @@ public:
 	std::unordered_set<Variable*>::iterator beginVariable();
 	std::unordered_set<Variable*>::iterator endVariable();
 	void removeVariable(Variable* p_variable);
-	
+	void addVariable(Variable* p_variable);
+
 	void log() const;
 
 protected:

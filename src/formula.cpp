@@ -19,6 +19,7 @@
 #include <algorithm>
 #include <functional>
 #include <log4c.h>
+#include "history.h"
 #include "utils.h"
 #include "log.h"
 
@@ -156,52 +157,66 @@ Literal Formula::selectLiteral() const {
 
 
 /**
- * Remove a clause from the list of active ones.
- *
- * @param p_clause
- *            the clause to remove
+ * Remove all the clauses that have the given literal (with the same sign).
+ * 
+ * @param p_literal
+ *            the literal
  */
-void Formula::removeClause(Clause* p_clause, Literal p_literal) {
-	// Parameters check
-	if (isNull(p_clause)) {
-		log4c_category_log(log_formula(), LOG4C_PRIORITY_ERROR, "Cannot remove a NULL clause.");
-		return;
+void Formula::removeClausesWithLiteral(Literal p_literal, History& p_history) {
+	log4c_category_log(log_formula(), LOG4C_PRIORITY_INFO, "Removing clauses that contain the literal %sx%u...", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
+	for (auto it = p_literal.beginOccurence(); it != p_literal.endOccurence(); it = p_literal.erase(it)) {
+		Clause* clause = *it;
+		
+		// Saving the clause into the history
+		log4c_category_log(log_dpll(), LOG4C_PRIORITY_DEBUG, "Saving clause %u in the history.", clause->id());
+		p_history.addClause(clause);
+		
+		// Removing the clause
+		log4c_category_log(log_dpll(), LOG4C_PRIORITY_DEBUG, "Removing clause %u.", clause->id());
+		
+		// Remove all links variable -> clause except the current iterator
+		for (auto it = clause->beginLiteral(); it != clause->endLiteral(); ++it)
+			if (p_literal != *it)
+				unlinkVariable(clause, *it);
+			
+		// Move the clause to the unused list
+		clause->setUnused();
+		m_clauses.erase(clause);
+		m_unusedClauses.insert(clause);
+		log4c_category_log(log_formula(), LOG4C_PRIORITY_INFO, "Clause %u removed.", clause->id());
 	}
-
-	// Remove all links variable -> clause
-	for (auto it = p_clause->beginLiteral(); it != p_clause->endLiteral(); ++it)
-		if (p_literal != *it)
-			unlinkVariable(p_clause, *it);
-
-	// Move the clause to the unused list
-	m_clauses.erase(p_clause);
-	m_unusedClauses.insert(p_clause);
-	p_clause->setUnused();
-	log4c_category_log(log_formula(), LOG4C_PRIORITY_INFO, "Clause %u removed.", p_clause->id());
 }
 
 
 /**
- * Remove a literal from a clause.
- *
- * @param p_clause
- *            the clause
- * @param p_literal
- *            the literal
+ * Removes the opposite of the given literal from the clauses.
+ * If an empty clause is found, it is unsatisfiable and 
+ * 
+ * @return true if all the clauses could be reduced without producing an unsatisfiable one;
+ *         false if an unsatisfiable clause was produced.
  */
-void Formula::removeLiteralFromClause(Clause* p_clause, Literal p_literal) {
-	// Parameters check
-	if (isNull(p_clause)) {
-		log4c_category_log(log_formula(), LOG4C_PRIORITY_ERROR, "Cannot remove a literal from a NULL clause.");
-		return;
+bool Formula::removeOppositeLiteralFromClauses(Literal p_literal, History& p_history) {
+	log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "Removing literal %sx%u from the clauses.", (p_literal.isPositive() ? "¬" : ""), p_literal.id());
+	for (auto it = p_literal.beginOppositeOccurence(); it != p_literal.endOppositeOccurence(); it = p_literal.eraseOpposite(it)) {
+		Clause* clause = *it;
+		
+		// Record the removal of the literal in the history
+		log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "Saving literal %sx%u of clause %u in the history.", (p_literal.isPositive() ? "¬" : ""), p_literal.id(), clause->id());
+		p_history.addLiteral(clause, -p_literal);
+		
+		// Remove the literal from the clause
+		clause->removeLiteral(-p_literal);
+		log4c_category_log(log_formula(), LOG4C_PRIORITY_INFO, "Literal %sx%u removed from clause %u.", (p_literal.isPositive() ? "¬" : ""), p_literal.id(), clause->id());
+
+		if (clause->isUnsatisfiable()) {
+			log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "The produced clause is unsatisfiable.");
+			// Remove the link variable->literal now as otherwise it would not be done by the for loop
+			p_literal.eraseOpposite(it);
+			return false;
+		}
 	}
 
-	// Remove the link clause -> variable
-	p_clause->removeLiteral(p_literal);
-	
-	// Remove the link variable -> clause
-	//unlinkVariable(p_clause, p_literal);
-	log4c_category_log(log_formula(), LOG4C_PRIORITY_INFO, "Literal %sx%u removed from clause %u.", (p_literal.isNegative() ? "¬" : ""), p_literal.id(), p_clause->id());
+	return true;
 }
 
 
@@ -242,10 +257,24 @@ void Formula::unlinkVariable(Clause* p_clause, Literal p_literal) {
  *            the variable to remove
  */
 void Formula::removeVariable(Variable* p_variable) {
+	p_variable->setUnused();
 	m_variables.erase(p_variable);
 	m_unusedVariables.insert(p_variable);
-	p_variable->setUnused();
 	log4c_category_log(log_formula(), LOG4C_PRIORITY_INFO, "Variable x%u has been removed.", p_variable->id());
+}
+
+
+/**
+ * Move a variable to the current list.
+ * 
+ * @param p_variable
+ *            the variable to add
+ */
+void Formula::addVariable(Variable* p_variable) {
+	m_unusedVariables.erase(p_variable);
+	m_variables.insert(p_variable);
+	p_variable->setUsed();
+	log4c_category_log(log_formula(), LOG4C_PRIORITY_INFO, "Variable x%u has been added.", p_variable->id());
 }
 
 
@@ -266,6 +295,19 @@ void Formula::addClause(Clause* p_clause) {
 	m_unusedClauses.erase(p_clause);
 	m_clauses.insert(p_clause);
 	p_clause->setUsed();
+
+	// Ensure the linked variables are enabled
+	for (auto it = p_clause->beginLiteral(); it != p_clause->endLiteral(); ++it) {
+		Variable* variable = (*it).var();
+		
+		// Move the variable to the current list if needed
+		if (variable->isUnused())
+			addVariable(variable);
+		
+		// Relink the variable with the clause
+		variable->addOccurence(p_clause, (*it).sign());
+	}
+	
 	log4c_category_log(log_formula(), LOG4C_PRIORITY_INFO, "Clause %u added.", p_clause->id());
 }
 
@@ -346,30 +388,28 @@ void Formula::log() const {
 	log4c_category_log(log_formula(), LOG4C_PRIORITY_DEBUG, "}");
 
 	// Print the variables
-	/* TODO Reenable later
 	log4c_category_log(log_formula(), LOG4C_PRIORITY_DEBUG, "Variables = {");
 	for (auto variableIt = m_variables.cbegin(); variableIt != m_variables.cend(); ++variableIt) {
 		Variable* variable = *variableIt;
 
 		// Variable id
-		std::string line = "   x" + std::to_string(variable->id()) + " +{";
+		std::string line = "   x" + std::to_string(variable->id()) + " \t+{";
 
 		// Positive occurences
-		for (auto occurenceIt = variable->beginPositiveOccurences(); occurenceIt != variable->endPositiveOccurences(); ++occurenceIt) {
+		for (auto occurenceIt = variable->beginOccurence(SIGN_POSITIVE); occurenceIt != variable->endOccurence(SIGN_POSITIVE); ++occurenceIt) {
 			Clause* clause = *occurenceIt;
 			line.append(" ").append(std::to_string(clause->id()));
 		}
 
-		line.append("}  -{ ");
+		line.append(" } \t-{");
 
 		// Negative occurences
-		for (auto occurenceIt = variable->beginNegativeOccurences(); occurenceIt != variable->endNegativeOccurences(); ++occurenceIt) {
+		for (auto occurenceIt = variable->beginOccurence(SIGN_NEGATIVE); occurenceIt != variable->endOccurence(SIGN_NEGATIVE); ++occurenceIt) {
 			Clause* clause = *occurenceIt;
 			line.append(" ").append(std::to_string(clause->id()));
 		}
 
-		log4c_category_log(log_formula(), LOG4C_PRIORITY_DEBUG, line.append("}").data());
+		log4c_category_log(log_formula(), LOG4C_PRIORITY_DEBUG, line.append(" }").data());
 	}
 	log4c_category_log(log_formula(), LOG4C_PRIORITY_DEBUG, "}");
-	*/
 }

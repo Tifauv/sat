@@ -54,10 +54,7 @@ void History::addClause(Clause* p_clause) {
 	}
 
 	// Create the new step
-	Step* newStep = new Step();
-	newStep->operation = Operation::AddClause;
-	newStep->clause = p_clause;
-	newStep->literal = NULL;
+	Step* newStep = new Step(Operation::AddClause, p_clause);
 
 	// Add the new step
 	m_steps.push_front(newStep);
@@ -81,10 +78,7 @@ void History::addLiteral(Clause* p_clause, Literal p_literal) {
 	}
 
 	// Create the new step
-	Step* newStep = new Step();
-	newStep->operation = Operation::AddLiteralToClause;
-	newStep->clause  = p_clause;
-	newStep->literal = &p_literal;
+	Step* newStep = new Step(Operation::AddLiteralToClause, p_clause, p_literal);
 	
 	// Add the new step
 	m_steps.push_back(newStep);
@@ -102,22 +96,22 @@ void History::replay(Formula& p_formula) {
 	// Replaying...
 	log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "Replaying the history...");
 	for (auto it = m_steps.begin(); it != m_steps.end(); it = m_steps.erase(it)) {
-		Clause* clause  = (*it)->clause;
-		Literal* literal = (*it)->literal;
+		Clause* clause  = (*it)->clause();
+		Literal literal = (*it)->literal();
 
-		switch ((*it)->operation) {
+		switch ((*it)->operation()) {
 			case Operation::AddClause:
 				p_formula.addClause(clause);
 				log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "Added clause %u", clause->id());
 				break;
 
 			case Operation::AddLiteralToClause:
-				p_formula.addLiteralToClause(clause, *literal);
-				log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "Added %sx%u to clause %u", (literal->isNegative() ? "¬" : ""), literal->id(), clause->id());
+				p_formula.addLiteralToClause(clause, literal);
+				log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "Added %sx%u to clause %u", (literal.isNegative() ? "¬" : ""), literal.id(), clause->id());
 				break;
 
 			default:
-				log4c_category_log(log_history(), LOG4C_PRIORITY_WARN, "An unknown operation code (%u) has been found in the history, skipping.", (*it)->operation);
+				log4c_category_log(log_history(), LOG4C_PRIORITY_WARN, "An unknown operation code (%u) has been found in the history, skipping.", (*it)->operation());
 		}
 
 		// Delete the step
@@ -138,3 +132,31 @@ void History::clear() {
 	log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "History cleared.");
 }
 
+
+History::Step::Step(History::Operation p_operation, Clause* p_clause) :
+m_operation(p_operation),
+m_clause(p_clause),
+m_literal() {
+}
+
+
+History::Step::Step(History::Operation p_operation, Clause* p_clause, Literal p_literal) :
+m_operation(p_operation),
+m_clause(p_clause),
+m_literal(p_literal) {
+}
+
+
+History::Operation History::Step::operation() const {
+	return m_operation;
+}
+
+
+Clause* History::Step::clause() const {
+	return m_clause;
+}
+
+
+Literal History::Step::literal() const {
+	return m_literal;
+}

@@ -18,9 +18,21 @@
 
 
 // CONSTRUCTORS
+Literal::Literal() :
+m_variable(nullptr),
+m_sign(SIGN_POSITIVE) {
+}
+
+
 Literal::Literal(Variable* p_variable, int p_sign) :
 m_variable(p_variable),
 m_sign(p_sign) {
+}
+
+
+Literal::Literal(const Literal& p_literal) :
+m_variable(p_literal.var()),
+m_sign(p_literal.sign()) {
 }
 
 

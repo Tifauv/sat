@@ -21,28 +21,42 @@
 #include <list>
 #include "formula.h"
 
-/**
- * The history manages steps for two operations:
- *   - add a new clause,
- *   - add a literal to a clause
- */
-enum class Operation {
-	AddClause,
-	AddLiteralToClause
-};
-
-
-typedef struct Step {
-	Operation  operation;
-	Clause*    clause;
-	Literal*   literal;
-} Step;
-
 
 /**
  * An history is a list of steps.
  */
 class History {
+
+	/**
+	 * The history manages steps for two operations:
+	 *   - add a new clause,
+	 *   - add a literal to a clause
+	 */
+	enum class Operation {
+		AddClause,
+		AddLiteralToClause
+	};
+
+
+	/**
+	 * This is a step of the history.
+	 */
+	class Step {
+	public:
+		Step(Operation p_operation, Clause* p_clause);
+		Step(Operation p_operation, Clause* p_clause, Literal p_literal);
+
+		Operation operation() const;
+		Clause*   clause()    const;
+		Literal   literal()   const;
+
+	private:
+		Operation m_operation;
+		Clause*   m_clause;
+		Literal   m_literal;
+	};
+
+
 public:
 	/**
 	 * Creates a new history.

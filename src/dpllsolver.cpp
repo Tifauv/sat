@@ -54,7 +54,7 @@ Interpretation* DpllSolver::solve(Formula& p_formula) {
  */
 bool DpllSolver::checkSolution(Formula& p_formula, std::list<RawLiteral>* p_solution) {
 	for (auto literal = p_solution->cbegin(); literal != p_solution->cend(); ++literal) {
-		if (reduce(p_formula, *literal) == 1) {
+		if (!reduce(p_formula, *literal)) {
 			std::cout << "An unsatisfiable clause was obtained." << std::endl;
 			return false;
 		}
@@ -101,12 +101,12 @@ void DpllSolver::main(Formula& p_formula, Interpretation& p_interpretation) {
 	 */
 	log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "First reduction attempt...");
 	History history;
-	int rc = reduce(p_formula, chosen_literal, history);
+	bool satisfiable = reduce(p_formula, chosen_literal, history);
 	
 	/*
-	 * The interpretation is satisfiable: we are done.
+	 * The reduced interpretation is satisfiable: we are done.
 	 */
-	if (rc == 0) {
+	if (satisfiable) {
 		// Add the chosen literal to the current interpretation
 		p_interpretation.push(chosen_literal);
 		log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "Added %sx%u to the interpretation.", (chosen_literal.isNegative() ? "¬" : ""), chosen_literal.id());
@@ -131,12 +131,12 @@ void DpllSolver::main(Formula& p_formula, Interpretation& p_interpretation) {
 
 	// Seconde réduction et test du résultat
 	log4c_category_log(log_dpll(), LOG4C_PRIORITY_DEBUG, "Second reduction attempt...");
-	rc = reduce(p_formula, -chosen_literal, history);
+	satisfiable = reduce(p_formula, -chosen_literal, history);
 
 	/*
 	 * The interpretation is satisfiable: we are done. We can return the current interpretation.
 	 */
-	if (rc == 0) {
+	if (satisfiable) {
 		// Add the chosen literal to the current interpretation
 		p_interpretation.push(-chosen_literal);
 		log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "Added %sx%u to the interpretation.", (chosen_literal.isPositive() ? "¬" : ""), chosen_literal.id());
@@ -196,50 +196,22 @@ Literal DpllSolver::selectLiteral(Formula& p_formula) {
  * @param p_history
  *            the backtracking history
  *
- * @return -1 if p_formula is NULL,
- *          0 if the reduction was done to the end,
- *          1 if an unsatisfiable clause was produced
+ * @return true if the reduction is satisfiable
+ *         false if it is unsatisfiable
  */
-int DpllSolver::reduce(Formula& p_formula, Literal p_literal, History& p_history) {
+bool DpllSolver::reduce(Formula& p_formula, Literal p_literal, History& p_history) {
 	log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "Reduction using literal %sx%u...", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
-	int rc = 0;
 
 	// Remove the clauses that contain the same sign as the given literal
-	log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "Removing clauses that contain the literal %sx%u...", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
-	for (auto it = p_literal.beginOccurence(); it != p_literal.endOccurence(); it = p_literal.erase(it)) {
-		Clause* clause = *it;
-
-		// Enregistrement de la suppression dans l'historique
-		log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "Saving clause %u in the history.", clause->id());
-		p_history.addClause(clause);
-
-		// Suppression de la clause
-		log4c_category_log(log_dpll(), LOG4C_PRIORITY_DEBUG, "Removing clause %u.", clause->id());
-		p_formula.removeClause(clause, p_literal);
-	}
+	p_formula.removeClausesWithLiteral(p_literal, p_history);
 
 	// Remove the literal from the clauses that contain the oposite sign
-	log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "Removing literal %sx%u from the clauses.", (p_literal.isPositive() ? "¬" : ""), p_literal.id());
-	for (auto it = p_literal.beginOppositeOccurence(); it != p_literal.endOppositeOccurence(); it = p_literal.eraseOpposite(it)) {
-		Clause* clause = *it;
-
-		// Record the removal of the literal in the history
-		log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "Saving literal %sx%u of clause %u in the history.", (p_literal.isPositive() ? "¬" : ""), p_literal.id(), clause->id());
-		p_history.addLiteral(clause, -p_literal);
-
-		// Remove the literal from the clause
-		p_formula.removeLiteralFromClause(clause, -p_literal);
-		if (clause->isUnsatisfiable()) {
-			log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "The produced clause is unsatisfiable.");
-			rc = 1;
-			break;
-		}
-	}
+	bool satisfiable = p_formula.removeOppositeLiteralFromClauses(p_literal, p_history);
 
 	// The variable is now empty, we can remove it
 	p_formula.removeVariable(p_literal.var());
 
-	return rc;
+	return satisfiable;
 }
 
 
@@ -251,11 +223,10 @@ int DpllSolver::reduce(Formula& p_formula, Literal p_literal, History& p_history
  * @param p_literal
  *            the raw literal used to reduce the formula
  * 
- * @return -1 if p_formula is NULL,
- *          0 if the reduction was done to the end,
- *          1 if an unsatisfiable clause was produced
+ * @return true if the reduction is satisfiable
+ *         false if it is unsatisfiable
  */
-int DpllSolver::reduce(Formula& p_formula, const RawLiteral& p_literal) {
+bool DpllSolver::reduce(Formula& p_formula, const RawLiteral& p_literal) {
 	History history;
 
 	// Rebuild a Literal from a RawLiteral
@@ -265,6 +236,6 @@ int DpllSolver::reduce(Formula& p_formula, const RawLiteral& p_literal) {
 		if (variable->id() == p_literal.id())
 			return reduce(p_formula, Literal(variable, p_literal.sign()), history);
 	}
-	
-	return -1;
+
+	return true;
 }

@@ -30,7 +30,7 @@ class Literal;
  */
 class Clause : public FormulaObject {
 public:
-	Clause(Id p_id);
+	explicit Clause(Id p_id);
 	~Clause();
 
 	void addLiteral(Literal p_literal);

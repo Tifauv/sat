@@ -32,7 +32,7 @@ class Clause;
  */
 class Variable : public FormulaObject {
 public:
-	Variable(Id p_id);
+	explicit Variable(Id p_id);
 	~Variable();
 
 	void addOccurence(Clause* p_clauseId, int p_sign);

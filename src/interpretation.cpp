@@ -105,7 +105,7 @@ void Interpretation::pop() {
 	if (m_literals.empty())
 		return;
 	
-	Literal& literal = m_literals.back();
+	Literal literal = m_literals.back();
 	m_literals.pop_back();
 	log4c_category_log(log_interpretation(), LOG4C_PRIORITY_INFO, "Literal %sx%u removed from the interpretation.", (literal.isNegative() ? "¬" : ""), literal.id());
 }
@@ -143,7 +143,7 @@ void Interpretation::print() {
 	std::cout << "v";
 	for (auto it = m_literals.cbegin(); it != m_literals.cend(); ++it) {
 		const Literal literal = *it;
-		std::cout << " " << (literal.sign() * literal.id());
+		std::cout << " " << (int)(literal.sign() * literal.id());
 	}
 	std::cout << " 0" << std::endl;
 }

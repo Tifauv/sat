@@ -26,7 +26,7 @@ typedef unsigned int Id;
  */
 class FormulaObject {
 public:
-	FormulaObject(Id p_id);
+	explicit FormulaObject(Id p_id);
 	virtual ~FormulaObject();
 
 	Id id() const;

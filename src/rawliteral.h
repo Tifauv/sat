@@ -21,7 +21,7 @@
 
 class RawLiteral {
 public:
-	RawLiteral(int p_literal);
+	explicit RawLiteral(int p_literal);
 
 	VariableId id() const;
 	int sign() const;
