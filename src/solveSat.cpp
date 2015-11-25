@@ -21,7 +21,7 @@
 #include <log4c.h>
 
 #include "cnf.h"
-#include "solver.h"
+#include "dpllsolver.h"
 
 using namespace std;
 
@@ -60,22 +60,21 @@ int main(int p_argc, char* p_argv[]) {
 	}
 
 	// Create the formula
-	tGraphe* formula = sat_new();
+	Formula formula;
 
 	// Load the CNF problem file
 	char* nom_fic = (char*) malloc(32);
 	strcpy(nom_fic, p_argv[1]);
-	cnf_load_problem(nom_fic, *formula);
+	cnf_load_problem(nom_fic, formula);
 	cout << "c Solution to cnf file " << nom_fic << endl;
 	free(nom_fic);
-	sat_log(*formula);
+	formula.log();
 
-	Interpretation* interpretation = alg_solve(*formula);
+	DpllSolver solver;
+	Interpretation* interpretation = solver.solve(formula);
 	interpretation->print();
 
 	delete interpretation;
-	sat_free(formula);
-	formula = NULL;
 
 	// Clean the logging system
 	if (log4c_fini())

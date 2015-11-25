@@ -8,13 +8,13 @@ set (LIBSAT_SRCS
 	formulaobject.cpp
 	variable.cpp
 	literal.cpp
+	rawliteral.cpp
 	clause.cpp
 	formula.cpp
 	interpretation.cpp
-	#history.cpp
-	#sat.cpp
-	#alg_dp.cpp
-	#cnf.cpp
+	history.cpp
+	dpllsolver.cpp
+	cnf.cpp
 )
 
 # The sources of solveSat
@@ -34,12 +34,12 @@ target_compile_options(sat PUBLIC -Wall -pedantic -std=c++11)
 target_link_libraries (sat ${LIBS})
 
 # Build solveSat
-#add_executable (solveSat ${SOLVESAT_SRCS})
-#target_compile_options(solveSat PRIVATE -Wall -pedantic -std=c++11)
-#target_link_libraries (solveSat LINK_PUBLIC sat ${LIBS})
+add_executable (solveSat ${SOLVESAT_SRCS})
+target_compile_options(solveSat PRIVATE -Wall -pedantic -std=c++11)
+target_link_libraries (solveSat LINK_PUBLIC sat ${LIBS})
 
 # Build checkSat
-#add_executable (checkSat ${CHECKSAT_SRCS})
-#target_compile_options(checkSat PRIVATE -Wall -pedantic -std=c++11)
-#target_link_libraries (checkSat LINK_PUBLIC sat ${LIBS})
+add_executable (checkSat ${CHECKSAT_SRCS})
+target_compile_options(checkSat PRIVATE -Wall -pedantic -std=c++11)
+target_link_libraries (checkSat LINK_PUBLIC sat ${LIBS})
 

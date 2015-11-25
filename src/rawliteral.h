@@ -14,43 +14,26 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
 */
-#ifndef LITERAL_H
-#define LITERAL_H
+#ifndef RAWLITERAL_H
+#define RAWLITERAL_H
 
 #include "variable.h"
 
-typedef unsigned int VariableId;
-class Variable;
-class Clause;
-
-
-class Literal {
+class RawLiteral {
 public:
-	Literal(Variable* p_variable, int p_sign);
-	~Literal();
+	RawLiteral(int p_literal);
 
-	Variable*  var()  const;
-	VariableId id()   const;
-	int        sign() const;
+	VariableId id() const;
+	int sign() const;
 
 	bool isPositive() const;
 	bool isNegative() const;
-
-	std::list<Clause*>::iterator beginOccurence();
-	std::list<Clause*>::iterator endOccurence();
-	std::list<Clause*>::iterator erase(std::list<Clause*>::iterator);
-
-	std::list<Clause*>::iterator beginOppositeOccurence();
-	std::list<Clause*>::iterator endOppositeOccurence();
-	std::list<Clause*>::iterator eraseOpposite(std::list<Clause*>::iterator);
-
-	Literal operator-();
-	bool operator==(const Literal& p_literal);
-	bool operator!=(const Literal& p_literal);
 	
+	RawLiteral operator-();
+	bool operator==(const RawLiteral& p_literal);
+
 private:
-	Variable* m_variable;
-	int m_sign;
+	int m_literal;
 };
 
-#endif // LITERAL_H
+#endif // RAWLITERAL_H

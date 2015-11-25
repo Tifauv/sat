@@ -19,9 +19,7 @@
 #define HISTORY_H
 
 #include <list>
-#include "clause.h"
-#include "literal.h"
-#include "sat.h"
+#include "formula.h"
 
 /**
  * The history manages steps for two operations:
@@ -35,9 +33,9 @@ enum class Operation {
 
 
 typedef struct Step {
-	Operation          operation;
-	ClauseId           clauseId;
-	std::list<Literal> literals;
+	Operation  operation;
+	Clause*    clause;
+	Literal*   literal;
 } Step;
 
 
@@ -62,17 +60,17 @@ public:
 	 * @param p_clause
 	 *            the clause to save
 	 */
-	void addClause(tClause* p_clause);
+	void addClause(Clause* p_clause);
 
 	/**
 	 * Adds an operation of type OP_ADD_LITERAL_TO_CLAUSE as last step of the history.
 	 *
-	 * @param p_clauseId
-	 *            the id of the clause
+	 * @param p_clause
+	 *            the clause
 	 * @param p_literal
 	 *            the literal to save
 	 */
-	void addLiteral(ClauseId p_clauseId, Literal p_literal);
+	void addLiteral(Clause* p_clause, Literal p_literal);
 
 	/**
 	 * Replays the modifications stored in the history.
@@ -80,7 +78,7 @@ public:
 	 * @param p_formula
 	 *            the formula in which to replay the operations
 	 */
-	void replay(tGraphe& p_formula);
+	void replay(Formula& p_formula);
 
 protected:
 	/**
@@ -94,3 +92,4 @@ private:
 };
 
 #endif // HISTORY_H
+

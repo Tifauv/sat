@@ -20,6 +20,7 @@
 #include <unordered_set>
 #include "clause.h"
 #include "variable.h"
+#include "rawliteral.h"
 
 
 class Formula {
@@ -27,22 +28,29 @@ public:
 	Formula();
 	~Formula();
 
-	Clause* createClause(Id p_clauseId, std::list<CnfLiteral>& p_literals);
+	Clause* createClause(Id p_clauseId, std::list<RawLiteral>& p_literals);
 
-	Literal* findLiteralFromUnaryClause() const;
-	Literal* selectLiteral() const;
+	Literal findLiteralFromUnaryClause() const;
+	Literal selectLiteral() const;
 
-	void removeClause(Clause* p_clause);
-	void removeLiteralFromClause(Clause* p_clause, Literal* p_literal);
+	void removeClause(Clause* p_clause, Literal p_literal);
+	void removeLiteralFromClause(Clause* p_clause, Literal p_literal);
 
-	void addClause(Clause* p_clause, std::list<Literal>& p_literals);
-	void addLiteralToClause(Clause* p_clause, Literal* p_literal);
+	void addClause(Clause* p_clause);
+	void addLiteralToClause(Clause* p_clause, Literal p_literal);
+
+	bool hasMoreClauses() const;
+
+	std::unordered_set<Variable*>::iterator beginVariable();
+	std::unordered_set<Variable*>::iterator endVariable();
+	void removeVariable(Variable* p_variable);
+	
+	void log() const;
 
 protected:
 	Variable* findOrCreateVariable(VariableId p_variableId);
 
-	void removeVariable(Variable* p_variable);
-	void unlinkVariable(Clause* p_clause, Literal* p_literal);
+	void unlinkVariable(Clause* p_clause, Literal p_literal);
 
 private:
 	std::unordered_set<Clause*> m_clauses;

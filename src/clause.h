@@ -33,18 +33,19 @@ public:
 	Clause(Id p_id);
 	~Clause();
 
-	void addLiteral(Literal* p_literal);
-	void removeLiteral(Literal* p_literal);
+	void addLiteral(Literal p_literal);
+	void removeLiteral(const Literal& p_literal);
 
+	bool isUnsatisfiable() const;
 	bool isUnary() const;
-	Literal* firstLiteral() const;
+	Literal firstLiteral() const;
 
-	std::list<Literal*>::const_iterator beginLiteral() const;
-	std::list<Literal*>::const_iterator endLiteral()   const;
+	std::list<Literal>::const_iterator beginLiteral() const;
+	std::list<Literal>::const_iterator endLiteral()   const;
 
 private:
 	/** The list of variables. */
-	std::list<Literal*> m_literals;
+	std::list<Literal> m_literals;
 };
 
 #endif // CLAUSE_H

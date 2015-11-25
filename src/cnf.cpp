@@ -22,10 +22,12 @@
 #include <log4c.h>
 #include <list>
 
-#include "sat.h"
-#include "alg_dp.h"
+#include "dpllsolver.h"
 #include "utils.h"
 #include "log.h"
+
+#define LN_SIZE 1024
+
 
 using namespace std;
 
@@ -42,10 +44,12 @@ using namespace std;
  *          0 if p_literal does not appear in p_literals
  *          1 if p_literal appears in p_literals
  */
-int cnf_exists_literal(Literal p_literal, std::list<Literal>& p_literals) {
-	for (auto literal = p_literals.cbegin(); literal != p_literals.cend(); ++literal)
-		if ( sat_literal_id(p_literal) == sat_literal_id(*literal) )
-			return sat_literal_sign(p_literal * *literal);
+int cnf_exists_literal(RawLiteral& p_literal, std::list<RawLiteral>& p_literals) {
+	for (auto it = p_literals.cbegin(); it != p_literals.cend(); ++it) {
+		RawLiteral literal = *it;
+		if ( p_literal.id() == literal.id() )
+			return p_literal.sign() * literal.sign();
+	}
 	return 0;
 }
 
@@ -54,43 +58,43 @@ int cnf_exists_literal(Literal p_literal, std::list<Literal>& p_literals) {
  * Parses a clause line from a cnf file.
  * 
  */
-std::list<Literal>* cnf_parse_clause(char* p_line, size_t p_size) {
+std::list<RawLiteral>* cnf_parse_clause(char* p_line, size_t p_size) {
 	// Sauvegarde de la chaîne originale
 	char* lineCopy = (char*) malloc(p_size);
 	strcpy(lineCopy, p_line);
 	
 	// I/ Création du tableau
-	auto literals = new std::list<Literal>();
+	auto literals = new std::list<RawLiteral>();
 	
 	// III/ Initialisation du tableau
 	char* token = strtok(lineCopy, " ");
 	while (token && notNull(literals)) {
 		// Parse current token
-		Literal literal = atoi(token);
+		RawLiteral literal(atoi(token));
 		
 		// Prepare next token
 		token = strtok(NULL, " ");
 		
 		// Break for this line if the '0' token has been found
-		if (literal == 0)
+		if (literal.id() == 0)
 			break;
 		
 		// On teste si l'entier n'apparaît pas déjà dans la variable
 		int exists = cnf_exists_literal(literal, *literals);
 		switch (exists) {
 			case 1: // Le token apparaît 2 fois avec le même "signe" -> pas ajouté cette fois
-				log4c_category_log(log_cnf(), LOG4C_PRIORITY_DEBUG, "  - Literal %sx%u already parsed in that clause, skipped.", (literal < 0 ? "¬" : ""), sat_literal_id(literal));
+				log4c_category_log(log_cnf(), LOG4C_PRIORITY_DEBUG, "  - Literal %sx%u already parsed in that clause, skipped.", (literal.isNegative() ? "¬" : ""), literal.id());
 				break;
 				
 			case -1: // Le token et son contraire apparaîssent -> literals = NULL
-				log4c_category_log(log_cnf(), LOG4C_PRIORITY_DEBUG, "   - Literal %sx%u already parsed in that clause so it is always true.", (literal < 0 ? "¬" : ""), sat_literal_id(literal));
+				log4c_category_log(log_cnf(), LOG4C_PRIORITY_DEBUG, "   - Literal %sx%u already parsed in that clause so it is always true.", (literal.isNegative() ? "¬" : ""), literal.id());
 				delete literals;
 				literals = NULL;
 				break;
 				
 			default:
 				literals->push_back(literal);
-				log4c_category_log(log_cnf(), LOG4C_PRIORITY_DEBUG, "  - Literal %sx%u parsed.", (literal < 0 ? "¬" : ""), sat_literal_id(literal));
+				log4c_category_log(log_cnf(), LOG4C_PRIORITY_DEBUG, "  - Literal %sx%u parsed.", (literal.isNegative() ? "¬" : ""), literal.id());
 		}
 	}
 	
@@ -108,7 +112,7 @@ std::list<Literal>* cnf_parse_clause(char* p_line, size_t p_size) {
  * @return NULL if p_filename is NULL,
  *         the formula loaded otherwise
  */
-void cnf_load_problem(char* p_filename, tGraphe& p_formula) {
+void cnf_load_problem(char* p_filename, Formula& p_formula) {
 	log4c_category_log(log_cnf(), LOG4C_PRIORITY_DEBUG, "Loading problem from CNF file '%s'...", p_filename);
 
 	// Ouverture du fichier
@@ -150,12 +154,10 @@ void cnf_load_problem(char* p_filename, tGraphe& p_formula) {
 			break;
 
 		// Transformation string -> tab
-		std::list<Literal>* literals = cnf_parse_clause(str, LN_SIZE);
+		std::list<RawLiteral>* literals = cnf_parse_clause(str, LN_SIZE);
 
-		if (sat_add_clause(p_formula, clauseId, *literals))
-			log4c_category_log(log_cnf(), LOG4C_PRIORITY_INFO, "Clause for line %u was not added.", lineNo);
-		else
-			++clauseId;
+		p_formula.createClause(clauseId, *literals);
+		++clauseId;
 		delete literals;
 	}
 	fclose(fic);
@@ -174,7 +176,7 @@ void cnf_load_problem(char* p_filename, tGraphe& p_formula) {
  * @return NULL if p_filename is NULL,
  *         the interpretation loaded otherwise
  */
-std::list<Literal>* cnf_load_solution(char* p_filename) {
+std::list<RawLiteral>* cnf_load_solution(char* p_filename) {
 	log4c_category_log(log_cnf(), LOG4C_PRIORITY_DEBUG, "Loading solution from SAT file '%s'...", p_filename);
 
 	// Ouverture du fichier
@@ -186,7 +188,7 @@ std::list<Literal>* cnf_load_solution(char* p_filename) {
 	log4c_category_log(log_cnf(), LOG4C_PRIORITY_DEBUG, "File '%s' opened.", p_filename);
 	
 	// Initialisation de formula
-	std::list<Literal>* solution = NULL;
+	std::list<RawLiteral>* solution = NULL;
 
 	// Initialisation de str
 	char* str = (char*) malloc(LN_SIZE);
@@ -222,35 +224,4 @@ std::list<Literal>* cnf_load_solution(char* p_filename) {
 	log4c_category_log(log_cnf(), LOG4C_PRIORITY_INFO, "Solution loaded from SAT file '%s'.", p_filename);
 
 	return solution;
-}
-
-
-/**
- * Check whether a given solution is a valid interpretation of a formula.
- * 
- * @param p_formula
- *            the formula
- * @param p_solution
- *            the solution to check
- * 
- * @return true if the solution satisfies teh formula,
- *         false otherwise
- */
-bool cnf_check_solution(tGraphe& p_formula, std::list<Literal>* p_solution) {
-	History history;
-	for (auto literal = p_solution->cbegin(); literal != p_solution->cend(); ++literal) {
-		if (dp_reduce(p_formula, *literal, history) == 1) {
-			cout << "An unsatisfiable clause was obtained." << endl;
-			return false;
-		}
-	}
-
-	if (isNull(p_formula.clauses)) {
-		cout << "All clauses could be interpreted." << endl;
-		return true;
-	}
-	else {
-		cout << "Some clauses could not be interpreted." << endl;
-		return false;
-	}
 }

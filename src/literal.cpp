@@ -19,14 +19,10 @@
 
 // CONSTRUCTORS
 Literal::Literal(Variable* p_variable, int p_sign) :
-	m_variable(p_variable),
-	m_sign(p_sign) {
+m_variable(p_variable),
+m_sign(p_sign) {
 }
 
-
-CnfLiteral::CnfLiteral(int p_literal) :
-	m_literal(p_literal) {
-}
 
 // DESTRUCTORS
 Literal::~Literal() {
@@ -49,15 +45,58 @@ int Literal::sign() const {
 }
 
 
-VariableId CnfLiteral::id() const {
-	if (m_literal >= 0)
-		return m_literal;
-	return - m_literal;
+bool Literal::isPositive() const {
+	return sign() >= 0;
 }
 
 
-int CnfLiteral::sign() const {
-	if (m_literal >= 0)
-		return SIGN_POSITIVE;
-	return SIGN_NEGATIVE;
+bool Literal::isNegative() const {
+	return sign() < 0;
+}
+
+
+// METHODS
+std::list<Clause*>::iterator Literal::beginOccurence() {
+	return var()->beginOccurence(m_sign);
+}
+
+
+std::list<Clause*>::iterator Literal::endOccurence() {
+	return var()->endOccurence(m_sign);
+}
+
+
+std::list<Clause*>::iterator Literal::erase(std::list<Clause*>::iterator p_iterator) {
+	return var()->erase(p_iterator, m_sign);
+}
+
+
+std::list<Clause*>::iterator Literal::beginOppositeOccurence() {
+	return var()->beginOccurence(-m_sign);
+}
+
+
+std::list<Clause*>::iterator Literal::endOppositeOccurence() {
+	return var()->endOccurence(-m_sign);
+}
+
+
+std::list<Clause*>::iterator Literal::eraseOpposite(std::list<Clause*>::iterator p_iterator) {
+	return var()->erase(p_iterator, -m_sign);
+}
+
+
+// OPERATORS
+Literal Literal::operator-() {
+	return Literal(m_variable, -m_sign);
+}
+
+
+bool Literal::operator==(const Literal& p_literal) {
+	return id() == p_literal.id();
+}
+
+
+bool Literal::operator!=(const Literal& p_literal) {
+	return id() != p_literal.id();
 }

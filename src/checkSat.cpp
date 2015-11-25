@@ -22,6 +22,7 @@
 #include <list>
 
 #include "cnf.h"
+#include "dpllsolver.h"
 
 using namespace std;
 
@@ -61,24 +62,25 @@ int main(int p_argc, char* p_argv[]) {
 	}
 
 	// Create the formula
-	tGraphe* formula = sat_new();
+	Formula formula;
 
 	// Load the CNF problem file
 	char* cnfFilename = (char*) malloc(32);
 	strcpy(cnfFilename, p_argv[1]);
-	cnf_load_problem(cnfFilename, *formula);
+	cnf_load_problem(cnfFilename, formula);
 	free(cnfFilename);
-	sat_log(*formula);
+	formula.log();
 
 	// Load the SAT solution file
 	char* satFilename = (char*) malloc(32);
 	strcpy(satFilename, p_argv[2]);
-	std::list<Literal>* solution = cnf_load_solution(satFilename);
+	std::list<RawLiteral>* solution = cnf_load_solution(satFilename);
 	free(satFilename);
 
 	// Check the solution
 	int rc = 0;
-	if (cnf_check_solution(*formula, solution)) {
+	DpllSolver solver;
+	if (solver.checkSolution(formula, solution)) {
 		rc = 0;
 		cout << "The solution is valid." << endl;
 	}
@@ -88,8 +90,6 @@ int main(int p_argc, char* p_argv[]) {
 	}
 
 	delete solution;
-	sat_free(formula);
-	formula = NULL;
 
 	// Clean the logging system
 	if (log4c_fini())

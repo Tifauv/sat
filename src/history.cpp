@@ -46,61 +46,49 @@ History::~History() {
  * @param p_clause
  *            the clause to save
  */
-void History::addClause(tClause* p_clause) {
+void History::addClause(Clause* p_clause) {
 	// Parameters check
 	if (isNull(p_clause)) {
 		log4c_category_log(log_history(), LOG4C_PRIORITY_ERROR, "The clause to add is NULL.");
 		return;
 	}
 
-	// Check the clause is not empty
-	if (isNull(p_clause->vars)) {
-		log4c_category_log(log_history(), LOG4C_PRIORITY_ERROR, "The clause to add is empty.");
-		return;
-	}
-
-	// Create the literals array
-	std::list<Literal> literals;
-	tPtVar* literalIter = p_clause->vars;
-	while (notNull(literalIter)) {
-		literals.push_back( literalIter->var->indVar * sat_get_sign(literalIter->var, p_clause->indCls) );
-		literalIter = literalIter->suiv;
-	}
-	
 	// Create the new step
 	Step* newStep = new Step();
 	newStep->operation = Operation::AddClause;
-	newStep->clauseId = p_clause->indCls;
-	newStep->literals = literals;
+	newStep->clause = p_clause;
+	newStep->literal = NULL;
 
 	// Add the new step
 	m_steps.push_front(newStep);
-	log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "Clause %u added to the history.", p_clause->indCls);
+	log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "Clause %u added to the history.", p_clause->id());
 }
 
 
 /**
  * Adds an operation of type Operation::AddLiteralToClause as last step of the history.
  *
- * @param p_clauseId
- *            the id of the clause
+ * @param p_clause
+ *            the clause
  * @param p_literal
  *            the literal to save
  */
-void History::addLiteral(ClauseId p_clauseId, Literal p_literal) {
-	// Create the literals array
-	std::list<Literal> literals(1);
-	literals.push_front( p_literal );
-	
+void History::addLiteral(Clause* p_clause, Literal p_literal) {
+	// Parameters check
+	if (isNull(p_clause)) {
+		log4c_category_log(log_history(), LOG4C_PRIORITY_ERROR, "The clause to add is NULL.");
+		return;
+	}
+
 	// Create the new step
 	Step* newStep = new Step();
 	newStep->operation = Operation::AddLiteralToClause;
-	newStep->clauseId = p_clauseId;
-	newStep->literals = literals;
+	newStep->clause  = p_clause;
+	newStep->literal = &p_literal;
 	
 	// Add the new step
 	m_steps.push_back(newStep);
-	log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "Literal %sx%u of clause %u added to the history.", (p_literal < 0 ? "¬" : ""), sat_literal_id(p_literal), p_clauseId);
+	log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "Literal %sx%u of clause %u added to the history.", (p_literal.isNegative() ? "¬" : ""), p_literal.id(), p_clause->id());
 }
 
 
@@ -110,22 +98,22 @@ void History::addLiteral(ClauseId p_clauseId, Literal p_literal) {
  * @param p_formula
  *            the formula in which to replay the operations
  */
-void History::replay(tGraphe& p_formula) {
+void History::replay(Formula& p_formula) {
 	// Replaying...
 	log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "Replaying the history...");
 	for (auto it = m_steps.begin(); it != m_steps.end(); it = m_steps.erase(it)) {
-		ClauseId clauseId = (*it)->clauseId;
-		std::list<Literal> literals = (*it)->literals;
+		Clause* clause  = (*it)->clause;
+		Literal* literal = (*it)->literal;
 
 		switch ((*it)->operation) {
 			case Operation::AddClause:
-				sat_add_clause(p_formula, clauseId, literals);
-				log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "Added clause %u", clauseId);
+				p_formula.addClause(clause);
+				log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "Added clause %u", clause->id());
 				break;
 
 			case Operation::AddLiteralToClause:
-				sat_add_var_to_cls(p_formula, clauseId, literals.front());
-				log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "Added %sx%u to clause %u", (literals.front() < 0 ? "¬" : ""), sat_literal_id(literals.front()), clauseId);
+				p_formula.addLiteralToClause(clause, *literal);
+				log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "Added %sx%u to clause %u", (literal->isNegative() ? "¬" : ""), literal->id(), clause->id());
 				break;
 
 			default:
@@ -149,3 +137,4 @@ void History::clear() {
 		delete *it;
 	log4c_category_log(log_history(), LOG4C_PRIORITY_DEBUG, "History cleared.");
 }
+

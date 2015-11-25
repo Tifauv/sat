@@ -19,9 +19,8 @@
 #define CNF_H
 
 #include <list>
-#include "sat.h"
+#include "formula.h"
 
-using namespace std;
 
 /**
  * Searches a literal in a list of literals.
@@ -35,14 +34,14 @@ using namespace std;
  *          0 if p_literal does not appear in p_literals
  *          1 if p_literal appears in p_literals
  */
-int cnf_exists_literal(Literal p_literal, std::list<Literal>& p_literals);
+int cnf_exists_literal(RawLiteral& p_literal, std::list<RawLiteral>& p_literals);
 
 
 /**
  * Parses a clause line from a cnf file.
  * 
  */
-std::list<Literal>* cnf_parse_clause(char* p_line, size_t p_size);
+std::list<RawLiteral>* cnf_parse_clause(char* p_line, size_t p_size);
 
 
 /**
@@ -54,7 +53,7 @@ std::list<Literal>* cnf_parse_clause(char* p_line, size_t p_size);
  * @return NULL if p_filename is NULL,
  *         the formula loaded otherwise
  */
-void cnf_load_problem(char* p_filename, tGraphe& p_formula);
+void cnf_load_problem(char* p_filename, Formula& p_formula);
 
 
 /**
@@ -66,20 +65,6 @@ void cnf_load_problem(char* p_filename, tGraphe& p_formula);
  * @return NULL if p_filename is NULL,
  *         the interpretation loaded otherwise
  */
-std::list<Literal>* cnf_load_solution(char* p_filename);
-
-
-/**
- * Check whether a given solution is a valid interpretation of a formula.
- * 
- * @param p_formula
- *            the formula
- * @param p_solution
- *            the solution to check
- * 
- * @return true if the solution satisfies teh formula,
- *         false otherwise
- */
-bool cnf_check_solution(tGraphe& p_formula, std::list<Literal>* p_solution);
+std::list<RawLiteral>* cnf_load_solution(char* p_filename);
 
 #endif // CNF_H

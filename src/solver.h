@@ -19,18 +19,22 @@
 #ifndef SOLVER_H
 #define SOLVER_H
 
-#include "sat.h"
+#include "formula.h"
 #include "interpretation.h"
 
-/**
- * Common entrypoint for SAT solvers.
- * 
- * @param p_formula
- *            the SAT formula to solve
- * 
- * @return NULL if p_formula is NULL,
- *         or an interpretation (satisfiable or not)
- */
-Interpretation* alg_solve(tGraphe& p_formula);
+
+class Solver {
+public:
+	/**
+	 * Common entrypoint for SAT solvers.
+	 * 
+	 * @param p_formula
+	 *            the SAT formula to solve
+	 * 
+	 * @return NULL if p_formula is NULL,
+	 *         or an interpretation (satisfiable or not)
+	 */
+	virtual Interpretation* solve(Formula& p_formula) = 0;
+};
 
 #endif // SOLVER_H

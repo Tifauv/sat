@@ -40,6 +40,10 @@ public:
 	bool hasPositiveOccurence() const;
 	bool hasNegativeOccurence() const;
 
+	std::list<Clause*>::iterator beginOccurence(int p_sign);
+	std::list<Clause*>::iterator endOccurence(int p_sign);
+	std::list<Clause*>::iterator erase(std::list<Clause*>::iterator p_iterator, int p_sign);
+
 	void removePositiveOccurence(Clause* p_clause);
 	void removeNegativeOccurence(Clause* p_clause);
 

@@ -76,6 +76,27 @@ bool Variable::hasNegativeOccurence() const {
 }
 
 
+std::list<Clause*>::iterator Variable::beginOccurence(int p_sign) {
+	if (p_sign == SIGN_POSITIVE)
+		return m_positiveOccurences.begin();
+	return m_negativeOccurences.begin();
+}
+
+
+std::list<Clause*>::iterator Variable::endOccurence(int p_sign) {
+	if (p_sign == SIGN_POSITIVE)
+		return m_positiveOccurences.end();
+	return m_negativeOccurences.end();
+}
+
+
+std::list<Clause*>::iterator Variable::erase(std::list<Clause*>::iterator p_iterator, int p_sign) {
+	if (p_sign == SIGN_POSITIVE)
+		return m_positiveOccurences.erase(p_iterator);
+	return m_negativeOccurences.erase(p_iterator);
+}
+
+
 void Variable::removePositiveOccurence(Clause* p_clause) {
 	m_positiveOccurences.remove(p_clause);
 }
