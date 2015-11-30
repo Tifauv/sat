@@ -4,7 +4,7 @@ include_directories(${LOG4C_INCLUDE_DIRS})
 set(LIBS ${LIBS} ${LOG4C_LIBRARIES})
 
 # Declare common CFLAGS
-set(CFLAGS -Wall -pedantic -std=c++11 -O2)
+set(CFLAGS -Wall -Wextra -pedantic -std=c++11 -O2)
 
 # The sources of libSat
 set (LIBSAT_SRCS
