@@ -38,6 +38,22 @@ Formula::Formula() {
  * Cleans the memory used by the formula. 
  */
 Formula::~Formula() {
+	// Delete the clauses
+	for (auto it = m_clauses.begin(); it != m_clauses.end(); it = m_clauses.erase(it))
+		delete *it;
+
+	// Delete the unused clauses
+	for (auto it = m_unusedClauses.begin(); it != m_unusedClauses.end(); it = m_unusedClauses.erase(it))
+		delete *it;
+	
+	// Delete the variables
+	for (auto it = m_variables.begin(); it != m_variables.end(); it = m_variables.erase(it))
+		delete *it;
+	
+	// Delete the unused variables
+	for (auto it = m_unusedVariables.begin(); it != m_unusedVariables.end(); it = m_unusedVariables.erase(it))
+		delete *it;
+	
 	log4c_category_log(log_formula(), LOG4C_PRIORITY_DEBUG, "Formula deleted.");
 }
 
