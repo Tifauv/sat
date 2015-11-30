@@ -28,8 +28,6 @@
 #include "utils.h"
 #include "log.h"
 
-#define LN_SIZE 1024
-
 
 using namespace std;
 
