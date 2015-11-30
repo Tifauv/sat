@@ -17,7 +17,6 @@
 */
 
 #include <iostream>
-//#include <string.h>
 #include <log4c.h>
 
 #include "cnf.h"

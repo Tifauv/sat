@@ -17,9 +17,8 @@
 */
 
 #include <iostream>
-#include <string.h>
-#include <log4c.h>
 #include <list>
+#include <log4c.h>
 
 #include "cnf.h"
 #include "dpllsolver.h"
