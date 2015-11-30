@@ -61,35 +61,35 @@ int main(int p_argc, char* p_argv[]) {
 		exit(-2);
 	}
 
-	// Create the formula
-	Formula formula;
-
-	// Load the CNF problem file
-	char* cnfFilename = (char*) malloc(32);
-	strcpy(cnfFilename, p_argv[1]);
-	cnf_load_problem(cnfFilename, formula);
-	free(cnfFilename);
-	formula.log();
-
-	// Load the SAT solution file
-	char* satFilename = (char*) malloc(32);
-	strcpy(satFilename, p_argv[2]);
-	std::list<RawLiteral>* solution = cnf_load_solution(satFilename);
-	free(satFilename);
-
-	// Check the solution
 	int rc = 0;
-	DpllSolver solver;
-	if (solver.checkSolution(formula, solution)) {
-		rc = 0;
-		cout << "The solution is valid." << endl;
-	}
-	else {
-		rc = 1;
-		cout << "The solution is not valid." << endl;
-	}
+	{
+		// Files to load
+		char* cnfFilename = p_argv[1];
+		char* satFilename = p_argv[2];
+		
+		// Create the formula
+		Formula formula;
 
-	delete solution;
+		// Load the CNF problem file
+		cnf_load_problem(cnfFilename, formula);
+		formula.log();
+
+		// Load the SAT solution file
+		std::list<RawLiteral>* solution = cnf_load_solution(satFilename);
+
+		// Check the solution
+		DpllSolver solver;
+		if (solver.checkSolution(formula, solution)) {
+			rc = 0;
+			cout << "The solution is valid." << endl;
+		}
+		else {
+			rc = 1;
+			cout << "The solution is not valid." << endl;
+		}
+
+		delete solution;
+	}
 
 	// Clean the logging system
 	if (log4c_fini())

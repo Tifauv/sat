@@ -17,7 +17,7 @@
 */
 
 #include <iostream>
-#include <string.h>
+//#include <string.h>
 #include <log4c.h>
 
 #include "cnf.h"
@@ -48,7 +48,7 @@ void usage() {
  */
 int main(int p_argc, char* p_argv[]) {
 	// No argument: display usage and exit
-	if (p_argc == 1) {
+	if (p_argc != 2) {
 		usage();
 		exit(-1);
 	}
@@ -58,23 +58,24 @@ int main(int p_argc, char* p_argv[]) {
 		cerr << "Log4c initialization failed, aborting." << endl;
 		exit(-2);
 	}
+	
+	{
+		char* cnf_filename = p_argv[1];
 
-	// Create the formula
-	Formula formula;
+		// Create the formula
+		Formula formula;
 
-	// Load the CNF problem file
-	char* nom_fic = (char*) malloc(32);
-	strcpy(nom_fic, p_argv[1]);
-	cnf_load_problem(nom_fic, formula);
-	cout << "c Solution to cnf file " << nom_fic << endl;
-	free(nom_fic);
-	formula.log();
+		// Load the CNF problem file
+		cnf_load_problem(cnf_filename, formula);
+		cout << "c Solution to cnf file " << cnf_filename << endl;
+		formula.log();
 
-	DpllSolver solver;
-	Interpretation* interpretation = solver.solve(formula);
-	interpretation->print();
-
-	delete interpretation;
+		// Solve the problem and display its interpretation
+		DpllSolver solver;
+		Interpretation* interpretation = solver.solve(formula);
+		interpretation->print();
+		delete interpretation;
+	}
 
 	// Clean the logging system
 	if (log4c_fini())
