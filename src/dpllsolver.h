@@ -48,7 +48,7 @@ public:
 	 * @param p_solution
 	 *            the solution to check
 	 * 
-	 * @return true if the solution satisfies teh formula,
+	 * @return true if the solution satisfies the formula,
 	 *         false otherwise
 	 */
 	bool checkSolution(Formula& p_formula, std::list<RawLiteral>* p_solution);
@@ -94,7 +94,7 @@ protected:
 
 
 	/**
-	 * Overloaded implementation that takes a raw literal instead of a literal.
+	 * Overloaded implementation that takes a RawLiteral instead of a Literal.
 	 * 
 	 * @param p_formula
 	 *            the SAT formula
