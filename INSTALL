@@ -12,4 +12,7 @@ or run the following commands:
 	$ cd build
 	$ cmake ..
 	$ make
-The executable is 'build/src/testSat'.
+
+The 'solver' executable is 'build/src/solveSat'.
+
+The 'checker' executable is 'build/src/checkSat'.
