@@ -2,7 +2,12 @@
 	"name": "SAT",
 	"files": [ { "git": 1 } ],
 	"build": {
-		"build": "./build.sh",
-		"clean": "./clean.sh"
+		"directory": "/home/tifauv/Developpement/sat",
+		"targets": [
+			{ "name": "clean", "build_cmd": "./clean.sh" },
+			{ "name": "build", "build_cmd": "./build.sh" }
+		],
+		"default_target": "build",
+		"clean_target":   "clean"
 	}
 }
