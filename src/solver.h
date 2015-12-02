@@ -29,8 +29,7 @@ public:
 	 * @param p_formula
 	 *            the SAT formula to solve
 	 * 
-	 * @return NULL if p_formula is NULL,
-	 *         or an interpretation (satisfiable or not)
+	 * @return an interpretation (satisfiable or not)
 	 */
 	virtual Interpretation* solve(Formula& p_formula) = 0;
 };

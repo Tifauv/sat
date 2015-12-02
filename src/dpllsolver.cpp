@@ -29,8 +29,7 @@
  * @param p_formula
  *            the SAT formula to solve
  * 
- * @return an interpretation (satisfiable or not),
- *         or NULL if p_formula is NULL
+ * @return an interpretation (satisfiable or not)
  */
 Interpretation* DpllSolver::solve(Formula& p_formula) {
 	log4c_category_log(log_dpll(), LOG4C_PRIORITY_DEBUG, "Starting the DPLL algorithm.");

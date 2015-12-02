@@ -80,10 +80,10 @@ std::list<RawLiteral>* cnf_parse_clause(std::string p_line) {
 				log4c_category_log(log_cnf(), LOG4C_PRIORITY_DEBUG, "  - Literal %sx%u already parsed in that clause, skipped.", (literal.isNegative() ? "¬" : ""), literal.id());
 				break;
 				
-			case -1: // Le token et son contraire apparaîssent -> literals = NULL
+			case -1: // Le token et son contraire apparaîssent -> literals = nullptr
 				log4c_category_log(log_cnf(), LOG4C_PRIORITY_DEBUG, "   - Literal %sx%u already parsed in that clause so it is always true.", (literal.isNegative() ? "¬" : ""), literal.id());
 				delete literals;
-				literals = NULL;
+				literals = nullptr;
 				break;
 				
 			default:
@@ -101,9 +101,8 @@ std::list<RawLiteral>* cnf_parse_clause(std::string p_line) {
  * 
  * @param p_filename
  *            the name of the file to load
- * 
- * @return NULL if p_filename is NULL,
- *         the formula loaded otherwise
+ * @param p_formula
+ *            the formula to initialize
  */
 void cnf_load_problem(char* p_filename, Formula& p_formula) {
 	log4c_category_log(log_cnf(), LOG4C_PRIORITY_DEBUG, "Loading problem from CNF file '%s'...", p_filename);
@@ -153,7 +152,7 @@ void cnf_load_problem(char* p_filename, Formula& p_formula) {
  * @param p_filename
  *            the name of the file to load
  * 
- * @return NULL if p_filename is NULL,
+ * @return nullptr if p_filename is nullptr,
  *         the interpretation loaded otherwise
  */
 std::list<RawLiteral>* cnf_load_solution(char* p_filename) {
@@ -163,12 +162,12 @@ std::list<RawLiteral>* cnf_load_solution(char* p_filename) {
 	std::ifstream file(p_filename);
 	if (!file.is_open()) {
 		log4c_category_log(log_cnf(), LOG4C_PRIORITY_ERROR, "Could not open file '%s'.", p_filename);
-		return NULL;
+		return nullptr;
 	}
 	log4c_category_log(log_cnf(), LOG4C_PRIORITY_DEBUG, "File '%s' opened.", p_filename);
 	
 	// Initializations
-	std::list<RawLiteral>* solution = NULL;
+	std::list<RawLiteral>* solution = nullptr;
 	std::string line;
 	unsigned int lineNo = 0;
 

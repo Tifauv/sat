@@ -17,7 +17,7 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#define isNull(p) (p == NULL)
-#define notNull(p) (p != NULL)
+#define isNull(p) (p == nullptr)
+#define notNull(p) (p != nullptr)
 
 #endif // UTILS_H

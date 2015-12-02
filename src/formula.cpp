@@ -104,7 +104,7 @@ Clause* Formula::createClause(Id p_clauseId, std::list<RawLiteral>& p_literals) 
  * @return the variable, either found or created
  */
 Variable* Formula::findOrCreateVariable(VariableId p_variableId) {
-	Variable* variable = NULL;
+	Variable* variable = nullptr;
 
 	// Search the variable
 	auto match_id([p_variableId](Variable* variable) { return variable->id() == p_variableId; } );
@@ -130,7 +130,7 @@ Variable* Formula::findOrCreateVariable(VariableId p_variableId) {
  * Retrieves the literal from a unary clause.
  *
  * @return the literal found,
- *         or NULL if there is no unary clause
+ *         or a literal pointing to a nullptr variable if there is no unary clause
  */
 Literal Formula::findLiteralFromUnaryClause() const {
 	// Search an unary clause
@@ -145,7 +145,7 @@ Literal Formula::findLiteralFromUnaryClause() const {
 	}
 
 	// No unary clause found
-	return Literal(NULL, SIGN_POSITIVE);
+	return Literal(nullptr, SIGN_POSITIVE);
 }
 
 
@@ -153,13 +153,13 @@ Literal Formula::findLiteralFromUnaryClause() const {
  * Select a literal for the reduction phase.
  *
  * @return the literal selected,
- *         or NULL if there is not anymore
+ *         or a literal pointing to a nullptr variable if there is no more variable
  */
 Literal Formula::selectLiteral() const {
 	// Parameters check
 	if (m_variables.empty()) {
 		log4c_category_log(log_formula(), LOG4C_PRIORITY_ERROR, "There is no more used literal in the formula.");
-		return Literal(NULL, SIGN_POSITIVE);
+		return Literal(nullptr, SIGN_POSITIVE);
 	}
 
 	Variable* variable = *m_variables.cbegin();

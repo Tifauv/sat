@@ -48,9 +48,8 @@ std::list<RawLiteral>* cnf_parse_clause(char* p_line, size_t p_size);
  * 
  * @param p_filename
  *            the name of the file to load
- * 
- * @return NULL if p_filename is NULL,
- *         the formula loaded otherwise
+ * @param p_formula
+ *            the formula to initialize
  */
 void cnf_load_problem(char* p_filename, Formula& p_formula);
 
@@ -61,7 +60,7 @@ void cnf_load_problem(char* p_filename, Formula& p_formula);
  * @param p_filename
  *            the name of the file to load
  * 
- * @return NULL if p_filename is NULL,
+ * @return nullptr if p_filename is nullptr,
  *         the interpretation loaded otherwise
  */
 std::list<RawLiteral>* cnf_load_solution(char* p_filename);
