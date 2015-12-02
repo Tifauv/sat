@@ -19,7 +19,6 @@
 
 #include "variable.h"
 
-typedef unsigned int VariableId;
 class Variable;
 class Clause;
 
@@ -31,9 +30,9 @@ public:
 	Literal(const Literal& p_literal);
 	~Literal();
 
-	Variable*  var()  const;
-	VariableId id()   const;
-	int        sign() const;
+	Variable* var()  const;
+	Id        id()   const;
+	int       sign() const;
 
 	bool isPositive() const;
 	bool isNegative() const;

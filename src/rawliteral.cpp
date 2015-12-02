@@ -16,6 +16,7 @@
  */
 #include "rawliteral.h"
 
+#include "variable.h"
 
 // CONSTRUCTORS
 RawLiteral::RawLiteral(int p_literal) :
@@ -24,7 +25,7 @@ m_literal(p_literal) {
 
 
 // GETTERS
-VariableId RawLiteral::id() const {
+Id RawLiteral::id() const {
 	if (m_literal >= 0)
 		return m_literal;
 	return - m_literal;

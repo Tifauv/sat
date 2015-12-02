@@ -17,10 +17,13 @@
 #ifndef SOLVER_H
 #define SOLVER_H
 
-#include "formula.h"
-#include "interpretation.h"
+class Formula;
+class Interpretation;
 
 
+/**
+ * Interface for SAT solvers.
+ */
 class Solver {
 public:
 	/**

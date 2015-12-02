@@ -19,13 +19,12 @@
 
 #include <list>
 #include "formulaobject.h"
-#include "clause.h"
+
+class Clause;
 
 #define SIGN_POSITIVE  1
 #define SIGN_NEGATIVE -1
 
-
-class Clause;
 
 /**
  * 

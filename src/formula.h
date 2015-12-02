@@ -17,13 +17,15 @@
 #ifndef FORMULA_H
 #define FORMULA_H
 
+#include <list>
 #include <unordered_set>
-#include "clause.h"
-#include "variable.h"
 #include "rawliteral.h"
 
-
+class Clause;
+class Literal;
+class Variable;
 class History;
+
 
 class Formula {
 public:
@@ -51,7 +53,7 @@ public:
 	void log() const;
 
 protected:
-	Variable* findOrCreateVariable(VariableId p_variableId);
+	Variable* findOrCreateVariable(Id p_variableId);
 
 	void unlinkVariable(Clause* p_clause, Literal p_literal);
 

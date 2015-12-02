@@ -17,8 +17,8 @@
 #ifndef INTERPRETATION_H
 #define INTERPRETATION_H
 
-#include "literal.h"
 #include <list>
+#include "literal.h"
 
 
 /**

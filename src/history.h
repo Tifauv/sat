@@ -18,7 +18,10 @@
 #define HISTORY_H
 
 #include <list>
-#include "formula.h"
+#include "literal.h"
+
+class Formula;
+class Clause;
 
 
 /**

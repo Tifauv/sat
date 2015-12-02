@@ -19,8 +19,10 @@
 
 #include "cnf.h"
 #include "dpllsolver.h"
+#include "interpretation.h"
 
 using namespace std;
+
 
 /**
  * Displays the usage message.

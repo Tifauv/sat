@@ -19,6 +19,8 @@
 #include <algorithm>
 #include <functional>
 #include <log4c.h>
+#include "clause.h"
+#include "variable.h"
 #include "history.h"
 #include "utils.h"
 #include "log.h"
@@ -103,7 +105,7 @@ Clause* Formula::createClause(Id p_clauseId, std::list<RawLiteral>& p_literals) 
  *
  * @return the variable, either found or created
  */
-Variable* Formula::findOrCreateVariable(VariableId p_variableId) {
+Variable* Formula::findOrCreateVariable(Id p_variableId) {
 	Variable* variable = nullptr;
 
 	// Search the variable

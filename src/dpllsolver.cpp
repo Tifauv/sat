@@ -18,6 +18,9 @@
 
 #include <iostream>
 #include <log4c.h>
+#include "formula.h"
+#include "interpretation.h"
+#include "history.h"
 #include "utils.h"
 #include "log.h"
 

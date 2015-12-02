@@ -17,6 +17,7 @@
 #include "variable.h"
 
 #include <log4c.h>
+#include "clause.h"
 #include "utils.h"
 #include "log.h"
 

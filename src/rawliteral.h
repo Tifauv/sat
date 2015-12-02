@@ -17,13 +17,14 @@
 #ifndef RAWLITERAL_H
 #define RAWLITERAL_H
 
-#include "variable.h"
+#include "formulaobject.h"
+
 
 class RawLiteral {
 public:
 	explicit RawLiteral(int p_literal);
 
-	VariableId id() const;
+	Id id() const;
 	int sign() const;
 
 	bool isPositive() const;

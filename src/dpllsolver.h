@@ -18,10 +18,13 @@
 #ifndef DPLL_SOLVER_H
 #define DPLL_SOLVER_H
 
+#include <list>
 #include "solver.h"
-#include "formula.h"
-#include "interpretation.h"
-#include "history.h"
+
+class RawLiteral;
+class Literal;
+class Interpretation;
+class History;
 
 
 /**

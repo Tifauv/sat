@@ -17,6 +17,8 @@
 #include "history.h"
 
 #include <log4c.h>
+#include "formula.h"
+#include "clause.h"
 #include "utils.h"
 #include "log.h"
 

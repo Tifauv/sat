@@ -47,7 +47,7 @@ Variable* Literal::var() const {
 }
 
 
-VariableId Literal::id() const {
+Id Literal::id() const {
 	return m_variable->id();
 }
 
