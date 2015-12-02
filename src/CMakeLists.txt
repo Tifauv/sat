@@ -32,7 +32,6 @@ set (CHECKSAT_SRCS
 
 # Build libSat
 add_library (sat ${LIBSAT_SRCS})
-target_include_directories (sat PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_compile_options(sat PUBLIC ${CFLAGS})
 target_link_libraries (sat ${LIBS})
 
