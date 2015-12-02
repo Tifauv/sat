@@ -45,9 +45,9 @@ void usage(char* p_command) {
  * @param p_argv
  *            the array of command-line arguments
  * 
- * @return 2 if the log4c initialization fails,
- *         1 if no argument was given,
- *         0 otherwise
+ * @return -2 if the log4c initialization fails,
+ *         -1 if no argument was given,
+ *          0 otherwise
  */
 int main(int p_argc, char* p_argv[]) {
 	// No argument: display usage and exit

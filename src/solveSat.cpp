@@ -44,9 +44,9 @@ void usage(char* p_command) {
  * @param p_argv
  *            the array of command-line arguments
  * 
- * @return 2 if the log4c initialization fails,
- *         1 if no argument was given,
- *         0 otherwise
+ * @return -2 if the log4c initialization fails,
+ *         -1 if no argument was given,
+ *          0 otherwise
  */
 int main(int p_argc, char* p_argv[]) {
 	// No argument: display usage and exit
@@ -63,13 +63,13 @@ int main(int p_argc, char* p_argv[]) {
 	
 	{
 		// File to load
-		char* cnf_filename = p_argv[1];
+		char* cnfFilename = p_argv[1];
 
 		// Load the formula
 		Formula formula;
 		CnfLoader loader;
-		loader.loadProblem(cnf_filename, formula);
-		cout << "c Solution to cnf file " << cnf_filename << endl;
+		loader.loadProblem(cnfFilename, formula);
+		cout << "c Solution to cnf file " << cnfFilename << endl;
 		formula.log();
 
 		// Solve the problem and display its interpretation
