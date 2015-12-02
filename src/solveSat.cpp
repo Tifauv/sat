@@ -26,9 +26,12 @@ using namespace std;
 
 /**
  * Displays the usage message.
+ * 
+ * @param p_command
+ *            the command name as given to argv[0]
  */
-void usage() {
-	cout << "Usage: solveSat <cnf_file>" << endl;
+void usage(char* p_command) {
+	cout << "Usage: " << p_command << " <cnf_file>" << endl;
 	cout << "    <cnf_file>  a CNF problem" << endl;
 }
 
@@ -48,7 +51,7 @@ void usage() {
 int main(int p_argc, char* p_argv[]) {
 	// No argument: display usage and exit
 	if (p_argc != 2) {
-		usage();
+		usage(p_argv[0]);
 		exit(-1);
 	}
 
