@@ -56,3 +56,14 @@ void FormulaObject::setUnused() {
 void FormulaObject::setUsed() {
 	m_unused = false;
 }
+
+
+// OPERATORS
+bool FormulaObject::operator==(const FormulaObject& p_object) {
+	return id() == p_object.id();
+}
+
+
+bool FormulaObject::operator!=(const FormulaObject& p_object) {
+	return id() != p_object.id();
+}

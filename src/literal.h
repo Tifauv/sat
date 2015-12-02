@@ -48,7 +48,7 @@ public:
 	Literal operator-();
 	bool operator==(const Literal& p_literal);
 	bool operator!=(const Literal& p_literal);
-	
+
 private:
 	Variable* m_variable;
 	int m_sign;

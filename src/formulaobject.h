@@ -36,6 +36,9 @@ public:
 	void setUnused();
 	void setUsed();
 
+	bool operator==(const FormulaObject& p_object);
+	bool operator!=(const FormulaObject& p_object);
+
 private:
 	/** The object identifier. */
 	Id m_id;
