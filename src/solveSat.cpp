@@ -17,7 +17,7 @@
 #include <iostream>
 #include <log4c.h>
 
-#include "cnf.h"
+#include "cnfloader.h"
 #include "dpllsolver.h"
 #include "interpretation.h"
 
@@ -59,13 +59,13 @@ int main(int p_argc, char* p_argv[]) {
 	}
 	
 	{
+		// File to load
 		char* cnf_filename = p_argv[1];
 
-		// Create the formula
+		// Load the formula
 		Formula formula;
-
-		// Load the CNF problem file
-		cnf_load_problem(cnf_filename, formula);
+		CnfLoader loader;
+		loader.loadProblem(cnf_filename, formula);
 		cout << "c Solution to cnf file " << cnf_filename << endl;
 		formula.log();
 

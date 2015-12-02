@@ -18,10 +18,11 @@
 #include <list>
 #include <log4c.h>
 
-#include "cnf.h"
+#include "cnfloader.h"
 #include "dpllsolver.h"
 
 using namespace std;
+
 
 /**
  * Displays the usage message.
@@ -64,15 +65,14 @@ int main(int p_argc, char* p_argv[]) {
 		char* cnfFilename = p_argv[1];
 		char* satFilename = p_argv[2];
 		
-		// Create the formula
+		// Load the formula
 		Formula formula;
-
-		// Load the CNF problem file
-		cnf_load_problem(cnfFilename, formula);
+		CnfLoader loader;
+		loader.loadProblem(cnfFilename, formula);
 		formula.log();
 
 		// Load the SAT solution file
-		std::list<RawLiteral>* solution = cnf_load_solution(satFilename);
+		std::list<RawLiteral>* solution = loader.loadSolution(satFilename);
 
 		// Check the solution
 		DpllSolver solver;

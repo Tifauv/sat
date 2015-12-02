@@ -17,7 +17,7 @@ set (LIBSAT_SRCS
 	interpretation.cpp
 	history.cpp
 	dpllsolver.cpp
-	cnf.cpp
+	cnfloader.cpp
 )
 
 # The sources of solveSat
