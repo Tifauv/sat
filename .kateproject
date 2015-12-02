@@ -1,5 +1,5 @@
 {
-	"name": "SAT",
+	"name": "Sat",
 	"files": [ { "git": 1 } ],
 	"build": {
 		"directory": "/home/tifauv/Developpement/sat",
