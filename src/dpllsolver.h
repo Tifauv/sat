@@ -62,8 +62,12 @@ protected:
 	 * 
 	 * @param p_formula
 	 *            the SAT formula to solve
-	 * @param p_intr
+	 * @param p_interpretation
 	 *            the current interpretation
+	 * @param p_backtrackCounter
+	 *            the current number of backtracks
+	 * 
+	 * @return the new count of backtracks
 	 */
 	unsigned int main(Formula& p_formula, Interpretation& p_interpretation, unsigned int p_backtrackCounter);
 

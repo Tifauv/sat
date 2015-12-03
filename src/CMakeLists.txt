@@ -44,4 +44,3 @@ target_link_libraries (solveSat LINK_PUBLIC sat ${LIBS})
 add_executable (checkSat ${CHECKSAT_SRCS})
 target_compile_options(checkSat PRIVATE ${CFLAGS})
 target_link_libraries (checkSat LINK_PUBLIC sat ${LIBS})
-

@@ -78,6 +78,10 @@ bool DpllSolver::checkSolution(Formula& p_formula, std::list<RawLiteral>* p_solu
  *            the SAT formula to solve
  * @param p_interpretation
  *            the current interpretation
+ * @param p_backtrackCounter
+ *            the current number of backtracks
+ * 
+ * @return the new count of backtracks
  */
 unsigned int DpllSolver::main(Formula& p_formula, Interpretation& p_interpretation, unsigned int p_backtrackCounter) {
 	unsigned int backtrackCounter = p_backtrackCounter;
