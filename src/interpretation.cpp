@@ -28,7 +28,7 @@
  */
 Interpretation::Interpretation() :
 m_unsatisfiable(false) {
-	log4c_category_log(log_interpretation(), LOG4C_PRIORITY_DEBUG, "New interpretation created.");
+	log4c_category_debug(log_interpretation(), "New interpretation created.");
 }
 
 
@@ -37,7 +37,7 @@ m_unsatisfiable(false) {
  * Deletes the interpretation.
  */
 Interpretation::~Interpretation() {
-	log4c_category_log(log_interpretation(), LOG4C_PRIORITY_DEBUG, "Interpretation deleted.");
+	log4c_category_debug(log_interpretation(), "Interpretation deleted.");
 }
 
 
@@ -64,7 +64,7 @@ bool Interpretation::isUnsatisfiable() const {
  */
 void Interpretation::setSatisfiable() {
 	m_unsatisfiable = false;
-	log4c_category_log(log_interpretation(), LOG4C_PRIORITY_DEBUG, "The interpretation is set satisfiable.");
+	log4c_category_debug(log_interpretation(), "The interpretation is set satisfiable.");
 }
 
 
@@ -73,7 +73,7 @@ void Interpretation::setSatisfiable() {
  */
 void Interpretation::setUnsatisfiable() {
 	m_unsatisfiable = true;
-	log4c_category_log(log_interpretation(), LOG4C_PRIORITY_DEBUG, "The interpretation is set unsatisfiable.");
+	log4c_category_debug(log_interpretation(), "The interpretation is set unsatisfiable.");
 }
 
 
@@ -86,12 +86,12 @@ void Interpretation::setUnsatisfiable() {
  */
 void Interpretation::push(Literal p_literal) {
 	m_literals.push_back(p_literal);
-	log4c_category_log(log_interpretation(), LOG4C_PRIORITY_INFO, "Literal %sx%u added to the interpretation.", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
+	log4c_category_info(log_interpretation(), "Literal %sx%u added to the interpretation.", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
 	
 	// Reset the satisfiability status
 	if (isUnsatisfiable()) {
 		setSatisfiable();
-		log4c_category_log(log_interpretation(), LOG4C_PRIORITY_WARN, "The interpretation was unsatisfiable, and has now been set satisfiable.");
+		log4c_category_info(log_interpretation(), "The interpretation was unsatisfiable, and has now been set satisfiable.");
 	}
 }
 
@@ -105,7 +105,7 @@ void Interpretation::pop() {
 	
 	Literal literal = m_literals.back();
 	m_literals.pop_back();
-	log4c_category_log(log_interpretation(), LOG4C_PRIORITY_INFO, "Literal %sx%u removed from the interpretation.", (literal.isNegative() ? "¬" : ""), literal.id());
+	log4c_category_info(log_interpretation(), "Literal %sx%u removed from the interpretation.", (literal.isNegative() ? "¬" : ""), literal.id());
 }
 
 
@@ -113,17 +113,22 @@ void Interpretation::pop() {
  * Logs the interpretation.
  */
 void Interpretation::log() {
+	if (!log4c_category_is_info_enabled(log_interpretation()))
+		return;
+
 	if (isUnsatisfiable()) {
-		log4c_category_log(log_interpretation(), LOG4C_PRIORITY_INFO, "The interpretation is unsatisfiable.");
+		log4c_category_info(log_interpretation(), "The interpretation is unsatisfiable.");
 		return;
 	}
-	
+
 	// Otherwise, print the elements
-	log4c_category_log(log_interpretation(), LOG4C_PRIORITY_INFO, "Interpretation:");
+	std::string line = "Interpretation:";
 	for (auto it = m_literals.cbegin(); it != m_literals.cend(); ++it) {
 		const Literal literal = *it;
-		log4c_category_log(log_interpretation(), LOG4C_PRIORITY_INFO, "  %sx%u", (literal.isNegative() ? "¬" : ""), literal.id());
+		line.append("  ").append(literal.isNegative() ? "¬" : "").append("x").append(std::to_string(literal.id()));
 	}
+
+	log4c_category_info(log_interpretation(), line.data());
 }
 
 

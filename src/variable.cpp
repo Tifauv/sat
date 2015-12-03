@@ -28,7 +28,7 @@
  */
 Variable::Variable(Id p_id) :
 FormulaObject(p_id) {
-	log4c_category_log(log_formula(), LOG4C_PRIORITY_DEBUG, "Variable x%u created.", p_id);
+	log4c_category_debug(log_formula(), "Variable x%u created.", p_id);
 }
 
 
@@ -37,7 +37,7 @@ FormulaObject(p_id) {
  *
  */
 Variable::~Variable() {
-	log4c_category_log(log_formula(), LOG4C_PRIORITY_DEBUG, "Variable x%u deleted.", id());
+	log4c_category_debug(log_formula(), "Variable x%u deleted.", id());
 }
 
 
@@ -45,23 +45,23 @@ Variable::~Variable() {
 void Variable::addOccurence(Clause* p_clause, int p_sign) {
 	// Parameters check
 	if (isNull(p_clause)) {
-		log4c_category_log(log_formula(), LOG4C_PRIORITY_ERROR, "Attempted to add a NULL clause to variable x%u.", id());
+		log4c_category_error(log_formula(), "Attempted to add a NULL clause to variable x%u.", id());
 		return;
 	}
 	
 	switch (p_sign) {
 		case SIGN_POSITIVE:
 			m_positiveOccurences.push_back(p_clause);
-			log4c_category_log(log_formula(), LOG4C_PRIORITY_DEBUG, "Clause %u added to positive occurences of variable x%u.", p_clause->id(), id());
+			log4c_category_debug(log_formula(), "Clause %u added to positive occurences of variable x%u.", p_clause->id(), id());
 			break;
 		
 		case SIGN_NEGATIVE:
 			m_negativeOccurences.push_back(p_clause);
-			log4c_category_log(log_formula(), LOG4C_PRIORITY_DEBUG, "Clause %u added to negative occurences of variable x%u.", p_clause->id(), id());
+			log4c_category_debug(log_formula(), "Clause %u added to negative occurences of variable x%u.", p_clause->id(), id());
 			break;
 		
 		default:
-			log4c_category_log(log_formula(), LOG4C_PRIORITY_ERROR, "Sign '%d' is invalid.", p_sign);
+			log4c_category_error(log_formula(), "Sign '%d' is invalid.", p_sign);
 			// Error Invalid sign
 	}
 }
