@@ -65,7 +65,7 @@ protected:
 	 * @param p_intr
 	 *            the current interpretation
 	 */
-	void main(Formula& p_formula, Interpretation& p_interpretation);
+	unsigned int main(Formula& p_formula, Interpretation& p_interpretation, unsigned int p_backtrackCounter);
 
 	
 	/**

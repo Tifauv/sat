@@ -37,7 +37,8 @@
 Interpretation* DpllSolver::solve(Formula& p_formula) {
 	log4c_category_log(log_dpll(), LOG4C_PRIORITY_DEBUG, "Starting the DPLL algorithm.");
 	Interpretation* interpretation = new Interpretation();
-	main(p_formula, *interpretation);
+	unsigned int backtrackCounter = main(p_formula, *interpretation, 0);
+	std::cout << "c Backtracked " << backtrackCounter << " times" << std::endl;
 	return interpretation;
 }
 
@@ -78,7 +79,9 @@ bool DpllSolver::checkSolution(Formula& p_formula, std::list<RawLiteral>* p_solu
  * @param p_interpretation
  *            the current interpretation
  */
-void DpllSolver::main(Formula& p_formula, Interpretation& p_interpretation) {
+unsigned int DpllSolver::main(Formula& p_formula, Interpretation& p_interpretation, unsigned int p_backtrackCounter) {
+	unsigned int backtrackCounter = p_backtrackCounter;
+
 	log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "Current state:");
 	p_formula.log();
 	p_interpretation.log();
@@ -88,7 +91,7 @@ void DpllSolver::main(Formula& p_formula, Interpretation& p_interpretation) {
 	 */
 	if (!p_formula.hasMoreClauses()) {
 		log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "No more clauses.");
-		return;
+		return backtrackCounter;
 	}
 
 	/*
@@ -113,9 +116,9 @@ void DpllSolver::main(Formula& p_formula, Interpretation& p_interpretation) {
 		log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "Added %sx%u to the interpretation.", (chosen_literal.isNegative() ? "¬" : ""), chosen_literal.id());
 
 		// Loop again
-		main(p_formula, p_interpretation);
+		backtrackCounter = main(p_formula, p_interpretation, backtrackCounter);
 		if (p_interpretation.isSatisfiable())
-			return;
+			return backtrackCounter;
 		else // Remove the current literal from the interpretation
 			p_interpretation.pop();
 	}
@@ -143,9 +146,9 @@ void DpllSolver::main(Formula& p_formula, Interpretation& p_interpretation) {
 		log4c_category_log(log_dpll(), LOG4C_PRIORITY_INFO, "Added %sx%u to the interpretation.", (chosen_literal.isPositive() ? "¬" : ""), chosen_literal.id());
 
 		// Loop again
-		main(p_formula, p_interpretation);
+		backtrackCounter = main(p_formula, p_interpretation, backtrackCounter);
 		if (p_interpretation.isSatisfiable())
-			return;
+			return backtrackCounter;
 		else // Remove the current literal from the interpretation
 			p_interpretation.pop();
 	}
@@ -157,6 +160,7 @@ void DpllSolver::main(Formula& p_formula, Interpretation& p_interpretation) {
 
 	/* Restoring state before backtracking. */
 	log4c_category_log(log_dpll(), LOG4C_PRIORITY_DEBUG, "Restoring state before backtracking...");
+	backtrackCounter++;
 
 	// Reconstruction du graphe
 	history.replay(p_formula);
@@ -164,6 +168,8 @@ void DpllSolver::main(Formula& p_formula, Interpretation& p_interpretation) {
 	log4c_category_log(log_dpll(), LOG4C_PRIORITY_DEBUG, "Restored state:");
 	p_formula.log();
 	p_interpretation.log();
+
+	return backtrackCounter;
 }
 
 
