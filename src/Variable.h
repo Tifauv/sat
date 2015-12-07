@@ -18,7 +18,7 @@
 #define VARIABLE_H
 
 #include <list>
-#include "formulaobject.h"
+#include "FormulaObject.h"
 
 class Clause;
 

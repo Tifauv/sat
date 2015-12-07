@@ -18,7 +18,7 @@
 #define CNFLOADER_H
 
 #include <list>
-#include "formula.h"
+#include "Formula.h"
 
 
 class CnfLoader {

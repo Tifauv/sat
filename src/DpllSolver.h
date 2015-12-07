@@ -19,7 +19,7 @@
 #define DPLL_SOLVER_H
 
 #include <list>
-#include "solver.h"
+#include "Solver.h"
 
 class RawLiteral;
 class Literal;

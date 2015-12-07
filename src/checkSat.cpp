@@ -18,8 +18,8 @@
 #include <list>
 #include <log4c.h>
 
-#include "cnfloader.h"
-#include "dpllsolver.h"
+#include "CnfLoader.h"
+#include "DpllSolver.h"
 
 using namespace std;
 

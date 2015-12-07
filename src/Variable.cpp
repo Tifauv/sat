@@ -14,10 +14,10 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
  */
-#include "variable.h"
+#include "Variable.h"
 
 #include <log4c.h>
-#include "clause.h"
+#include "Clause.h"
 #include "utils.h"
 #include "log.h"
 

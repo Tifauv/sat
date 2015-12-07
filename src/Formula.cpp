@@ -14,14 +14,14 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
  */
-#include "formula.h"
+#include "Formula.h"
 
 #include <algorithm>
 #include <functional>
 #include <log4c.h>
-#include "clause.h"
-#include "variable.h"
-#include "history.h"
+#include "Clause.h"
+#include "Variable.h"
+#include "History.h"
 #include "utils.h"
 #include "log.h"
 

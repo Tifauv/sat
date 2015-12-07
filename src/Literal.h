@@ -17,7 +17,7 @@
 #ifndef LITERAL_H
 #define LITERAL_H
 
-#include "variable.h"
+#include "Variable.h"
 
 class Variable;
 class Clause;

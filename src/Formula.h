@@ -19,7 +19,7 @@
 
 #include <list>
 #include <unordered_set>
-#include "rawliteral.h"
+#include "RawLiteral.h"
 
 class Clause;
 class Literal;

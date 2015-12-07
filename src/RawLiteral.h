@@ -17,7 +17,7 @@
 #ifndef RAWLITERAL_H
 #define RAWLITERAL_H
 
-#include "formulaobject.h"
+#include "FormulaObject.h"
 
 
 class RawLiteral {

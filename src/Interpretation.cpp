@@ -14,7 +14,7 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
  */
-#include "interpretation.h"
+#include "Interpretation.h"
 
 #include <iostream>
 #include <log4c.h>

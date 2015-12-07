@@ -14,7 +14,7 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
  */
-#include "cnfloader.h"
+#include "CnfLoader.h"
 
 #include <iostream>
 #include <fstream>
@@ -23,7 +23,7 @@
 #include <list>
 #include <log4c.h>
 
-#include "dpllsolver.h"
+#include "DpllSolver.h"
 #include "utils.h"
 #include "log.h"
 

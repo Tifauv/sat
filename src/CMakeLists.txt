@@ -8,16 +8,16 @@ set(CFLAGS -Wall -Wextra -pedantic -std=c++11 -O2)
 
 # The sources of libSat
 set (LIBSAT_SRCS
-	formulaobject.cpp
-	variable.cpp
-	literal.cpp
-	rawliteral.cpp
-	clause.cpp
-	formula.cpp
-	interpretation.cpp
-	history.cpp
-	dpllsolver.cpp
-	cnfloader.cpp
+	FormulaObject.cpp
+	Variable.cpp
+	Literal.cpp
+	RawLiteral.cpp
+	Clause.cpp
+	Formula.cpp
+	Interpretation.cpp
+	History.cpp
+	DpllSolver.cpp
+	CnfLoader.cpp
 )
 
 # The sources of solveSat

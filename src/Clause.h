@@ -18,7 +18,7 @@
 #define CLAUSE_H
 
 #include <list>
-#include "formulaobject.h"
+#include "FormulaObject.h"
 
 class Literal;
 

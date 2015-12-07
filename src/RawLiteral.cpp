@@ -1,69 +1,61 @@
 /*  Copyright (c) 2015 Olivier Serve
- *
+ * 
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
- *
+ * 
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- *
+ * 
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
  */
-#include "formulaobject.h"
+#include "RawLiteral.h"
+
+#include "Variable.h"
 
 
 // CONSTRUCTORS
-/**
- *
- */
-FormulaObject::FormulaObject(Id p_id) :
-	m_id(p_id),
-	m_unused(false) {
-	
+RawLiteral::RawLiteral(int p_literal) :
+m_literal(p_literal) {
 }
 
 
-// DESTRUCTORS
-/**
- *
- */
-FormulaObject::~FormulaObject() {
-	
+// GETTERS
+Id RawLiteral::id() const {
+	if (m_literal >= 0)
+		return m_literal;
+	return - m_literal;
 }
 
 
-// METHODS
-Id FormulaObject::id() const {
-	return m_id;
+int RawLiteral::sign() const {
+	if (m_literal >= 0)
+		return SIGN_POSITIVE;
+	return SIGN_NEGATIVE;
 }
 
 
-bool FormulaObject::isUnused() const {
-	return m_unused;
+bool RawLiteral::isPositive() const {
+	return sign() >= 0;
 }
 
 
-void FormulaObject::setUnused() {
-	m_unused = true;
-}
-
-
-void FormulaObject::setUsed() {
-	m_unused = false;
+bool RawLiteral::isNegative() const {
+	return sign() < 0;
 }
 
 
 // OPERATORS
-bool FormulaObject::operator==(const FormulaObject& p_object) {
-	return id() == p_object.id();
+RawLiteral RawLiteral::operator-() {
+	return RawLiteral(-m_literal);
 }
 
 
-bool FormulaObject::operator!=(const FormulaObject& p_object) {
-	return id() != p_object.id();
+bool RawLiteral::operator==(const RawLiteral& p_literal) {
+	return id() == p_literal.id();
 }

@@ -14,20 +14,20 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
  */
-#include "dpllsolver.h"
+#include "DpllSolver.h"
 
 #include <iostream>
 #include <log4c.h>
-#include "formula.h"
-#include "interpretation.h"
-#include "history.h"
+#include "Formula.h"
+#include "Interpretation.h"
+#include "History.h"
 #include "utils.h"
 #include "log.h"
 
 
 /**
  * Starter function of the solver.
- * Implements "solver.h"
+ * Implements Solver.
  * 
  * @param p_formula
  *            the SAT formula to solve
