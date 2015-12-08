@@ -355,10 +355,18 @@ void Formula::addLiteralToClause(Clause* p_clause, Literal p_literal) {
 
 
 /**
- * Tells whether there are still clauses to process.
+ * Tells whether there are clauses in the formula.
  */
-bool Formula::hasMoreClauses() const {
+bool Formula::hasClauses() const {
 	return !m_clauses.empty();
+}
+
+
+/**
+ * Tells whether there are variables in the formula.
+ */
+bool Formula::hasVariables() const {
+	return !m_variables.empty();
 }
 
 

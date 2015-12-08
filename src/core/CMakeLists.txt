@@ -1,5 +1,5 @@
 # The sources of SatCore
-set (SATCORE_SRCS
+set (SAT_CORE_SRCS
 	FormulaObject.cpp
 	Variable.cpp
 	Literal.cpp
@@ -12,8 +12,9 @@ set (SATCORE_SRCS
 	VariablePolarityLiteralSelector.cpp
 	CnfLoader.cpp
 )
+set (SAT_CORE_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR} PARENT_SCOPE)
 
 # Build libSatCore
-add_library (SatCore ${SATCORE_SRCS})
+add_library (SatCore ${SAT_CORE_SRCS})
 target_compile_options(SatCore PUBLIC ${CFLAGS})
 target_link_libraries (SatCore ${LIBS})

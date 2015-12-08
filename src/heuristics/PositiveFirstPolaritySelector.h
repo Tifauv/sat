@@ -14,23 +14,21 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
  */
-#ifndef VariableSelector_h
-#define VariableSelector_h
+#ifndef PositiveFirstPolaritySelector_h
+#define PositiveFirstPolaritySelector_h
 
-class Formula;
+#include "PolaritySelector.h"
+
 class Variable;
+class Literal;
 
 
-class VariableSelector {
+class PositiveFirstPolaritySelector : public PolaritySelector {
 public:
-	VariableSelector();
-	virtual ~VariableSelector();
+	PositiveFirstPolaritySelector();
+	virtual ~PositiveFirstPolaritySelector();
 
-	/**
-	 * @return a pointer to the variable found,
-	 *         or nullptr if there is no variable in the formula
-	 */
-	virtual Variable* getVariable(Formula& p_formula) = 0;
+	virtual Literal getLiteral(Variable* p_variable) = 0;
 };
 
-#endif // VariableSelector_h
+#endif // PositiveFirstPolaritySelector_h

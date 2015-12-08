@@ -14,23 +14,24 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
  */
-#ifndef VariableSelector_h
-#define VariableSelector_h
+#ifndef FirstVariableSelector_h
+#define FirstVariableSelector_h
+
+#include "VariableSelector.h"
 
 class Formula;
 class Variable;
 
 
-class VariableSelector {
+/**
+ * Selects the first variable in the formula's list.
+ */
+class FirstVariableSelector : public VariableSelector {
 public:
-	VariableSelector();
-	virtual ~VariableSelector();
-
-	/**
-	 * @return a pointer to the variable found,
-	 *         or nullptr if there is no variable in the formula
-	 */
-	virtual Variable* getVariable(Formula& p_formula) = 0;
+	FirstVariableSelector();
+	~FirstVariableSelector();
+	
+	Variable* getVariable(Formula& p_formula);
 };
 
-#endif // VariableSelector_h
+#endif // FirstVariableSelector_h

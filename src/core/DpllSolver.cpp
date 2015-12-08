@@ -62,7 +62,7 @@ bool DpllSolver::checkSolution(Formula& p_formula, std::list<RawLiteral>* p_solu
 		}
 	}
 	
-	if (!p_formula.hasMoreClauses()) {
+	if (!p_formula.hasClauses()) {
 		std::cout << "All clauses could be interpreted." << std::endl;
 		return true;
 	}
@@ -93,7 +93,7 @@ unsigned int DpllSolver::main(Formula& p_formula, Interpretation& p_interpretati
 	/*
 	 * Stop case: if there is no clause left, we are done.
 	 */
-	if (!p_formula.hasMoreClauses()) {
+	if (!p_formula.hasClauses()) {
 		log4c_category_info(log_dpll(), "No more clauses.");
 		return backtrackCounter;
 	}

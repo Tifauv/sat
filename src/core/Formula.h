@@ -43,7 +43,8 @@ public:
 	void addClause(Clause* p_clause);
 	void addLiteralToClause(Clause* p_clause, Literal p_literal);
 
-	bool hasMoreClauses() const;
+	bool hasClauses() const;
+	bool hasVariables() const;
 
 	std::unordered_set<Variable*>::iterator beginVariable();
 	std::unordered_set<Variable*>::iterator endVariable();
