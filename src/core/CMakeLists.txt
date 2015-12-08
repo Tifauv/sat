@@ -9,6 +9,7 @@ set (SATCORE_SRCS
 	Interpretation.cpp
 	History.cpp
 	DpllSolver.cpp
+	VariablePolarityLiteralSelector.cpp
 	CnfLoader.cpp
 )
 
