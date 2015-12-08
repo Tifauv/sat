@@ -6,19 +6,9 @@ set(LIBS ${LIBS} ${LOG4C_LIBRARIES})
 # Declare common CFLAGS
 set(CFLAGS -Wall -Wextra -pedantic -std=c++11 -O2)
 
-# The sources of libSat
-set (LIBSAT_SRCS
-	FormulaObject.cpp
-	Variable.cpp
-	Literal.cpp
-	RawLiteral.cpp
-	Clause.cpp
-	Formula.cpp
-	Interpretation.cpp
-	History.cpp
-	DpllSolver.cpp
-	CnfLoader.cpp
-)
+# Build libraries
+add_subdirectory (core)
+
 
 # The sources of solveSat
 set (SOLVESAT_SRCS
@@ -30,17 +20,12 @@ set (CHECKSAT_SRCS
 	checkSat.cpp
 )
 
-# Build libSat
-add_library (sat ${LIBSAT_SRCS})
-target_compile_options(sat PUBLIC ${CFLAGS})
-target_link_libraries (sat ${LIBS})
-
 # Build solveSat
 add_executable (solveSat ${SOLVESAT_SRCS})
 target_compile_options(solveSat PRIVATE ${CFLAGS})
-target_link_libraries (solveSat LINK_PUBLIC sat ${LIBS})
+target_link_libraries (solveSat LINK_PUBLIC SatCore ${LIBS})
 
 # Build checkSat
 add_executable (checkSat ${CHECKSAT_SRCS})
 target_compile_options(checkSat PRIVATE ${CFLAGS})
-target_link_libraries (checkSat LINK_PUBLIC sat ${LIBS})
+target_link_libraries (checkSat LINK_PUBLIC SatCore ${LIBS})

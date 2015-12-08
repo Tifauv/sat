@@ -17,9 +17,9 @@
 #include <iostream>
 #include <log4c.h>
 
-#include "CnfLoader.h"
-#include "DpllSolver.h"
-#include "Interpretation.h"
+#include "core/CnfLoader.h"
+#include "core/DpllSolver.h"
+#include "core/Interpretation.h"
 
 using namespace std;
 
