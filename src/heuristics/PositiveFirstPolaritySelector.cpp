@@ -21,8 +21,7 @@
 
 
 // CONSTRUCTORS
-PositiveFirstPolaritySelector::PositiveFirstPolaritySelector() :
-PolaritySelector() {
+PositiveFirstPolaritySelector::PositiveFirstPolaritySelector() {
 }
 
 

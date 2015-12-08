@@ -25,6 +25,7 @@ class RawLiteral;
 class Literal;
 class Interpretation;
 class History;
+class LiteralSelector;
 
 
 /**
@@ -32,6 +33,21 @@ class History;
  */
 class DpllSolver : public Solver {
 public:
+	/**
+	 * Constructor.
+	 * 
+	 * @param p_literalSelector
+	 *            the literal selection strategy
+	 */
+	explicit DpllSolver(LiteralSelector& p_literalSelector);
+
+
+	/**
+	 * Destructor.
+	 */
+	~DpllSolver();
+
+
 	/**
 	 * Common entry point for all solvers.
 	 *
@@ -112,6 +128,9 @@ protected:
 	 *         false if it is unsatisfiable
 	 */
 	bool reduce(Formula& p_formula, const RawLiteral& p_literal);
+
+private:
+	LiteralSelector& m_literalSelector;
 };
 
 #endif // DPLL_SOLVER_H

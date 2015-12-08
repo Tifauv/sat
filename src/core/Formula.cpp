@@ -152,29 +152,6 @@ Literal Formula::findLiteralFromUnaryClause() const {
 
 
 /**
- * Select a literal for the reduction phase.
- *
- * @return the literal selected,
- *         or a literal pointing to a nullptr variable if there is no more variable
- */
-Literal Formula::selectLiteral() const {
-	// Parameters check
-	if (m_variables.empty()) {
-		log4c_category_error(log_formula(), "There is no more used literal in the formula.");
-		return Literal(nullptr, SIGN_POSITIVE);
-	}
-
-	Variable* variable = *m_variables.cbegin();
-	int sign = SIGN_POSITIVE;
-	if (!variable->hasPositiveOccurence())
-		sign = SIGN_NEGATIVE;
-
-	log4c_category_debug(log_formula(), "Literal %sx%u selected.", (sign == SIGN_NEGATIVE ? "¬" : ""), variable->id());
-	return Literal(variable, sign);
-}
-
-
-/**
  * Remove all the clauses that have the given literal (with the same sign).
  * 
  * @param p_literal

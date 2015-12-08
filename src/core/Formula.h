@@ -35,7 +35,6 @@ public:
 	Clause* createClause(Id p_clauseId, std::list<RawLiteral>& p_literals);
 
 	Literal findLiteralFromUnaryClause() const;
-	Literal selectLiteral() const;
 
 	void removeClausesWithLiteral(Literal p_literal, History& p_history);
 	bool removeOppositeLiteralFromClauses(Literal p_literal, History& p_history);

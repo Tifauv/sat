@@ -23,9 +23,6 @@ class Literal;
 
 class LiteralSelector {
 public:
-	LiteralSelector();
-	virtual ~LiteralSelector();
-
 	virtual Literal getLiteral(Formula& p_formula) = 0;
 };
 

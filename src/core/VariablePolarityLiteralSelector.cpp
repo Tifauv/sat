@@ -24,7 +24,6 @@
 
 // CONSTRUCTORS
 VariablePolarityLiteralSelector::VariablePolarityLiteralSelector(VariableSelector& p_variableSelector, PolaritySelector& p_polaritySelector) :
-LiteralSelector(),
 m_variableSelector(p_variableSelector),
 m_polaritySelector(p_polaritySelector) {
 }
@@ -41,7 +40,7 @@ Literal VariablePolarityLiteralSelector::getLiteral(Formula& p_formula) {
 
 	// No variable found : return a literal pointing to no variable
 	if (variable == nullptr) {
-		log4c_category_error(log_dpll(), "There is no more used literal in the formula.");
+		log4c_category_error(log_dpll(), "There is no more literal in the formula.");
 		return Literal(nullptr, SIGN_POSITIVE);
 	}
 

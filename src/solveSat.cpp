@@ -17,9 +17,12 @@
 #include <iostream>
 #include <log4c.h>
 
-#include "core/CnfLoader.h"
-#include "core/DpllSolver.h"
-#include "core/Interpretation.h"
+#include "CnfLoader.h"
+#include "DpllSolver.h"
+#include "Interpretation.h"
+#include "VariablePolarityLiteralSelector.h"
+#include "FirstVariableSelector.h"
+#include "PositiveFirstPolaritySelector.h"
 
 using namespace std;
 
@@ -72,8 +75,13 @@ int main(int p_argc, char* p_argv[]) {
 		cout << "c Solution to cnf file " << cnfFilename << endl;
 		formula.log();
 
+		// Build the solver
+		FirstVariableSelector variableSelector;
+		PositiveFirstPolaritySelector polaritySelector;
+		VariablePolarityLiteralSelector literalSelector(variableSelector, polaritySelector);
+
 		// Solve the problem and display its interpretation
-		DpllSolver solver;
+		DpllSolver solver(literalSelector);
 		Interpretation* interpretation = solver.solve(formula);
 		interpretation->print();
 		delete interpretation;

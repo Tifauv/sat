@@ -21,8 +21,7 @@
 
 
 // CONSTRUCTORS
-FirstVariableSelector::FirstVariableSelector() :
-VariableSelector() {
+FirstVariableSelector::FirstVariableSelector() {
 }
 
 
@@ -33,7 +32,7 @@ FirstVariableSelector::~FirstVariableSelector() {
 
 // METHODS 
 Variable* FirstVariableSelector::getVariable(Formula& p_formula) {
-	if (p_formula.hasVariables())
+	if (!p_formula.hasVariables())
 		return nullptr;
 	
 	// TODO check there are variables left

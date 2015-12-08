@@ -21,10 +21,34 @@
 #include "Formula.h"
 #include "Interpretation.h"
 #include "History.h"
+#include "LiteralSelector.h"
 #include "utils.h"
 #include "log.h"
 
 
+// CONSTRUCTORS
+/**
+ * Constructor.
+ * 
+ * @param p_literalSelector
+ *            the literal selection strategy
+ */
+DpllSolver::DpllSolver(LiteralSelector& p_literalSelector) : 
+m_literalSelector(p_literalSelector) {
+	log4c_category_debug(log_dpll(), "DPLL Solver created.");
+}
+
+
+// DESTRUCTORS
+/**
+ * Destructor.
+ */
+DpllSolver::~DpllSolver() {
+	log4c_category_debug(log_dpll(), "DPLL Solver deleted.");	
+}
+
+
+// INTERFACE METHODS
 /**
  * Starter function of the solver.
  * Implements Solver.
@@ -71,6 +95,7 @@ bool DpllSolver::checkSolution(Formula& p_formula, std::list<RawLiteral>* p_solu
 }
 
 
+// METHODS
 /**
  * Main loop of the Davis-Putnam algorithm.
  * 
@@ -189,11 +214,11 @@ unsigned int DpllSolver::main(Formula& p_formula, Interpretation& p_interpretati
 Literal DpllSolver::selectLiteral(Formula& p_formula) {
 	// Search a literal from a unitary clause
 	Literal chosen_literal = p_formula.findLiteralFromUnaryClause();
-	if (chosen_literal.var() != 0)
+	if (chosen_literal.var() != nullptr)
 		return chosen_literal;
 
-	// If there is no unitary clause
-	return p_formula.selectLiteral();
+	// If there is no unitary clause, use the selector
+	return m_literalSelector.getLiteral(p_formula);
 }
 
 

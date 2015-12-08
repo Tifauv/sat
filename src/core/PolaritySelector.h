@@ -23,9 +23,6 @@ class Literal;
 
 class PolaritySelector {
 public:
-	PolaritySelector();
-	virtual ~PolaritySelector();
-
 	virtual Literal getLiteral(Variable* p_variable) = 0;
 };
 

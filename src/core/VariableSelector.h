@@ -23,9 +23,6 @@ class Variable;
 
 class VariableSelector {
 public:
-	VariableSelector();
-	virtual ~VariableSelector();
-
 	/**
 	 * @return a pointer to the variable found,
 	 *         or nullptr if there is no variable in the formula

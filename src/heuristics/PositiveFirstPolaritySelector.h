@@ -28,7 +28,7 @@ public:
 	PositiveFirstPolaritySelector();
 	virtual ~PositiveFirstPolaritySelector();
 
-	virtual Literal getLiteral(Variable* p_variable) = 0;
+	Literal getLiteral(Variable* p_variable);
 };
 
 #endif // PositiveFirstPolaritySelector_h
