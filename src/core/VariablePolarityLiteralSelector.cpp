@@ -40,12 +40,12 @@ Literal VariablePolarityLiteralSelector::getLiteral(Formula& p_formula) {
 
 	// No variable found : return a literal pointing to no variable
 	if (variable == nullptr) {
-		log4c_category_error(log_dpll(), "There is no more literal in the formula.");
+		log4c_category_error(log_dpll, "There is no more literal in the formula.");
 		return Literal(nullptr, SIGN_POSITIVE);
 	}
 
 	// Variable found : select the polarity of the literal
 	Literal literal = m_polaritySelector.getLiteral(variable);
-	log4c_category_debug(log_formula(), "Literal %sx%u selected.", (literal.isNegative() ? "¬" : ""), literal.id());
+	log4c_category_debug(log_dpll, "Literal %sx%u selected.", (literal.isNegative() ? "¬" : ""), literal.id());
 	return literal;
 }

@@ -31,7 +31,7 @@
  */
 Clause::Clause(Id p_id) :
 FormulaObject(p_id) {
-	log4c_category_debug(log_formula(), "Clause %u created.", id());
+	log4c_category_debug(log_formula, "Clause %u created.", id());
 }
 
 
@@ -40,7 +40,7 @@ FormulaObject(p_id) {
  * Cleans the memory used by the clause.
  */
 Clause::~Clause() {
-	log4c_category_debug(log_formula(), "Clause %u deleted.", id());
+	log4c_category_debug(log_formula, "Clause %u deleted.", id());
 }
 
 
@@ -53,7 +53,7 @@ Clause::~Clause() {
  */
 void Clause::addLiteral(Literal p_literal) {
 	m_literals.push_back(p_literal);
-	log4c_category_debug(log_formula(), "Literal %sx%u added to clause %u.", (p_literal.isNegative() ? "¬" : ""), p_literal.id(), id());
+	log4c_category_debug(log_formula, "Literal %sx%u added to clause %u.", (p_literal.isNegative() ? "¬" : ""), p_literal.id(), id());
 }
 
 
@@ -65,7 +65,7 @@ void Clause::addLiteral(Literal p_literal) {
  */
 void Clause::removeLiteral(const Literal& p_literal) {
 	m_literals.remove(p_literal);
-	log4c_category_debug(log_formula(), "Literal %sx%u removed from clause %u.", (p_literal.isNegative() ? "¬" : ""), p_literal.id(), id());
+	log4c_category_debug(log_formula, "Literal %sx%u removed from clause %u.", (p_literal.isNegative() ? "¬" : ""), p_literal.id(), id());
 }
 
 

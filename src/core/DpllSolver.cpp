@@ -35,7 +35,7 @@
  */
 DpllSolver::DpllSolver(LiteralSelector& p_literalSelector) : 
 m_literalSelector(p_literalSelector) {
-	log4c_category_debug(log_dpll(), "DPLL Solver created.");
+	log4c_category_debug(log_dpll, "DPLL Solver created.");
 }
 
 
@@ -44,7 +44,7 @@ m_literalSelector(p_literalSelector) {
  * Destructor.
  */
 DpllSolver::~DpllSolver() {
-	log4c_category_debug(log_dpll(), "DPLL Solver deleted.");	
+	log4c_category_debug(log_dpll, "DPLL Solver deleted.");	
 }
 
 
@@ -59,7 +59,7 @@ DpllSolver::~DpllSolver() {
  * @return an interpretation (satisfiable or not)
  */
 Interpretation* DpllSolver::solve(Formula& p_formula) {
-	log4c_category_debug(log_dpll(), "Starting the DPLL algorithm.");
+	log4c_category_debug(log_dpll, "Starting the DPLL algorithm.");
 	Interpretation* interpretation = new Interpretation();
 	unsigned int backtrackCounter = main(p_formula, *interpretation, 0);
 	std::cout << "c Backtracked " << backtrackCounter << " times" << std::endl;
@@ -111,7 +111,7 @@ bool DpllSolver::checkSolution(Formula& p_formula, std::list<RawLiteral>* p_solu
 unsigned int DpllSolver::main(Formula& p_formula, Interpretation& p_interpretation, unsigned int p_backtrackCounter) {
 	unsigned int backtrackCounter = p_backtrackCounter;
 
-	log4c_category_info(log_dpll(), "Current state:");
+	log4c_category_info(log_dpll, "Current state:");
 	p_formula.log();
 	p_interpretation.log();
 
@@ -119,7 +119,16 @@ unsigned int DpllSolver::main(Formula& p_formula, Interpretation& p_interpretati
 	 * Stop case: if there is no clause left, we are done.
 	 */
 	if (!p_formula.hasClauses()) {
-		log4c_category_info(log_dpll(), "No more clauses.");
+		log4c_category_info(log_dpll, "No more clauses.");
+		return backtrackCounter;
+	}
+
+	
+	/*
+	 * Stop case: if there is no variable left, we are done.
+	 */
+	if (!p_formula.hasVariables()) {
+		log4c_category_info(log_dpll, "No more variables.");
 		return backtrackCounter;
 	}
 
@@ -132,7 +141,7 @@ unsigned int DpllSolver::main(Formula& p_formula, Interpretation& p_interpretati
 	/*
 	 * First reduction with the chosen literal.
 	 */
-	log4c_category_info(log_dpll(), "First reduction attempt...");
+	log4c_category_info(log_dpll, "First reduction attempt...");
 	History history;
 	bool satisfiable = reduce(p_formula, chosen_literal, history);
 	
@@ -142,7 +151,7 @@ unsigned int DpllSolver::main(Formula& p_formula, Interpretation& p_interpretati
 	if (satisfiable) {
 		// Add the chosen literal to the current interpretation
 		p_interpretation.push(chosen_literal);
-		log4c_category_info(log_dpll(), "Added %sx%u to the interpretation.", (chosen_literal.isNegative() ? "¬" : ""), chosen_literal.id());
+		log4c_category_info(log_dpll, "Added %sx%u to the interpretation.", (chosen_literal.isNegative() ? "¬" : ""), chosen_literal.id());
 
 		// Loop again
 		backtrackCounter = main(p_formula, p_interpretation, backtrackCounter);
@@ -155,15 +164,15 @@ unsigned int DpllSolver::main(Formula& p_formula, Interpretation& p_interpretati
 	/*
 	 * The interpretation is not satisfiable: we try with the opposite literal.
 	 */
-	log4c_category_info(log_dpll(), "The current interpretation is unsatisfiable.");
-	log4c_category_debug(log_dpll(), "Rebuilding the formula before second attempt...");
+	log4c_category_info(log_dpll, "The current interpretation is unsatisfiable.");
+	log4c_category_debug(log_dpll, "Rebuilding the formula before second attempt...");
 	history.replay(p_formula);
 	p_formula.log();
 	p_interpretation.setSatisfiable();
 	p_interpretation.log();
 
 	// Seconde réduction et test du résultat
-	log4c_category_debug(log_dpll(), "Second reduction attempt...");
+	log4c_category_debug(log_dpll, "Second reduction attempt...");
 	satisfiable = reduce(p_formula, -chosen_literal, history);
 
 	/*
@@ -172,7 +181,7 @@ unsigned int DpllSolver::main(Formula& p_formula, Interpretation& p_interpretati
 	if (satisfiable) {
 		// Add the chosen literal to the current interpretation
 		p_interpretation.push(-chosen_literal);
-		log4c_category_info(log_dpll(), "Added %sx%u to the interpretation.", (chosen_literal.isPositive() ? "¬" : ""), chosen_literal.id());
+		log4c_category_info(log_dpll, "Added %sx%u to the interpretation.", (chosen_literal.isPositive() ? "¬" : ""), chosen_literal.id());
 
 		// Loop again
 		backtrackCounter = main(p_formula, p_interpretation, backtrackCounter);
@@ -188,14 +197,13 @@ unsigned int DpllSolver::main(Formula& p_formula, Interpretation& p_interpretati
 		p_interpretation.setUnsatisfiable();
 
 	/* Restoring state before backtracking. */
-	log4c_category_debug(log_dpll(), "Restoring state before backtracking...");
+	log4c_category_debug(log_dpll, "Restoring state before backtracking...");
 	backtrackCounter++;
-	log_info(log_dpll(), "Coucou !");
 
 	// Reconstruction du graphe
 	history.replay(p_formula);
 
-	log4c_category_debug(log_dpll(), "Restored state:");
+	log4c_category_debug(log_dpll, "Restored state:");
 	p_formula.log();
 	p_interpretation.log();
 
@@ -237,7 +245,7 @@ Literal DpllSolver::selectLiteral(Formula& p_formula) {
  *         false if it is unsatisfiable
  */
 bool DpllSolver::reduce(Formula& p_formula, Literal p_literal, History& p_history) {
-	log4c_category_info(log_dpll(), "Reduction using literal %sx%u...", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
+	log4c_category_info(log_dpll, "Reduction using literal %sx%u...", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
 
 	// Remove the clauses that contain the same sign as the given literal
 	p_formula.removeClausesWithLiteral(p_literal, p_history);

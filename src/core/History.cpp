@@ -28,7 +28,7 @@
  * Creates a new history.
  */
 History::History() {
-	log4c_category_debug(log_history(), "New history created.");
+	log4c_category_debug(log_history, "New history created.");
 }
 
 
@@ -37,7 +37,7 @@ History::History() {
  */
 History::~History() {
 	clear();
-	log4c_category_debug(log_history(), "History deleted.");
+	log4c_category_debug(log_history, "History deleted.");
 }
 
 
@@ -50,7 +50,7 @@ History::~History() {
 void History::addClause(Clause* p_clause) {
 	// Parameters check
 	if (isNull(p_clause)) {
-		log4c_category_error(log_history(), "The clause to add is NULL.");
+		log4c_category_error(log_history, "The clause to add is NULL.");
 		return;
 	}
 
@@ -59,7 +59,7 @@ void History::addClause(Clause* p_clause) {
 
 	// Add the new step
 	m_steps.push_front(newStep);
-	log4c_category_info(log_history(), "Clause %u added to the history.", p_clause->id());
+	log4c_category_info(log_history, "Clause %u added to the history.", p_clause->id());
 }
 
 
@@ -74,7 +74,7 @@ void History::addClause(Clause* p_clause) {
 void History::addLiteral(Clause* p_clause, Literal p_literal) {
 	// Parameters check
 	if (isNull(p_clause)) {
-		log4c_category_error(log_history(), "The clause to add is NULL.");
+		log4c_category_error(log_history, "The clause to add is NULL.");
 		return;
 	}
 
@@ -83,7 +83,7 @@ void History::addLiteral(Clause* p_clause, Literal p_literal) {
 	
 	// Add the new step
 	m_steps.push_back(newStep);
-	log4c_category_info(log_history(), "Literal %sx%u of clause %u added to the history.", (p_literal.isNegative() ? "¬" : ""), p_literal.id(), p_clause->id());
+	log4c_category_info(log_history, "Literal %sx%u of clause %u added to the history.", (p_literal.isNegative() ? "¬" : ""), p_literal.id(), p_clause->id());
 }
 
 
@@ -95,7 +95,7 @@ void History::addLiteral(Clause* p_clause, Literal p_literal) {
  */
 void History::replay(Formula& p_formula) {
 	// Replaying...
-	log4c_category_debug(log_history(), "Replaying the history...");
+	log4c_category_debug(log_history, "Replaying the history...");
 	for (auto it = m_steps.begin(); it != m_steps.end(); it = m_steps.erase(it)) {
 		Clause* clause  = (*it)->clause();
 		Literal literal = (*it)->literal();
@@ -103,16 +103,16 @@ void History::replay(Formula& p_formula) {
 		switch ((*it)->operation()) {
 			case Operation::AddClause:
 				p_formula.addClause(clause);
-				log4c_category_debug(log_history(), "Added clause %u", clause->id());
+				log4c_category_debug(log_history, "Added clause %u", clause->id());
 				break;
 
 			case Operation::AddLiteralToClause:
 				p_formula.addLiteralToClause(clause, literal);
-				log4c_category_debug(log_history(), "Added %sx%u to clause %u", (literal.isNegative() ? "¬" : ""), literal.id(), clause->id());
+				log4c_category_debug(log_history, "Added %sx%u to clause %u", (literal.isNegative() ? "¬" : ""), literal.id(), clause->id());
 				break;
 
 			default:
-				log4c_category_warn(log_history(), "An unknown operation code (%u) has been found in the history, skipping.", (*it)->operation());
+				log4c_category_warn(log_history, "An unknown operation code (%u) has been found in the history, skipping.", (*it)->operation());
 		}
 
 		// Delete the step
@@ -120,7 +120,7 @@ void History::replay(Formula& p_formula) {
 	}
 
 	// Result
-	log4c_category_info(log_history(), "History replayed.");
+	log4c_category_info(log_history, "History replayed.");
 }
 
 
@@ -130,7 +130,7 @@ void History::replay(Formula& p_formula) {
 void History::clear() {
 	for (auto it = m_steps.begin(); it != m_steps.end(); it = m_steps.erase(it))
 		delete *it;
-	log4c_category_debug(log_history(), "History cleared.");
+	log4c_category_debug(log_history, "History cleared.");
 }
 
 
