@@ -5,7 +5,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR on)
 set(LIBS ${LIBS} ${LOG4C_LIBRARIES})
 
 # Declare common CFLAGS
-set(CFLAGS -Wall -Wextra -pedantic -std=c++11 -O2)
+set(CFLAGS -Wall -Wextra -pedantic -std=c++11 -O2 -g)
 
 # Build libraries
 add_subdirectory (core)
