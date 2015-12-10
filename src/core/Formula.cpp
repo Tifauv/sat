@@ -159,7 +159,7 @@ Literal Formula::findLiteralFromUnaryClause() const {
  * @param p_history
  *            the history that stores the operations
  */
-void Formula::removeClausesWithLiteral(Literal p_literal, History& p_history) {
+void Formula::removeClausesWithLiteral(Literal& p_literal, History& p_history) {
 	log4c_category_info(log_formula, "Removing clauses that contain the literal %sx%u...", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
 	for (auto it = p_literal.beginOccurence(); it != p_literal.endOccurence(); it = p_literal.erase(it)) {
 		Clause* clause = *it;
@@ -192,7 +192,7 @@ void Formula::removeClausesWithLiteral(Literal p_literal, History& p_history) {
  * @return true if all the clauses could be reduced without producing an unsatisfiable one;
  *         false if an unsatisfiable clause was produced.
  */
-bool Formula::removeOppositeLiteralFromClauses(Literal p_literal, History& p_history) {
+bool Formula::removeOppositeLiteralFromClauses(Literal& p_literal, History& p_history) {
 	log4c_category_info(log_formula, "Removing literal %sx%u from the clauses.", (p_literal.isPositive() ? "¬" : ""), p_literal.id());
 	for (auto it = p_literal.beginOppositeOccurence(); it != p_literal.endOppositeOccurence(); it = p_literal.eraseOpposite(it)) {
 		Clause* clause = *it;
@@ -225,7 +225,7 @@ bool Formula::removeOppositeLiteralFromClauses(Literal p_literal, History& p_his
  * @param p_literal
  *            the literal to remove
  */
-void Formula::unlinkVariable(Clause* p_clause, Literal p_literal) {
+void Formula::unlinkVariable(Clause* p_clause, const Literal& p_literal) {
 	// Parameters check
 	if (isNull(p_clause)) {
 		log4c_category_error(log_formula, "Cannot remove a literal from a NULL clause.");

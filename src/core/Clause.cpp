@@ -51,7 +51,7 @@ Clause::~Clause() {
  * @param p_literal
  *            the literal to add
  */
-void Clause::addLiteral(Literal p_literal) {
+void Clause::addLiteral(const Literal& p_literal) {
 	m_literals.push_back(p_literal);
 	log4c_category_debug(log_formula, "Literal %sx%u added to clause %u.", (p_literal.isNegative() ? "¬" : ""), p_literal.id(), id());
 }

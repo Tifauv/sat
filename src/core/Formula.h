@@ -36,8 +36,8 @@ public:
 
 	Literal findLiteralFromUnaryClause() const;
 
-	void removeClausesWithLiteral(Literal p_literal, History& p_history);
-	bool removeOppositeLiteralFromClauses(Literal p_literal, History& p_history);
+	void removeClausesWithLiteral(Literal& p_literal, History& p_history);
+	bool removeOppositeLiteralFromClauses(Literal& p_literal, History& p_history);
 
 	void addClause(Clause* p_clause);
 	void addLiteralToClause(Clause* p_clause, Literal p_literal);
@@ -55,7 +55,7 @@ public:
 protected:
 	Variable* findOrCreateVariable(Id p_variableId);
 
-	void unlinkVariable(Clause* p_clause, Literal p_literal);
+	void unlinkVariable(Clause* p_clause, const Literal& p_literal);
 
 private:
 	std::unordered_set<Clause*> m_clauses;

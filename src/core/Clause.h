@@ -50,7 +50,7 @@ public:
 	 * @param p_literal
 	 *            the literal to add
 	 */
-	void addLiteral(Literal p_literal);
+	void addLiteral(const Literal& p_literal);
 
 
 	/**
