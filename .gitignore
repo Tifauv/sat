@@ -1,3 +1,11 @@
-tags
-.kateproject.d
+# Build directory
 build
+
+# CTags index
+tags
+
+# Kate
+.kateproject.d
+
+# Kdevelop4
+*.kdev4
