@@ -156,6 +156,8 @@ Literal Formula::findLiteralFromUnaryClause() const {
  * 
  * @param p_literal
  *            the literal
+ * @param p_history
+ *            the history that stores the operations
  */
 void Formula::removeClausesWithLiteral(Literal p_literal, History& p_history) {
 	log4c_category_info(log_formula, "Removing clauses that contain the literal %sx%u...", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
