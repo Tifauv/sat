@@ -20,16 +20,6 @@
 #include "Literal.h"
 
 
-// CONSTRUCTORS
-PositiveFirstPolaritySelector::PositiveFirstPolaritySelector() {
-}
-
-
-// DESTRUCTORS
-PositiveFirstPolaritySelector::~PositiveFirstPolaritySelector() {
-}
-
-
 // METHODS 
 Literal PositiveFirstPolaritySelector::getLiteral(Variable* p_variable) {
 	if (p_variable == nullptr) {

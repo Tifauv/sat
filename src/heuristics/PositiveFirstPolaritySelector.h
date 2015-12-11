@@ -25,9 +25,6 @@ class Literal;
 
 class PositiveFirstPolaritySelector : public PolaritySelector {
 public:
-	PositiveFirstPolaritySelector();
-	virtual ~PositiveFirstPolaritySelector();
-
 	Literal getLiteral(Variable* p_variable);
 };
 

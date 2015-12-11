@@ -20,21 +20,10 @@
 #include "Variable.h"
 
 
-// CONSTRUCTORS
-FirstVariableSelector::FirstVariableSelector() {
-}
-
-
-// DESTRUCTORS
-FirstVariableSelector::~FirstVariableSelector() {
-}
-
-
 // METHODS 
 Variable* FirstVariableSelector::getVariable(Formula& p_formula) {
 	if (!p_formula.hasVariables())
 		return nullptr;
-	
-	// TODO check there are variables left
+
 	return *p_formula.beginVariable();
 }

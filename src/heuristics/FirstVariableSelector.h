@@ -28,9 +28,6 @@ class Variable;
  */
 class FirstVariableSelector : public VariableSelector {
 public:
-	FirstVariableSelector();
-	~FirstVariableSelector();
-	
 	Variable* getVariable(Formula& p_formula);
 };
 
