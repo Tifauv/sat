@@ -4,6 +4,7 @@ include_directories(${SAT_CORE_INCLUDE})
 set (SAT_HEURISTICS_SRCS
 	FirstVariableSelector.cpp
 	MostUsedVariableSelector.cpp
+	LeastUsedVariableSelector.cpp
 	PositiveFirstPolaritySelector.cpp
 	MostUsedPolaritySelector.cpp
 	LeastUsedPolaritySelector.cpp

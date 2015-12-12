@@ -16,6 +16,7 @@
  */
 #include <iostream>
 #include <log4c.h>
+#include <chrono>
 
 #include "CnfLoader.h"
 #include "DpllSolver.h"
@@ -23,10 +24,12 @@
 #include "VariablePolarityLiteralSelector.h"
 #include "FirstVariableSelector.h"
 #include "MostUsedVariableSelector.h"
+#include "LeastUsedVariableSelector.h"
 #include "PositiveFirstPolaritySelector.h"
 #include "MostUsedPolaritySelector.h"
 #include "LeastUsedPolaritySelector.h"
 
+typedef std::chrono::high_resolution_clock Clock;
 using namespace std;
 
 
@@ -81,6 +84,7 @@ int main(int p_argc, char* p_argv[]) {
 		// Build the solver
 		//FirstVariableSelector variableSelector;
 		MostUsedVariableSelector variableSelector;
+		//LeastUsedVariableSelector variableSelector;
 		//PositiveFirstPolaritySelector polaritySelector;
 		MostUsedPolaritySelector polaritySelector;
 		//LeastUsedPolaritySelector polaritySelector;
@@ -88,7 +92,10 @@ int main(int p_argc, char* p_argv[]) {
 
 		// Solve the problem and display its interpretation
 		DpllSolver solver(literalSelector);
+		auto start = Clock::now();
 		Interpretation* interpretation = solver.solve(formula);
+		auto end = Clock::now();
+		std::cout << "c Took " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << " milliseconds" << endl;
 		interpretation->print();
 		delete interpretation;
 	}
