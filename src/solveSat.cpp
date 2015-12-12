@@ -24,6 +24,8 @@
 #include "FirstVariableSelector.h"
 #include "MostUsedVariableSelector.h"
 #include "PositiveFirstPolaritySelector.h"
+#include "MostUsedPolaritySelector.h"
+#include "LeastUsedPolaritySelector.h"
 
 using namespace std;
 
@@ -79,7 +81,9 @@ int main(int p_argc, char* p_argv[]) {
 		// Build the solver
 		//FirstVariableSelector variableSelector;
 		MostUsedVariableSelector variableSelector;
-		PositiveFirstPolaritySelector polaritySelector;
+		//PositiveFirstPolaritySelector polaritySelector;
+		MostUsedPolaritySelector polaritySelector;
+		//LeastUsedPolaritySelector polaritySelector;
 		VariablePolarityLiteralSelector literalSelector(variableSelector, polaritySelector);
 
 		// Solve the problem and display its interpretation
