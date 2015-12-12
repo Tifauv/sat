@@ -39,6 +39,10 @@ public:
 	bool hasPositiveOccurence() const;
 	bool hasNegativeOccurence() const;
 
+	unsigned int countPositiveOccurences() const;
+	unsigned int countNegativeOccurences() const;
+	unsigned int countOccurences() const;
+
 	std::list<Clause*>::iterator beginOccurence(int p_sign);
 	std::list<Clause*>::iterator endOccurence(int p_sign);
 	std::list<Clause*>::iterator erase(std::list<Clause*>::iterator p_iterator, int p_sign);

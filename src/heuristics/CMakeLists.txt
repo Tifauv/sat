@@ -3,6 +3,7 @@ include_directories(${SAT_CORE_INCLUDE})
 # The sources of SatHeuristics
 set (SAT_HEURISTICS_SRCS
 	FirstVariableSelector.cpp
+	MostUsedVariableSelector.cpp
 	PositiveFirstPolaritySelector.cpp
 )
 set (SAT_HEURISTICS_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR} PARENT_SCOPE)

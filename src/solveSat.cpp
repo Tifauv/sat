@@ -22,6 +22,7 @@
 #include "Interpretation.h"
 #include "VariablePolarityLiteralSelector.h"
 #include "FirstVariableSelector.h"
+#include "MostUsedVariableSelector.h"
 #include "PositiveFirstPolaritySelector.h"
 
 using namespace std;
@@ -76,7 +77,8 @@ int main(int p_argc, char* p_argv[]) {
 		formula.log();
 
 		// Build the solver
-		FirstVariableSelector variableSelector;
+		//FirstVariableSelector variableSelector;
+		MostUsedVariableSelector variableSelector;
 		PositiveFirstPolaritySelector polaritySelector;
 		VariablePolarityLiteralSelector literalSelector(variableSelector, polaritySelector);
 

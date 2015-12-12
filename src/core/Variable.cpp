@@ -77,6 +77,21 @@ bool Variable::hasNegativeOccurence() const {
 }
 
 
+unsigned int Variable::countPositiveOccurences() const {
+	return m_positiveOccurences.size();
+}
+
+
+unsigned int Variable::countNegativeOccurences() const {
+	return m_negativeOccurences.size();
+}
+
+
+unsigned int Variable::countOccurences() const {
+	return countPositiveOccurences() + countNegativeOccurences();
+}
+
+
 std::list<Clause*>::iterator Variable::beginOccurence(int p_sign) {
 	if (p_sign == SIGN_POSITIVE)
 		return m_positiveOccurences.begin();
