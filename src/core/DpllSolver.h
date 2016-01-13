@@ -21,9 +21,10 @@
 #include <list>
 #include "Solver.h"
 
+class Interpretation;
 class RawLiteral;
 class Literal;
-class Interpretation;
+class Formula;
 class History;
 class LiteralSelector;
 
@@ -38,8 +39,10 @@ public:
 	 * 
 	 * @param p_literalSelector
 	 *            the literal selection strategy
+	 * @param p_formula
+	 *            the initial formula to solve
 	 */
-	explicit DpllSolver(LiteralSelector& p_literalSelector);
+	explicit DpllSolver(LiteralSelector& p_literalSelector, Formula& p_formula);
 
 
 	/**
@@ -51,60 +54,46 @@ public:
 	/**
 	 * Common entry point for all solvers.
 	 *
-	 * @param p_formula
-	 *            the formula to resolve
-	 *
 	 * @return the interpretation found
 	 */
-	Interpretation* solve(Formula& p_formula);
+	Interpretation& solve();
 
 	
 	/**
 	 * Check whether a given solution is a valid interpretation of a formula.
 	 * 
-	 * @param p_formula
-	 *            the formula
 	 * @param p_solution
 	 *            the solution to check
 	 * 
 	 * @return true if the solution satisfies the formula,
 	 *         false otherwise
 	 */
-	bool checkSolution(Formula& p_formula, std::list<RawLiteral>* p_solution);
+	bool checkSolution(std::list<RawLiteral>* p_solution);
 
 protected:
 	/**
 	 * Main loop of the Davis-Putnam algorithm.
 	 * 
-	 * @param p_formula
-	 *            the SAT formula to solve
-	 * @param p_interpretation
-	 *            the current interpretation
 	 * @param p_backtrackCounter
 	 *            the current number of backtracks
 	 * 
 	 * @return the new count of backtracks
 	 */
-	unsigned int main(Formula& p_formula, Interpretation& p_interpretation, unsigned int p_backtrackCounter);
+	unsigned int main(unsigned int p_backtrackCounter);
 
 	
 	/**
 	 * Selects a literal to be used for the reduction phase.
 	 * 
-	 * @param p_formula
-	 *            the SAT formula
-	 * 
 	 * @return the literal
 	 */
-	virtual Literal selectLiteral(Formula& p_formula);
+	virtual Literal selectLiteral();
 
 
 	/**
 	 * Reduces all the graph's formulas using a literal.
 	 * The history is used for backtracking.
 	 * 
-	 * @param p_formula
-	 *            the SAT formula
 	 * @param p_literal
 	 *            the literal used to reduce the formula
 	 * @param p_history
@@ -113,24 +102,33 @@ protected:
 	 * @return true if the reduction is satisfiable
 	 *         false if it is unsatisfiable
 	 */
-	bool reduce(Formula& p_formula, Literal p_literal, History& p_history);
+	bool reduce(Literal p_literal, History& p_history);
 
 
 	/**
 	 * Overloaded implementation that takes a RawLiteral instead of a Literal.
 	 * 
-	 * @param p_formula
-	 *            the SAT formula
 	 * @param p_literal
 	 *            the raw literal used to reduce the formula
 	 * 
 	 * @return true if the reduction is satisfiable
 	 *         false if it is unsatisfiable
 	 */
-	bool reduce(Formula& p_formula, const RawLiteral& p_literal);
+	bool reduce(const RawLiteral& p_literal);
+
+
+	/**
+	 * Restores the previous state before backtracking.
+	 * 
+	 * @param p_history
+	 *            the history to replay
+	 */
+	void backtrack(History& p_history);
 
 private:
 	LiteralSelector& m_literalSelector;
+	Formula& m_formula;
+	Interpretation m_interpretation;
 };
 
 #endif // DPLL_SOLVER_H

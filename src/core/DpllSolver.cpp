@@ -33,8 +33,9 @@
  * @param p_literalSelector
  *            the literal selection strategy
  */
-DpllSolver::DpllSolver(LiteralSelector& p_literalSelector) : 
-m_literalSelector(p_literalSelector) {
+DpllSolver::DpllSolver(LiteralSelector& p_literalSelector, Formula& p_formula) : 
+m_literalSelector(p_literalSelector),
+m_formula(p_formula) {
 	log4c_category_debug(log_dpll, "DPLL Solver created.");
 }
 
@@ -53,40 +54,34 @@ DpllSolver::~DpllSolver() {
  * Starter function of the solver.
  * Implements Solver.
  * 
- * @param p_formula
- *            the SAT formula to solve
- * 
  * @return an interpretation (satisfiable or not)
  */
-Interpretation* DpllSolver::solve(Formula& p_formula) {
+Interpretation& DpllSolver::solve() {
 	log4c_category_debug(log_dpll, "Starting the DPLL algorithm.");
-	Interpretation* interpretation = new Interpretation();
-	unsigned int backtrackCounter = main(p_formula, *interpretation, 0);
+	unsigned int backtrackCounter = main(0);
 	std::cout << "c Backtracked " << backtrackCounter << " times" << std::endl;
-	return interpretation;
+	return m_interpretation;
 }
 
 
 /**
- * Check whether a given solution is a valid interpretation of a formula.
+ * Check whether a given solution is a valid interpretation of the formula.
  * 
- * @param p_formula
- *            the formula
  * @param p_solution
  *            the solution to check
  * 
  * @return true if the solution satisfies the formula,
  *         false otherwise
  */
-bool DpllSolver::checkSolution(Formula& p_formula, std::list<RawLiteral>* p_solution) {
+bool DpllSolver::checkSolution(std::list<RawLiteral>* p_solution) {
 	for (auto literal = p_solution->cbegin(); literal != p_solution->cend(); ++literal) {
-		if (!reduce(p_formula, *literal)) {
+		if (!reduce(*literal)) {
 			std::cout << "An unsatisfiable clause was obtained." << std::endl;
 			return false;
 		}
 	}
 	
-	if (!p_formula.hasClauses()) {
+	if (!m_formula.hasClauses()) {
 		std::cout << "All clauses could be interpreted." << std::endl;
 		return true;
 	}
@@ -99,26 +94,22 @@ bool DpllSolver::checkSolution(Formula& p_formula, std::list<RawLiteral>* p_solu
 /**
  * Main loop of the Davis-Putnam algorithm.
  * 
- * @param p_formula
- *            the SAT formula to solve
- * @param p_interpretation
- *            the current interpretation
  * @param p_backtrackCounter
  *            the current number of backtracks
  * 
  * @return the new count of backtracks
  */
-unsigned int DpllSolver::main(Formula& p_formula, Interpretation& p_interpretation, unsigned int p_backtrackCounter) {
+unsigned int DpllSolver::main(unsigned int p_backtrackCounter) {
 	unsigned int backtrackCounter = p_backtrackCounter;
 
 	log4c_category_info(log_dpll, "Current state:");
-	p_formula.log();
-	p_interpretation.log();
+	m_formula.log();
+	m_interpretation.log();
 
 	/*
 	 * Stop case: if there is no clause left, we are done.
 	 */
-	if (!p_formula.hasClauses()) {
+	if (!m_formula.hasClauses()) {
 		log4c_category_info(log_dpll, "No more clauses.");
 		return backtrackCounter;
 	}
@@ -127,7 +118,7 @@ unsigned int DpllSolver::main(Formula& p_formula, Interpretation& p_interpretati
 	/*
 	 * Stop case: if there is no variable left, we are done.
 	 */
-	if (!p_formula.hasVariables()) {
+	if (!m_formula.hasVariables()) {
 		log4c_category_info(log_dpll, "No more variables.");
 		return backtrackCounter;
 	}
@@ -136,29 +127,29 @@ unsigned int DpllSolver::main(Formula& p_formula, Interpretation& p_interpretati
 	 * Choose the reduction literal.
 	 * This is the crucial step, performance-wise.
 	 */
-	Literal chosen_literal = selectLiteral(p_formula);
+	Literal chosen_literal = selectLiteral();
 
 	/*
 	 * First reduction with the chosen literal.
 	 */
 	log4c_category_info(log_dpll, "First reduction attempt...");
 	History history;
-	bool satisfiable = reduce(p_formula, chosen_literal, history);
+	bool satisfiable = reduce(chosen_literal, history);
 	
 	/*
 	 * The reduced interpretation is satisfiable: we are done.
 	 */
 	if (satisfiable) {
 		// Add the chosen literal to the current interpretation
-		p_interpretation.push(chosen_literal);
+		m_interpretation.push(chosen_literal);
 		log4c_category_info(log_dpll, "Added %sx%u to the interpretation.", (chosen_literal.isNegative() ? "¬" : ""), chosen_literal.id());
 
 		// Loop again
-		backtrackCounter = main(p_formula, p_interpretation, backtrackCounter);
-		if (p_interpretation.isSatisfiable())
+		backtrackCounter = main(backtrackCounter);
+		if (m_interpretation.isSatisfiable())
 			return backtrackCounter;
 		else // Remove the current literal from the interpretation
-			p_interpretation.pop();
+			m_interpretation.pop();
 	}
 
 	/*
@@ -166,67 +157,54 @@ unsigned int DpllSolver::main(Formula& p_formula, Interpretation& p_interpretati
 	 */
 	log4c_category_info(log_dpll, "The current interpretation is unsatisfiable.");
 	log4c_category_debug(log_dpll, "Rebuilding the formula before second attempt...");
-	history.replay(p_formula);
-	p_formula.log();
-	p_interpretation.setSatisfiable();
-	p_interpretation.log();
+	history.replay(m_formula);
+	m_formula.log();
+	m_interpretation.setSatisfiable();
+	m_interpretation.log();
 
 	// Seconde réduction et test du résultat
 	log4c_category_debug(log_dpll, "Second reduction attempt...");
-	satisfiable = reduce(p_formula, -chosen_literal, history);
+	satisfiable = reduce(-chosen_literal, history);
 
 	/*
 	 * The interpretation is satisfiable: we are done. We can return the current interpretation.
 	 */
 	if (satisfiable) {
 		// Add the chosen literal to the current interpretation
-		p_interpretation.push(-chosen_literal);
+		m_interpretation.push(-chosen_literal);
 		log4c_category_info(log_dpll, "Added %sx%u to the interpretation.", (chosen_literal.isPositive() ? "¬" : ""), chosen_literal.id());
 
 		// Loop again
-		backtrackCounter = main(p_formula, p_interpretation, backtrackCounter);
-		if (p_interpretation.isSatisfiable())
+		backtrackCounter = main(backtrackCounter);
+		if (m_interpretation.isSatisfiable())
 			return backtrackCounter;
 		else // Remove the current literal from the interpretation
-			p_interpretation.pop();
+			m_interpretation.pop();
 	}
 	/*
 	 * The interpretation is also unsatisfiable with the opposite literal.
 	 */
 	else
-		p_interpretation.setUnsatisfiable();
+		m_interpretation.setUnsatisfiable();
 
-	/* Restoring state before backtracking. */
-	log4c_category_debug(log_dpll, "Restoring state before backtracking...");
-	backtrackCounter++;
-
-	// Reconstruction du graphe
-	history.replay(p_formula);
-
-	log4c_category_debug(log_dpll, "Restored state:");
-	p_formula.log();
-	p_interpretation.log();
-
-	return backtrackCounter;
+	backtrack(history);
+	return backtrackCounter + 1;
 }
 
 
 /**
  * Chooses a literal to be used for the reduction phase.
  * 
- * @param p_formula
- *            the SAT formula
- * 
  * @return the literal
  */
-Literal DpllSolver::selectLiteral(Formula& p_formula) {
+Literal DpllSolver::selectLiteral() {
 	// Search a literal from a unitary clause
-	Literal chosen_literal = p_formula.findLiteralFromUnaryClause();
+	Literal chosen_literal = m_formula.findLiteralFromUnaryClause();
 	if (chosen_literal.var() != nullptr)
 		return chosen_literal;
 
 	// If there is no unitary clause, use the selector
-	return m_literalSelector.getLiteral(p_formula);
+	return m_literalSelector.getLiteral(m_formula);
 }
 
 
@@ -234,8 +212,6 @@ Literal DpllSolver::selectLiteral(Formula& p_formula) {
  * Reduces all the graph's formulas using a literal.
  * The history is used for backtracking.
  * 
- * @param p_formula
- *            the SAT graph of formulas
  * @param p_literal
  *            the literal used to reduce the formulas
  * @param p_history
@@ -244,17 +220,17 @@ Literal DpllSolver::selectLiteral(Formula& p_formula) {
  * @return true if the reduction is satisfiable
  *         false if it is unsatisfiable
  */
-bool DpllSolver::reduce(Formula& p_formula, Literal p_literal, History& p_history) {
+bool DpllSolver::reduce(Literal p_literal, History& p_history) {
 	log4c_category_info(log_dpll, "Reduction using literal %sx%u...", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
 
 	// Remove the clauses that contain the same sign as the given literal
-	p_formula.removeClausesWithLiteral(p_literal, p_history);
+	m_formula.removeClausesWithLiteral(p_literal, p_history);
 
 	// Remove the literal from the clauses that contain the oposite sign
-	bool satisfiable = p_formula.removeOppositeLiteralFromClauses(p_literal, p_history);
+	bool satisfiable = m_formula.removeOppositeLiteralFromClauses(p_literal, p_history);
 
 	// The variable is now empty, we can remove it
-	p_formula.removeVariable(p_literal.var());
+	m_formula.removeVariable(p_literal.var());
 
 	return satisfiable;
 }
@@ -263,24 +239,41 @@ bool DpllSolver::reduce(Formula& p_formula, Literal p_literal, History& p_histor
 /**
  * Overloaded implementation that takes a raw literal instead of a literal.
  * 
- * @param p_formula
- *            the SAT formula
  * @param p_literal
  *            the raw literal used to reduce the formula
  * 
  * @return true if the reduction is satisfiable
  *         false if it is unsatisfiable
  */
-bool DpllSolver::reduce(Formula& p_formula, const RawLiteral& p_literal) {
+bool DpllSolver::reduce(const RawLiteral& p_literal) {
 	History history;
 
 	// Rebuild a Literal from a RawLiteral
-	for (auto it = p_formula.beginVariable(); it != p_formula.endVariable(); ++it) {
+	for (auto it = m_formula.beginVariable(); it != m_formula.endVariable(); ++it) {
 		Variable* variable = *it;
 		
 		if (variable->id() == p_literal.id())
-			return reduce(p_formula, Literal(variable, p_literal.sign()), history);
+			return reduce(Literal(variable, p_literal.sign()), history);
 	}
 
 	return true;
+}
+
+
+/**
+ * Restores the previous state before backtracking.
+ * 
+ * @param p_history
+ *            the history to replay
+ */
+void DpllSolver::backtrack(History& p_history) {
+	/* Restoring state before backtracking. */
+	log4c_category_debug(log_dpll, "Restoring state before backtracking...");
+	
+	// Reconstruction du graphe
+	p_history.replay(m_formula);
+	
+	log4c_category_debug(log_dpll, "Restored state:");
+	m_formula.log();
+	m_interpretation.log();
 }

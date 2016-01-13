@@ -91,13 +91,12 @@ int main(int p_argc, char* p_argv[]) {
 		VariablePolarityLiteralSelector literalSelector(variableSelector, polaritySelector);
 
 		// Solve the problem and display its interpretation
-		DpllSolver solver(literalSelector);
+		DpllSolver solver(literalSelector, formula);
 		auto start = Clock::now();
-		Interpretation* interpretation = solver.solve(formula);
+		Interpretation& interpretation = solver.solve();
 		auto end = Clock::now();
 		std::cout << "c Took " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << " milliseconds" << endl;
-		interpretation->print();
-		delete interpretation;
+		interpretation.print();
 	}
 
 	// Clean the logging system

@@ -86,8 +86,8 @@ int main(int p_argc, char* p_argv[]) {
 		VariablePolarityLiteralSelector literalSelector(variableSelector, polaritySelector);
 
 		// Check the solution
-		DpllSolver solver(literalSelector);
-		if (solver.checkSolution(formula, solution)) {
+		DpllSolver solver(literalSelector, formula);
+		if (solver.checkSolution(solution)) {
 			rc = 0;
 			cout << "The solution is valid." << endl;
 		}

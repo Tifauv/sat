@@ -17,8 +17,7 @@
 #ifndef SOLVER_H
 #define SOLVER_H
 
-class Formula;
-class Interpretation;
+#include "Interpretation.h"
 
 
 /**
@@ -29,12 +28,9 @@ public:
 	/**
 	 * Common entrypoint for SAT solvers.
 	 * 
-	 * @param p_formula
-	 *            the SAT formula to solve
-	 * 
 	 * @return an interpretation (satisfiable or not)
 	 */
-	virtual Interpretation* solve(Formula& p_formula) = 0;
+	virtual Interpretation& solve() = 0;
 };
 
 #endif // SOLVER_H
