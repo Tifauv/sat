@@ -87,7 +87,7 @@ protected:
 	 * 
 	 * @return the literal
 	 */
-	virtual Literal selectLiteral();
+	virtual Literal decide();
 
 
 	/**

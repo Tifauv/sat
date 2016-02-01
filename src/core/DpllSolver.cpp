@@ -127,7 +127,7 @@ unsigned int DpllSolver::main(unsigned int p_backtrackCounter) {
 	 * Choose the reduction literal.
 	 * This is the crucial step, performance-wise.
 	 */
-	Literal chosen_literal = selectLiteral();
+	Literal chosen_literal = decide();
 
 	/*
 	 * First reduction with the chosen literal.
@@ -197,7 +197,7 @@ unsigned int DpllSolver::main(unsigned int p_backtrackCounter) {
  * 
  * @return the literal
  */
-Literal DpllSolver::selectLiteral() {
+Literal DpllSolver::decide() {
 	// Search a literal from a unitary clause
 	Literal chosen_literal = m_formula.findLiteralFromUnaryClause();
 	if (chosen_literal.var() != nullptr)
