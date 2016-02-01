@@ -17,7 +17,7 @@
 #ifndef FORMULA_H
 #define FORMULA_H
 
-#include <list>
+#include <vector>
 #include <unordered_set>
 #include "RawLiteral.h"
 
@@ -32,7 +32,7 @@ public:
 	Formula();
 	~Formula();
 
-	Clause* createClause(Id p_clauseId, std::list<RawLiteral>& p_literals);
+	Clause* createClause(Id p_clauseId, std::vector<RawLiteral>& p_literals);
 
 	Literal findLiteralFromUnaryClause() const;
 

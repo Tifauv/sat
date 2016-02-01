@@ -17,7 +17,7 @@
 #ifndef SOLUTIONCHECKER_H
 #define SOLUTIONCHECKER_H
 
-#include <list>
+#include <vector>
 class RawLiteral;
 
 
@@ -35,7 +35,7 @@ public:
 	 * @return true if the solution satisfies the formula,
 	 *         false otherwise
 	 */
-	bool checkSolution(std::list<RawLiteral>* p_solution);
+	bool checkSolution(std::vector<RawLiteral>* p_solution);
 };
 
 #endif // SOLUTIONCHECKER_H

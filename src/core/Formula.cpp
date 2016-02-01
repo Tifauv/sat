@@ -72,7 +72,7 @@ Formula::~Formula() {
  *
  * @return the new clause
  */
-Clause* Formula::createClause(Id p_clauseId, std::list<RawLiteral>& p_literals) {
+Clause* Formula::createClause(Id p_clauseId, std::vector<RawLiteral>& p_literals) {
 	// Create the clause & add it to the list
 	Clause* clause = new Clause(p_clauseId);
 	m_clauses.insert(clause);

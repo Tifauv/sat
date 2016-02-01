@@ -73,7 +73,7 @@ void CnfLoader::loadProblem(char* p_filename, Formula& p_formula) {
 			break;
 		
 		// Transformation string -> tab
-		std::list<RawLiteral>* literals = parseClause(line);
+		std::vector<RawLiteral>* literals = parseClause(line);
 		p_formula.createClause(clauseId, *literals);
 		++clauseId;
 		delete literals;
@@ -91,7 +91,7 @@ void CnfLoader::loadProblem(char* p_filename, Formula& p_formula) {
  * @return nullptr if p_filename is nullptr,
  *         the interpretation loaded otherwise
  */
-std::list<RawLiteral>* CnfLoader::loadSolution(char* p_filename) {
+std::vector<RawLiteral>* CnfLoader::loadSolution(char* p_filename) {
 	log4c_category_debug(log_cnf, "Loading solution from SAT file '%s'...", p_filename);
 	
 	// Ouverture du fichier
@@ -103,7 +103,7 @@ std::list<RawLiteral>* CnfLoader::loadSolution(char* p_filename) {
 	log4c_category_debug(log_cnf, "File '%s' opened.", p_filename);
 	
 	// Initializations
-	std::list<RawLiteral>* solution = nullptr;
+	std::vector<RawLiteral>* solution = nullptr;
 	std::string line;
 	unsigned int lineNo = 0;
 	
@@ -135,9 +135,9 @@ std::list<RawLiteral>* CnfLoader::loadSolution(char* p_filename) {
  * Parses a clause line from a cnf file.
  * 
  */
-std::list<RawLiteral>* CnfLoader::parseClause(std::string p_line) {
+std::vector<RawLiteral>* CnfLoader::parseClause(std::string p_line) {
 	// I/ Création du tableau
-	auto literals = new std::list<RawLiteral>();
+	auto literals = new std::vector<RawLiteral>();
 	
 	// III/ Initialisation du tableau
 	std::istringstream source(p_line);
@@ -186,7 +186,7 @@ std::list<RawLiteral>* CnfLoader::parseClause(std::string p_line) {
  *          0 if p_literal does not appear in p_literals
  *          1 if p_literal appears in p_literals
  */
-int CnfLoader::existsLiteral(RawLiteral& p_literal, std::list<RawLiteral>& p_literals) {
+int CnfLoader::existsLiteral(RawLiteral& p_literal, std::vector<RawLiteral>& p_literals) {
 	for (auto it = p_literals.cbegin(); it != p_literals.cend(); ++it) {
 		RawLiteral literal = *it;
 		if ( p_literal.id() == literal.id() )

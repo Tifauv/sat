@@ -15,7 +15,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
  */
 #include <iostream>
-#include <list>
+#include <vector>
 #include <log4c.h>
 
 #include "CnfLoader.h"
@@ -75,7 +75,7 @@ int main(int p_argc, char* p_argv[]) {
 		formula.log();
 
 		// Load the SAT solution file
-		std::list<RawLiteral>* solution = loader.loadSolution(satFilename);
+		std::vector<RawLiteral>* solution = loader.loadSolution(satFilename);
 
 		// Check the solution
 		BasicSolutionChecker checker(formula);

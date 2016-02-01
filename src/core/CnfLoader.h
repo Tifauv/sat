@@ -17,7 +17,7 @@
 #ifndef CNFLOADER_H
 #define CNFLOADER_H
 
-#include <list>
+#include <vector>
 #include "Formula.h"
 
 
@@ -43,7 +43,7 @@ public:
 	* @return nullptr if p_filename is nullptr,
 	*         the interpretation loaded otherwise
 	*/
-	std::list<RawLiteral>* loadSolution(char* p_filename);
+	std::vector<RawLiteral>* loadSolution(char* p_filename);
 
 
 protected:
@@ -55,7 +55,7 @@ protected:
 	 * 
 	 * @return the list of raw literals
 	 */
-	std::list<RawLiteral>* parseClause(std::string p_line);
+	std::vector<RawLiteral>* parseClause(std::string p_line);
 
 
 	/**
@@ -70,7 +70,7 @@ protected:
 	 *          0 if p_literal does not appear in p_literals
 	 *          1 if p_literal appears in p_literals
 	 */
-	int existsLiteral(RawLiteral& p_literal, std::list<RawLiteral>& p_literals);
+	int existsLiteral(RawLiteral& p_literal, std::vector<RawLiteral>& p_literals);
 };
 
 #endif // CNFLOADER_H
