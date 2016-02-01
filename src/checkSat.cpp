@@ -19,10 +19,7 @@
 #include <log4c.h>
 
 #include "CnfLoader.h"
-#include "DpllSolver.h"
-#include "VariablePolarityLiteralSelector.h"
-#include "FirstVariableSelector.h"
-#include "PositiveFirstPolaritySelector.h"
+#include "BasicSolutionChecker.h"
 
 using namespace std;
 
@@ -80,14 +77,9 @@ int main(int p_argc, char* p_argv[]) {
 		// Load the SAT solution file
 		std::list<RawLiteral>* solution = loader.loadSolution(satFilename);
 
-		// Build the solver
-		FirstVariableSelector variableSelector;
-		PositiveFirstPolaritySelector polaritySelector;
-		VariablePolarityLiteralSelector literalSelector(variableSelector, polaritySelector);
-
 		// Check the solution
-		DpllSolver solver(literalSelector, formula);
-		if (solver.checkSolution(solution)) {
+		BasicSolutionChecker checker(formula);
+		if (checker.checkSolution(solution)) {
 			rc = 0;
 			cout << "The solution is valid." << endl;
 		}

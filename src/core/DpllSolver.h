@@ -18,11 +18,9 @@
 #ifndef DPLL_SOLVER_H
 #define DPLL_SOLVER_H
 
-#include <list>
 #include "Solver.h"
 
 class Interpretation;
-class RawLiteral;
 class Literal;
 class Formula;
 class History;
@@ -58,18 +56,6 @@ public:
 	 */
 	Interpretation& solve();
 
-	
-	/**
-	 * Check whether a given solution is a valid interpretation of a formula.
-	 * 
-	 * @param p_solution
-	 *            the solution to check
-	 * 
-	 * @return true if the solution satisfies the formula,
-	 *         false otherwise
-	 */
-	bool checkSolution(std::list<RawLiteral>* p_solution);
-
 protected:
 	/**
 	 * Main loop of the Davis-Putnam algorithm.
@@ -103,18 +89,6 @@ protected:
 	 *         false if it is unsatisfiable
 	 */
 	bool reduce(Literal p_literal, History& p_history);
-
-
-	/**
-	 * Overloaded implementation that takes a RawLiteral instead of a Literal.
-	 * 
-	 * @param p_literal
-	 *            the raw literal used to reduce the formula
-	 * 
-	 * @return true if the reduction is satisfiable
-	 *         false if it is unsatisfiable
-	 */
-	bool reduce(const RawLiteral& p_literal);
 
 
 	/**

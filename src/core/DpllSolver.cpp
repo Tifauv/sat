@@ -64,32 +64,6 @@ Interpretation& DpllSolver::solve() {
 }
 
 
-/**
- * Check whether a given solution is a valid interpretation of the formula.
- * 
- * @param p_solution
- *            the solution to check
- * 
- * @return true if the solution satisfies the formula,
- *         false otherwise
- */
-bool DpllSolver::checkSolution(std::list<RawLiteral>* p_solution) {
-	for (auto literal = p_solution->cbegin(); literal != p_solution->cend(); ++literal) {
-		if (!reduce(*literal)) {
-			std::cout << "An unsatisfiable clause was obtained." << std::endl;
-			return false;
-		}
-	}
-	
-	if (!m_formula.hasClauses()) {
-		std::cout << "All clauses could be interpreted." << std::endl;
-		return true;
-	}
-	std::cout << "Some clauses could not be interpreted." << std::endl;
-	return false;
-}
-
-
 // METHODS
 /**
  * Main loop of the Davis-Putnam algorithm.
@@ -233,30 +207,6 @@ bool DpllSolver::reduce(Literal p_literal, History& p_history) {
 	m_formula.removeVariable(p_literal.var());
 
 	return satisfiable;
-}
-
-
-/**
- * Overloaded implementation that takes a raw literal instead of a literal.
- * 
- * @param p_literal
- *            the raw literal used to reduce the formula
- * 
- * @return true if the reduction is satisfiable
- *         false if it is unsatisfiable
- */
-bool DpllSolver::reduce(const RawLiteral& p_literal) {
-	History history;
-
-	// Rebuild a Literal from a RawLiteral
-	for (auto it = m_formula.beginVariable(); it != m_formula.endVariable(); ++it) {
-		Variable* variable = *it;
-		
-		if (variable->id() == p_literal.id())
-			return reduce(Literal(variable, p_literal.sign()), history);
-	}
-
-	return true;
 }
 
 

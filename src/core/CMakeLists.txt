@@ -11,6 +11,7 @@ set (SAT_CORE_SRCS
 	DpllSolver.cpp
 	VariablePolarityLiteralSelector.cpp
 	CnfLoader.cpp
+	BasicSolutionChecker.cpp
 )
 set (SAT_CORE_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR} PARENT_SCOPE)
 
