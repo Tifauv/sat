@@ -79,7 +79,7 @@ Clause* Formula::createClause(Id p_clauseId, std::vector<RawLiteral>& p_literals
 	log4c_category_debug(log_formula, "Clause %u added.", p_clauseId);
 	
 	// Link the new clause with its literals
-	for (auto literal : p_literals) {
+	for (const auto& literal : p_literals) {
 		// Find the variable for the literal
 		Variable* variable = findOrCreateVariable(literal.id());
 
@@ -372,7 +372,7 @@ void Formula::log() const {
 
 	// Print the clauses
 	log4c_category_debug(log_formula, "Clauses = {");
-	for (auto clause : m_clauses) {
+	for (const auto& clause : m_clauses) {
 		// Clause id
 		std::string line = "   " + std::to_string(clause->id()) + ": ";
 
@@ -393,7 +393,7 @@ void Formula::log() const {
 
 	// Print the variables
 	log4c_category_debug(log_formula, "Variables = {");
-	for (auto variable : m_variables) {
+	for (const auto& variable : m_variables) {
 		// Variable id
 		std::string line = "   x" + std::to_string(variable->id()) + " \t+{";
 

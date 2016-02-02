@@ -72,7 +72,7 @@ void HistoryBasedDpllSolver::registerListener(SolverListener& p_listener) {
 Interpretation& HistoryBasedDpllSolver::solve() {
 	// Initialize the listeners
 	log4c_category_debug(log_dpll, "Initializing listeners...");
-	for (auto listener : m_listeners)
+	for (const auto& listener : m_listeners)
 		listener.get().init();
 
 	// Solving
@@ -81,7 +81,7 @@ Interpretation& HistoryBasedDpllSolver::solve() {
 
 	// Cleaning the listeners
 	log4c_category_debug(log_dpll, "Cleaning listeners...");
-	for (auto listener : m_listeners)
+	for (const auto& listener : m_listeners)
 		listener.get().cleanup();
 
 	return m_interpretation;
@@ -104,7 +104,6 @@ void HistoryBasedDpllSolver::main() {
 		return;
 	}
 
-	
 	/*
 	 * Stop case: if there is no variable left, we are done.
 	 */
@@ -125,7 +124,7 @@ void HistoryBasedDpllSolver::main() {
 	log4c_category_info(log_dpll, "First reduction attempt...");
 	History history;
 	bool satisfiable = reduce(chosen_literal, history);
-	
+
 	/*
 	 * The reduced interpretation is satisfiable: we are done.
 	 */
@@ -196,7 +195,7 @@ Literal HistoryBasedDpllSolver::decide() {
 
 	// Notify the listeners
 	log4c_category_debug(log_dpll, "Notifying listeners...");
-	for (auto listener : m_listeners)
+	for (const auto& listener : m_listeners)
 		listener.get().onDecide(m_formula, chosen_literal);
 
 	return chosen_literal;
@@ -229,7 +228,7 @@ bool HistoryBasedDpllSolver::reduce(Literal p_literal, History& p_history) {
 
 	// Notify the listeners
 	log4c_category_debug(log_dpll, "Notifying listeners...");
-	for (auto listener : m_listeners)
+	for (const auto& listener : m_listeners)
 		listener.get().onReduce(m_formula, p_literal);
 
 	return satisfiable;
@@ -250,7 +249,7 @@ void HistoryBasedDpllSolver::backtrack(History& p_history) {
 
 	// Notify the listeners
 	log4c_category_debug(log_dpll, "Notifying listeners...");
-	for (auto listener : m_listeners)
+	for (const auto& listener : m_listeners)
 		listener.get().onBacktrack(m_formula);
 
 	log4c_category_debug(log_dpll, "Restored state:");

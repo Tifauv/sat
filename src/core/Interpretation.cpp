@@ -123,7 +123,7 @@ void Interpretation::log() {
 
 	// Otherwise, print the elements
 	std::string line = "Interpretation:";
-	for (auto literal : m_literals)
+	for (const auto& literal : m_literals)
 		line.append("  ").append(literal.isNegative() ? "¬" : "").append("x").append(std::to_string(literal.id()));
 
 	log4c_category_info(log_interpretation, line.data());
@@ -142,7 +142,7 @@ void Interpretation::print() {
 	// Otherwise, print the elements
 	std::cout << "s SATISFIABLE" << std::endl;
 	std::cout << "v";
-	for (auto literal : m_literals)
+	for (const auto& literal : m_literals)
 		std::cout << " " << (int)(literal.sign() * literal.id());
 	std::cout << " 0" << std::endl;
 }

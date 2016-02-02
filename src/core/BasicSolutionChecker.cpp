@@ -57,7 +57,7 @@ BasicSolutionChecker::~BasicSolutionChecker() {
  *         false otherwise
  */
 bool BasicSolutionChecker::checkSolution(std::vector<RawLiteral>* p_solution) {
-	for (auto literal : *p_solution) {
+	for (const auto& literal : *p_solution) {
 		if (!reduce(literal)) {
 			std::cout << "An unsatisfiable clause was obtained." << std::endl;
 			return false;
