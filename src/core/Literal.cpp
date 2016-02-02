@@ -19,8 +19,7 @@
 
 // CONSTRUCTORS
 Literal::Literal() :
-m_variable(nullptr),
-m_sign(SIGN_POSITIVE) {
+Literal(nullptr, SIGN_POSITIVE) {
 }
 
 
