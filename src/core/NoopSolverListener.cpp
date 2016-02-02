@@ -22,6 +22,15 @@
 
 // INTERFACE METHODS
 /**
+ * Initialization called before a solving run. 
+ * Does nothing.
+ */
+void NoopSolverListener::init() {
+	// Do nothing
+}
+
+
+/**
  * Called when a literal has been selected.
  * Does nothing.
  */
@@ -44,5 +53,14 @@ void NoopSolverListener::onReduce(Formula&, Literal&) {
  * Does nothing.
  */
 void NoopSolverListener::onBacktrack(Formula&) {
+	// Do nothing
+}
+
+
+/**
+ * Cleanup method called after a solving run.
+ * Does nothing.
+ */
+void NoopSolverListener::cleanup() {
 	// Do nothing
 }

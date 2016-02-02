@@ -39,7 +39,7 @@ unsigned int BacktrackCounterListener::counter() {
 /**
  * Resets the counter to zero.
  */
-void BacktrackCounterListener::reset() {
+void BacktrackCounterListener::init() {
 	m_counter = 0;
 }
 

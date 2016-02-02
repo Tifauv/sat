@@ -30,6 +30,8 @@
 /**
  * Constructor.
  * 
+ * @param p_formula
+ *            the initial formula to solve
  * @param p_literalSelector
  *            the literal selection strategy
  */
@@ -68,8 +70,20 @@ void HistoryBasedDpllSolver::registerListener(SolverListener& p_listener) {
  * @return an interpretation (satisfiable or not)
  */
 Interpretation& HistoryBasedDpllSolver::solve() {
+	// Initialize the listeners
+	log4c_category_debug(log_dpll, "Initializing listeners...");
+	for (auto listener : m_listeners)
+		listener.get().init();
+
+	// Solving
 	log4c_category_debug(log_dpll, "Starting the DPLL algorithm.");
 	main();
+
+	// Cleaning the listeners
+	log4c_category_debug(log_dpll, "Cleaning listeners...");
+	for (auto listener : m_listeners)
+		listener.get().cleanup();
+
 	return m_interpretation;
 }
 

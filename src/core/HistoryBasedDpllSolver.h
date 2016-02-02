@@ -66,7 +66,7 @@ public:
 	 *
 	 * @return the interpretation found
 	 */
-	Interpretation& solve();
+	Interpretation& solve() override;
 
 
 protected:

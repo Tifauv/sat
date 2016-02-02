@@ -28,7 +28,7 @@ class Variable;
  */
 class FirstVariableSelector : public VariableSelector {
 public:
-	Variable* getVariable(Formula& p_formula);
+	Variable* getVariable(Formula& p_formula) override;
 };
 
 #endif // FirstVariableSelector_h

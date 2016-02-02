@@ -28,7 +28,7 @@ class Variable;
  */
 class LeastUsedVariableSelector : public VariableSelector {
 public:
-	Variable* getVariable(Formula& p_formula);
+	Variable* getVariable(Formula& p_formula) override;
 };
 
 #endif // LeastUsedVariableSelector_h

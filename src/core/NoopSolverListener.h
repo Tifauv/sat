@@ -28,24 +28,38 @@
 class NoopSolverListener : public SolverListener {
 public:
 	/**
+	 * Initialization called before a solving run. 
+	 * Does nothing.
+	 */
+	virtual void init() override;
+
+
+	/**
 	 * Called when a literal has been selected.
 	 * Does nothing.
 	 */
-	virtual void onDecide(Formula&, Literal&);
+	virtual void onDecide(Formula&, Literal&) override;
 
 
 	/**
 	 * Called when the formula has been reduced by a literal.
 	 * Does nothing.
 	 */
-	virtual void onReduce(Formula&, Literal&);
+	virtual void onReduce(Formula&, Literal&) override;
 
 
 	/**
 	 * Called when backtracking from the reduction of the formula by a literal.
 	 * Does nothing.
 	 */
-	virtual void onBacktrack(Formula&);
+	virtual void onBacktrack(Formula&) override;
+
+
+	/**
+	 * Cleanup method called after a solving run.
+	 * Does nothing.
+	 */
+	virtual void cleanup() override;
 };
 
 #endif // NOOP_DPLL_SOLVER_H

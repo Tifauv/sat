@@ -28,7 +28,7 @@ class Variable;
  */
 class MostUsedVariableSelector : public VariableSelector {
 public:
-	Variable* getVariable(Formula& p_formula);
+	Variable* getVariable(Formula& p_formula) override;
 };
 
 #endif // MostUsedVariableSelector_h

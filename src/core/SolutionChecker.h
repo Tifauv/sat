@@ -35,7 +35,7 @@ public:
 	 * @return true if the solution satisfies the formula,
 	 *         false otherwise
 	 */
-	bool checkSolution(std::vector<RawLiteral>* p_solution);
+	virtual bool checkSolution(std::vector<RawLiteral>* p_solution) = 0;
 };
 
 #endif // SOLUTIONCHECKER_H

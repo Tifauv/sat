@@ -97,7 +97,7 @@ int main(int p_argc, char* p_argv[]) {
 		HistoryBasedDpllSolver solver(formula, literalSelector);
 		solver.registerListener(backtrackListener);
 		
-		/* Solve the problem and display its interpretation */
+		/* Solve the problem */
 		auto start = Clock::now();
 		Interpretation& interpretation = solver.solve();
 		auto end = Clock::now();

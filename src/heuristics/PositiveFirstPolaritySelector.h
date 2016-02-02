@@ -25,7 +25,7 @@ class Literal;
 
 class PositiveFirstPolaritySelector : public PolaritySelector {
 public:
-	Literal getLiteral(Variable* p_variable);
+	Literal getLiteral(Variable* p_variable) override;
 };
 
 #endif // PositiveFirstPolaritySelector_h

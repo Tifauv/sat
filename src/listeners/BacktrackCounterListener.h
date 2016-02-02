@@ -41,14 +41,14 @@ public:
 	/**
 	 * Resets the counter to zero.
 	 */
-	void reset();
+	void init() override;
 
 
 	/**
 	 * Called when backtracking from the reduction of the formula by a literal.
 	 * Increments the counter.
 	 */
-	void onBacktrack(Formula&);
+	void onBacktrack(Formula&) override;
 
 
 private:

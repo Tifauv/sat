@@ -27,7 +27,7 @@ public:
 	VariablePolarityLiteralSelector(VariableSelector& p_variableSelector, PolaritySelector& p_polaritySelector);
 	~VariablePolarityLiteralSelector();
 
-	Literal getLiteral(Formula& p_formula);
+	Literal getLiteral(Formula& p_formula) override;
 
 private:
 	VariableSelector& m_variableSelector;

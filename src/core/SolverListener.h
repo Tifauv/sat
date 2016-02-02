@@ -28,6 +28,12 @@ class Literal;
 class SolverListener {
 public:
 	/**
+	 * Initialization called before a solving run. 
+	 */
+	virtual void init() = 0;
+	
+	
+	/**
 	 * Called when a literal has been selected.
 	 * 
 	 * @param p_formula
@@ -56,6 +62,12 @@ public:
 	 *            the restored formula
 	 */
 	virtual void onBacktrack(Formula& p_formula) = 0;
+	
+	
+	/**
+	 * Cleanup method called after a solving run.
+	 */
+	virtual void cleanup() = 0;
 };
 
 #endif // DPLL_SOLVER_H

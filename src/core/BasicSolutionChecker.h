@@ -52,7 +52,7 @@ public:
 	 * @return true if the solution satisfies the formula,
 	 *         false otherwise
 	 */
-	bool checkSolution(std::vector<RawLiteral>* p_solution);
+	bool checkSolution(std::vector<RawLiteral>* p_solution) override;
 
 
 protected:

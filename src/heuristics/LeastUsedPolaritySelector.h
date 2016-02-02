@@ -25,7 +25,7 @@ class Literal;
 
 class LeastUsedPolaritySelector : public PolaritySelector {
 public:
-	Literal getLiteral(Variable* p_variable);
+	Literal getLiteral(Variable* p_variable) override;
 };
 
 #endif // LeastUsedPolaritySelector_h
