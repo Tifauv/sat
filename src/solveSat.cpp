@@ -31,7 +31,7 @@
 #include "BacktrackCounterListener.h"
 
 using namespace std;
-typedef chrono::high_resolution_clock Clock;
+using Clock = chrono::high_resolution_clock;
 
 
 /**
