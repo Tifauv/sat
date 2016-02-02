@@ -19,7 +19,7 @@
 #include <chrono>
 
 #include "CnfLoader.h"
-#include "DpllSolver.h"
+#include "HistoryBasedDpllSolver.h"
 #include "Interpretation.h"
 #include "VariablePolarityLiteralSelector.h"
 #include "FirstVariableSelector.h"
@@ -28,9 +28,10 @@
 #include "PositiveFirstPolaritySelector.h"
 #include "MostUsedPolaritySelector.h"
 #include "LeastUsedPolaritySelector.h"
+#include "BacktrackCounterListener.h"
 
-typedef std::chrono::high_resolution_clock Clock;
 using namespace std;
+typedef chrono::high_resolution_clock Clock;
 
 
 /**
@@ -78,10 +79,9 @@ int main(int p_argc, char* p_argv[]) {
 		Formula formula;
 		CnfLoader loader;
 		loader.loadProblem(cnfFilename, formula);
-		cout << "c Solution to cnf file " << cnfFilename << endl;
 		formula.log();
 
-		// Build the solver
+		/* Build the literal selection strategy */
 		//FirstVariableSelector variableSelector;
 		MostUsedVariableSelector variableSelector;
 		//LeastUsedVariableSelector variableSelector;
@@ -89,13 +89,23 @@ int main(int p_argc, char* p_argv[]) {
 		MostUsedPolaritySelector polaritySelector;
 		//LeastUsedPolaritySelector polaritySelector;
 		VariablePolarityLiteralSelector literalSelector(variableSelector, polaritySelector);
-
-		// Solve the problem and display its interpretation
-		DpllSolver solver(literalSelector, formula);
+		
+		/* Build the listeners */
+		BacktrackCounterListener backtrackListener;
+		
+		/* Build the solver */
+		HistoryBasedDpllSolver solver(formula, literalSelector);
+		solver.registerListener(backtrackListener);
+		
+		/* Solve the problem and display its interpretation */
 		auto start = Clock::now();
 		Interpretation& interpretation = solver.solve();
 		auto end = Clock::now();
-		std::cout << "c Took " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << " milliseconds" << endl;
+		
+		/* Output the solution */
+		cout << "c Solution to cnf file " << cnfFilename << endl;
+		cout << "c Backtracked " << backtrackListener.counter() << " times" << endl;
+		cout << "c Took " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << " milliseconds" << endl;
 		interpretation.print();
 	}
 

@@ -22,8 +22,6 @@
 #include <string>
 #include <list>
 #include <log4c.h>
-
-#include "DpllSolver.h"
 #include "utils.h"
 #include "log.h"
 
@@ -187,8 +185,7 @@ std::vector<RawLiteral>* CnfLoader::parseClause(std::string p_line) {
  *          1 if p_literal appears in p_literals
  */
 int CnfLoader::existsLiteral(RawLiteral& p_literal, std::vector<RawLiteral>& p_literals) {
-	for (auto it = p_literals.cbegin(); it != p_literals.cend(); ++it) {
-		RawLiteral literal = *it;
+	for (auto literal : p_literals) {
 		if ( p_literal.id() == literal.id() )
 			return p_literal.sign() * literal.sign();
 	}

@@ -79,9 +79,7 @@ Clause* Formula::createClause(Id p_clauseId, std::vector<RawLiteral>& p_literals
 	log4c_category_debug(log_formula, "Clause %u added.", p_clauseId);
 	
 	// Link the new clause with its literals
-	for (auto iterator = p_literals.cbegin(); iterator != p_literals.cend(); ++iterator) {
-		RawLiteral literal = *iterator;
-		
+	for (auto literal : p_literals) {
 		// Find the variable for the literal
 		Variable* variable = findOrCreateVariable(literal.id());
 
@@ -172,9 +170,9 @@ void Formula::removeClausesWithLiteral(Literal& p_literal, History& p_history) {
 		log4c_category_debug(log_formula, "Removing clause %u.", clause->id());
 		
 		// Remove all links variable -> clause except the current iterator
-		for (auto it = clause->beginLiteral(); it != clause->endLiteral(); ++it)
-			if (p_literal != *it)
-				unlinkVariable(clause, *it);
+		for (auto literalIterator = clause->beginLiteral(); literalIterator != clause->endLiteral(); ++literalIterator)
+			if (p_literal != *literalIterator)
+				unlinkVariable(clause, *literalIterator);
 			
 		// Move the clause to the unused list
 		clause->setUnused();
@@ -294,15 +292,15 @@ void Formula::addClause(Clause* p_clause) {
 	p_clause->setUsed();
 
 	// Ensure the linked variables are enabled
-	for (auto it = p_clause->beginLiteral(); it != p_clause->endLiteral(); ++it) {
-		Variable* variable = (*it).var();
+	for (auto literalIterator = p_clause->beginLiteral(); literalIterator != p_clause->endLiteral(); ++literalIterator) {
+		Variable* variable = (*literalIterator).var();
 		
 		// Move the variable to the current list if needed
 		if (variable->isUnused())
 			addVariable(variable);
 		
 		// Relink the variable with the clause
-		variable->addOccurence(p_clause, (*it).sign());
+		variable->addOccurence(p_clause, (*literalIterator).sign());
 	}
 	
 	log4c_category_info(log_formula, "Clause %u added.", p_clause->id());
@@ -374,9 +372,7 @@ void Formula::log() const {
 
 	// Print the clauses
 	log4c_category_debug(log_formula, "Clauses = {");
-	for (auto clauseIt = m_clauses.cbegin(); clauseIt != m_clauses.cend(); ++clauseIt) {
-		Clause* clause = *clauseIt;
-
+	for (auto clause : m_clauses) {
 		// Clause id
 		std::string line = "   " + std::to_string(clause->id()) + ": ";
 
@@ -397,9 +393,7 @@ void Formula::log() const {
 
 	// Print the variables
 	log4c_category_debug(log_formula, "Variables = {");
-	for (auto variableIt = m_variables.cbegin(); variableIt != m_variables.cend(); ++variableIt) {
-		Variable* variable = *variableIt;
-
+	for (auto variable : m_variables) {
 		// Variable id
 		std::string line = "   x" + std::to_string(variable->id()) + " \t+{";
 

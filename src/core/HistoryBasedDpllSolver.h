@@ -15,9 +15,11 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
  */
 
-#ifndef DPLL_SOLVER_H
-#define DPLL_SOLVER_H
+#ifndef HISTORY_BASED_DPLL_SOLVER_H
+#define HISTORY_BASED_DPLL_SOLVER_H
 
+#include <vector>
+#include <functional>
 #include "Solver.h"
 
 class Interpretation;
@@ -25,29 +27,39 @@ class Literal;
 class Formula;
 class History;
 class LiteralSelector;
+class SolverListener;
 
 
 /**
- * Implementation of a SAT solver using the DPLL algorithm.
+ * Implementation of a DPLL solver.
  */
-class DpllSolver : public Solver {
+class HistoryBasedDpllSolver : public Solver {
 public:
 	/**
 	 * Constructor.
 	 * 
-	 * @param p_literalSelector
-	 *            the literal selection strategy
 	 * @param p_formula
 	 *            the initial formula to solve
+	 * @param p_literalSelector
+	 *            the literal selection strategy
 	 */
-	explicit DpllSolver(LiteralSelector& p_literalSelector, Formula& p_formula);
+	explicit HistoryBasedDpllSolver(Formula& p_formula, LiteralSelector& p_literalSelector);
 
 
 	/**
 	 * Destructor.
 	 */
-	~DpllSolver();
+	~HistoryBasedDpllSolver();
 
+
+	/**
+	 * Register a listener
+	 * 
+	 * @param p_listener
+	 *            the listener to add
+	 */
+	void registerListener(SolverListener& p_listener);
+	
 
 	/**
 	 * Common entry point for all solvers.
@@ -56,24 +68,20 @@ public:
 	 */
 	Interpretation& solve();
 
+
 protected:
 	/**
 	 * Main loop of the Davis-Putnam algorithm.
-	 * 
-	 * @param p_backtrackCounter
-	 *            the current number of backtracks
-	 * 
-	 * @return the new count of backtracks
 	 */
-	unsigned int main(unsigned int p_backtrackCounter);
+	void main();
 
-	
+
 	/**
 	 * Selects a literal to be used for the reduction phase.
 	 * 
 	 * @return the literal
 	 */
-	virtual Literal decide();
+	Literal decide();
 
 
 	/**
@@ -100,10 +108,18 @@ protected:
 	void backtrack(History& p_history);
 
 private:
-	LiteralSelector& m_literalSelector;
+	/** The formula beeing worked on. */
 	Formula& m_formula;
+
+	/** The interpretation . */
 	Interpretation m_interpretation;
+
+	/** The literal selection algorithm. */
+	LiteralSelector& m_literalSelector;
+
+	/** The listeners. */
+	std::vector<std::reference_wrapper<SolverListener>> m_listeners;
 };
 
-#endif // DPLL_SOLVER_H
+#endif // HISTORY_BASED_DPLL_SOLVER_H
 

@@ -14,14 +14,14 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
  */
-#include "DpllSolver.h"
+#include "HistoryBasedDpllSolver.h"
 
-#include <iostream>
 #include <log4c.h>
 #include "Formula.h"
 #include "Interpretation.h"
 #include "History.h"
 #include "LiteralSelector.h"
+#include "SolverListener.h"
 #include "utils.h"
 #include "log.h"
 
@@ -33,9 +33,9 @@
  * @param p_literalSelector
  *            the literal selection strategy
  */
-DpllSolver::DpllSolver(LiteralSelector& p_literalSelector, Formula& p_formula) : 
-m_literalSelector(p_literalSelector),
-m_formula(p_formula) {
+HistoryBasedDpllSolver::HistoryBasedDpllSolver(Formula& p_formula, LiteralSelector& p_literalSelector) : 
+m_formula(p_formula),
+m_literalSelector(p_literalSelector) {
 	log4c_category_debug(log_dpll, "DPLL Solver created.");
 }
 
@@ -44,38 +44,40 @@ m_formula(p_formula) {
 /**
  * Destructor.
  */
-DpllSolver::~DpllSolver() {
+HistoryBasedDpllSolver::~HistoryBasedDpllSolver() {
 	log4c_category_debug(log_dpll, "DPLL Solver deleted.");	
 }
 
 
-// INTERFACE METHODS
+// METHODS
+/**
+ * Register a listener
+ * 
+ * @param p_listener
+ *            the listener to add
+ */
+void HistoryBasedDpllSolver::registerListener(SolverListener& p_listener) {
+	m_listeners.push_back(std::ref(p_listener));
+}
+
+
 /**
  * Starter function of the solver.
  * Implements Solver.
  * 
  * @return an interpretation (satisfiable or not)
  */
-Interpretation& DpllSolver::solve() {
+Interpretation& HistoryBasedDpllSolver::solve() {
 	log4c_category_debug(log_dpll, "Starting the DPLL algorithm.");
-	unsigned int backtrackCounter = main(0);
-	std::cout << "c Backtracked " << backtrackCounter << " times" << std::endl;
+	main();
 	return m_interpretation;
 }
 
 
-// METHODS
 /**
  * Main loop of the Davis-Putnam algorithm.
- * 
- * @param p_backtrackCounter
- *            the current number of backtracks
- * 
- * @return the new count of backtracks
  */
-unsigned int DpllSolver::main(unsigned int p_backtrackCounter) {
-	unsigned int backtrackCounter = p_backtrackCounter;
-
+void HistoryBasedDpllSolver::main() {
 	log4c_category_info(log_dpll, "Current state:");
 	m_formula.log();
 	m_interpretation.log();
@@ -85,7 +87,7 @@ unsigned int DpllSolver::main(unsigned int p_backtrackCounter) {
 	 */
 	if (!m_formula.hasClauses()) {
 		log4c_category_info(log_dpll, "No more clauses.");
-		return backtrackCounter;
+		return;
 	}
 
 	
@@ -94,7 +96,7 @@ unsigned int DpllSolver::main(unsigned int p_backtrackCounter) {
 	 */
 	if (!m_formula.hasVariables()) {
 		log4c_category_info(log_dpll, "No more variables.");
-		return backtrackCounter;
+		return;
 	}
 
 	/*
@@ -119,9 +121,9 @@ unsigned int DpllSolver::main(unsigned int p_backtrackCounter) {
 		log4c_category_info(log_dpll, "Added %sx%u to the interpretation.", (chosen_literal.isNegative() ? "¬" : ""), chosen_literal.id());
 
 		// Loop again
-		backtrackCounter = main(backtrackCounter);
+		main();
 		if (m_interpretation.isSatisfiable())
-			return backtrackCounter;
+			return;
 		else // Remove the current literal from the interpretation
 			m_interpretation.pop();
 	}
@@ -149,9 +151,9 @@ unsigned int DpllSolver::main(unsigned int p_backtrackCounter) {
 		log4c_category_info(log_dpll, "Added %sx%u to the interpretation.", (chosen_literal.isPositive() ? "¬" : ""), chosen_literal.id());
 
 		// Loop again
-		backtrackCounter = main(backtrackCounter);
+		main();
 		if (m_interpretation.isSatisfiable())
-			return backtrackCounter;
+			return;
 		else // Remove the current literal from the interpretation
 			m_interpretation.pop();
 	}
@@ -162,7 +164,6 @@ unsigned int DpllSolver::main(unsigned int p_backtrackCounter) {
 		m_interpretation.setUnsatisfiable();
 
 	backtrack(history);
-	return backtrackCounter + 1;
 }
 
 
@@ -171,14 +172,20 @@ unsigned int DpllSolver::main(unsigned int p_backtrackCounter) {
  * 
  * @return the literal
  */
-Literal DpllSolver::decide() {
+Literal HistoryBasedDpllSolver::decide() {
 	// Search a literal from a unitary clause
 	Literal chosen_literal = m_formula.findLiteralFromUnaryClause();
-	if (chosen_literal.var() != nullptr)
-		return chosen_literal;
 
 	// If there is no unitary clause, use the selector
-	return m_literalSelector.getLiteral(m_formula);
+	if (chosen_literal.var() == nullptr)
+		chosen_literal = m_literalSelector.getLiteral(m_formula);
+
+	// Notify the listeners
+	log4c_category_debug(log_dpll, "Notifying listeners...");
+	for (auto listener : m_listeners)
+		listener.get().onDecide(m_formula, chosen_literal);
+
+	return chosen_literal;
 }
 
 
@@ -194,7 +201,7 @@ Literal DpllSolver::decide() {
  * @return true if the reduction is satisfiable
  *         false if it is unsatisfiable
  */
-bool DpllSolver::reduce(Literal p_literal, History& p_history) {
+bool HistoryBasedDpllSolver::reduce(Literal p_literal, History& p_history) {
 	log4c_category_info(log_dpll, "Reduction using literal %sx%u...", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
 
 	// Remove the clauses that contain the same sign as the given literal
@@ -206,6 +213,11 @@ bool DpllSolver::reduce(Literal p_literal, History& p_history) {
 	// The variable is now empty, we can remove it
 	m_formula.removeVariable(p_literal.var());
 
+	// Notify the listeners
+	log4c_category_debug(log_dpll, "Notifying listeners...");
+	for (auto listener : m_listeners)
+		listener.get().onReduce(m_formula, p_literal);
+
 	return satisfiable;
 }
 
@@ -216,13 +228,17 @@ bool DpllSolver::reduce(Literal p_literal, History& p_history) {
  * @param p_history
  *            the history to replay
  */
-void DpllSolver::backtrack(History& p_history) {
-	/* Restoring state before backtracking. */
+void HistoryBasedDpllSolver::backtrack(History& p_history) {
 	log4c_category_debug(log_dpll, "Restoring state before backtracking...");
-	
+
 	// Reconstruction du graphe
 	p_history.replay(m_formula);
-	
+
+	// Notify the listeners
+	log4c_category_debug(log_dpll, "Notifying listeners...");
+	for (auto listener : m_listeners)
+		listener.get().onBacktrack(m_formula);
+
 	log4c_category_debug(log_dpll, "Restored state:");
 	m_formula.log();
 	m_interpretation.log();

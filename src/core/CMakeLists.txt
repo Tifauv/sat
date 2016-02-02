@@ -8,10 +8,11 @@ set (SAT_CORE_SRCS
 	Formula.cpp
 	Interpretation.cpp
 	History.cpp
-	DpllSolver.cpp
+	HistoryBasedDpllSolver.cpp
 	VariablePolarityLiteralSelector.cpp
 	CnfLoader.cpp
 	BasicSolutionChecker.cpp
+	NoopSolverListener.cpp
 )
 set (SAT_CORE_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR} PARENT_SCOPE)
 

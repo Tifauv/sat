@@ -56,9 +56,9 @@ BasicSolutionChecker::~BasicSolutionChecker() {
  * @return true if the solution satisfies the formula,
  *         false otherwise
  */
-bool BasicSolutionChecker::checkSolution(std::list<RawLiteral>* p_solution) {
-	for (auto literal = p_solution->cbegin(); literal != p_solution->cend(); ++literal) {
-		if (!reduce(*literal)) {
+bool BasicSolutionChecker::checkSolution(std::vector<RawLiteral>* p_solution) {
+	for (auto literal : *p_solution) {
+		if (!reduce(literal)) {
 			std::cout << "An unsatisfiable clause was obtained." << std::endl;
 			return false;
 		}
