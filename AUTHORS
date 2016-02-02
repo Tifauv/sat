@@ -5,4 +5,4 @@ It was written at that time (2002) by 3 students:
   - Philippe Strelezki
 
 In 2015, Olivier Serve reworked on it, resolved some remaining bugs,
-and ported it from C to C++.
+and ported it from C to C++11.
