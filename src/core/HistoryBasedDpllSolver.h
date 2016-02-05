@@ -58,7 +58,15 @@ public:
 	 * @param p_listener
 	 *            the listener to add
 	 */
-	void registerListener(SolverListener& p_listener);
+	void addListener(SolverListener& p_listener);
+
+
+	/**
+	 * Gives the current interpretation.
+	 * 
+	 * @return the current interpretation
+	 */
+	const Interpretation& getInterpretation() const override;
 	
 
 	/**
@@ -85,7 +93,7 @@ protected:
 
 
 	/**
-	 * Reduces all the graph's formulas using a literal.
+	 * Propagates the clause reduction by the literal to the formula.
 	 * The history is used for backtracking.
 	 * 
 	 * @param p_literal
@@ -96,16 +104,18 @@ protected:
 	 * @return true if the reduction is satisfiable
 	 *         false if it is unsatisfiable
 	 */
-	bool reduce(Literal p_literal, History& p_history);
+	bool propagate(Literal p_literal, History& p_history);
 
 
 	/**
 	 * Restores the previous state before backtracking.
 	 * 
+	 * @param p_literal
+	 *            the literal whose propagation is backtracked
 	 * @param p_history
 	 *            the history to replay
 	 */
-	void backtrack(History& p_history);
+	void backtrack(Literal p_literal, History& p_history);
 
 private:
 	/** The formula beeing worked on. */

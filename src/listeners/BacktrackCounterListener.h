@@ -48,7 +48,7 @@ public:
 	 * Called when backtracking from the reduction of the formula by a literal.
 	 * Increments the counter.
 	 */
-	void onBacktrack(Formula&) override;
+	void onBacktrack(Literal&) override;
 
 
 private:

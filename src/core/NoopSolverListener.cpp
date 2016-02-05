@@ -16,7 +16,6 @@
  */
 #include "NoopSolverListener.h"
 
-#include "Formula.h"
 #include "Literal.h"
 
 
@@ -34,16 +33,16 @@ void NoopSolverListener::init() {
  * Called when a literal has been selected.
  * Does nothing.
  */
-void NoopSolverListener::onDecide(Formula&, Literal&) {
+void NoopSolverListener::onDecide(Literal&) {
 	// Do nothing
 }
 
 
 /**
- * Called when the formula has been reduced by a literal.
+ * Called when a literal has been propagated through the formula.
  * Does nothing.
  */
-void NoopSolverListener::onReduce(Formula&, Literal&) {
+void NoopSolverListener::onPropagate(Literal&) {
 	// Do nothing
 }
 
@@ -52,7 +51,7 @@ void NoopSolverListener::onReduce(Formula&, Literal&) {
  * Called when backtracking from the reduction of the formula by a literal.
  * Does nothing.
  */
-void NoopSolverListener::onBacktrack(Formula&) {
+void NoopSolverListener::onBacktrack(Literal&) {
 	// Do nothing
 }
 

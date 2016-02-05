@@ -38,21 +38,21 @@ public:
 	 * Called when a literal has been selected.
 	 * Does nothing.
 	 */
-	virtual void onDecide(Formula&, Literal&) override;
+	virtual void onDecide(Literal&) override;
 
 
 	/**
-	 * Called when the formula has been reduced by a literal.
+	 * Called when a literal has been propagated through the formula.
 	 * Does nothing.
 	 */
-	virtual void onReduce(Formula&, Literal&) override;
+	virtual void onPropagate(Literal&) override;
 
 
 	/**
 	 * Called when backtracking from the reduction of the formula by a literal.
 	 * Does nothing.
 	 */
-	virtual void onBacktrack(Formula&) override;
+	virtual void onBacktrack(Literal&) override;
 
 
 	/**

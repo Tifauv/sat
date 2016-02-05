@@ -26,6 +26,14 @@
 class Solver {
 public:
 	/**
+	 * Getter for the internal interpretation.
+	 * 
+	 * @return the current interpretation at the moment of the call
+	 */
+	virtual const Interpretation& getInterpretation() const = 0;
+
+
+	/**
 	 * Common entrypoint for SAT solvers.
 	 * 
 	 * @return an interpretation (satisfiable or not)

@@ -17,6 +17,7 @@
 #include "HistoryBasedDpllSolver.h"
 
 #include <log4c.h>
+#include <algorithm>
 #include "Formula.h"
 #include "Interpretation.h"
 #include "History.h"
@@ -58,8 +59,18 @@ HistoryBasedDpllSolver::~HistoryBasedDpllSolver() {
  * @param p_listener
  *            the listener to add
  */
-void HistoryBasedDpllSolver::registerListener(SolverListener& p_listener) {
+void HistoryBasedDpllSolver::addListener(SolverListener& p_listener) {
 	m_listeners.push_back(std::ref(p_listener));
+}
+
+
+/**
+ * Gives the current interpretation.
+ * 
+ * @return the current interpretation
+ */
+const Interpretation& HistoryBasedDpllSolver::getInterpretation() const {
+	return m_interpretation;
 }
 
 
@@ -123,7 +134,7 @@ void HistoryBasedDpllSolver::main() {
 	 */
 	log4c_category_info(log_dpll, "First reduction attempt...");
 	History history;
-	bool satisfiable = reduce(chosen_literal, history);
+	bool satisfiable = propagate(chosen_literal, history);
 
 	/*
 	 * The reduced interpretation is satisfiable: we are done.
@@ -153,7 +164,7 @@ void HistoryBasedDpllSolver::main() {
 
 	// Seconde réduction et test du résultat
 	log4c_category_debug(log_dpll, "Second reduction attempt...");
-	satisfiable = reduce(-chosen_literal, history);
+	satisfiable = propagate(-chosen_literal, history);
 
 	/*
 	 * The interpretation is satisfiable: we are done. We can return the current interpretation.
@@ -176,7 +187,7 @@ void HistoryBasedDpllSolver::main() {
 	else
 		m_interpretation.setUnsatisfiable();
 
-	backtrack(history);
+	backtrack(chosen_literal, history);
 }
 
 
@@ -196,7 +207,7 @@ Literal HistoryBasedDpllSolver::decide() {
 	// Notify the listeners
 	log4c_category_debug(log_dpll, "Notifying listeners...");
 	for (const auto& listener : m_listeners)
-		listener.get().onDecide(m_formula, chosen_literal);
+		listener.get().onDecide(chosen_literal);
 
 	return chosen_literal;
 }
@@ -207,15 +218,15 @@ Literal HistoryBasedDpllSolver::decide() {
  * The history is used for backtracking.
  * 
  * @param p_literal
- *            the literal used to reduce the formulas
+ *            the literal propagated through the formula
  * @param p_history
  *            the backtracking history
  *
  * @return true if the reduction is satisfiable
  *         false if it is unsatisfiable
  */
-bool HistoryBasedDpllSolver::reduce(Literal p_literal, History& p_history) {
-	log4c_category_info(log_dpll, "Reduction using literal %sx%u...", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
+bool HistoryBasedDpllSolver::propagate(Literal p_literal, History& p_history) {
+	log4c_category_info(log_dpll, "Propagating literal %sx%u...", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
 
 	// Remove the clauses that contain the same sign as the given literal
 	m_formula.removeClausesWithLiteral(p_literal, p_history);
@@ -229,7 +240,7 @@ bool HistoryBasedDpllSolver::reduce(Literal p_literal, History& p_history) {
 	// Notify the listeners
 	log4c_category_debug(log_dpll, "Notifying listeners...");
 	for (const auto& listener : m_listeners)
-		listener.get().onReduce(m_formula, p_literal);
+		listener.get().onPropagate(p_literal);
 
 	return satisfiable;
 }
@@ -238,10 +249,12 @@ bool HistoryBasedDpllSolver::reduce(Literal p_literal, History& p_history) {
 /**
  * Restores the previous state before backtracking.
  * 
+ * @param p_literal
+ *            the literal whose propagation is backtracked
  * @param p_history
  *            the history to replay
  */
-void HistoryBasedDpllSolver::backtrack(History& p_history) {
+void HistoryBasedDpllSolver::backtrack(Literal p_literal, History& p_history) {
 	log4c_category_debug(log_dpll, "Restoring state before backtracking...");
 
 	// Reconstruction du graphe
@@ -250,7 +263,7 @@ void HistoryBasedDpllSolver::backtrack(History& p_history) {
 	// Notify the listeners
 	log4c_category_debug(log_dpll, "Notifying listeners...");
 	for (const auto& listener : m_listeners)
-		listener.get().onBacktrack(m_formula);
+		listener.get().onBacktrack(p_literal);
 
 	log4c_category_debug(log_dpll, "Restored state:");
 	m_formula.log();

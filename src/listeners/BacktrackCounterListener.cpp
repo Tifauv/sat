@@ -48,6 +48,6 @@ void BacktrackCounterListener::init() {
  * Called when backtracking from the reduction of the formula by a literal.
  * Increments the counter.
  */
-void BacktrackCounterListener::onBacktrack(Formula&) {
+void BacktrackCounterListener::onBacktrack(Literal&) {
 	m_counter++;
 }

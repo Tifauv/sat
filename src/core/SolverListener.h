@@ -18,7 +18,6 @@
 #ifndef SOLVER_LISTENER_H
 #define SOLVER_LISTENER_H
 
-class Formula;
 class Literal;
 
 
@@ -36,32 +35,28 @@ public:
 	/**
 	 * Called when a literal has been selected.
 	 * 
-	 * @param p_formula
-	 *            the current formula
 	 * @param p_literal
 	 *            the selected literal
 	 */
-	virtual void onDecide(Formula& p_formula, Literal& p_literal) = 0;
+	virtual void onDecide(Literal& p_literal) = 0;
 	
 	
 	/**
 	 * Called when the formula has been reduced by a literal.
 	 * 
-	 * @param p_formula
-	 *            the reduced formula
 	 * @param p_literal
-	 *            the literal used to reduce the formula
+	 *            the literal propagated through the formula
 	 */
-	virtual void onReduce(Formula& p_formula, Literal& p_literal) = 0;
+	virtual void onPropagate(Literal& p_literal) = 0;
 	
 	
 	/**
 	 * Called when backtracking from the reduction of the formula by a literal.
 	 * 
-	 * @param p_formula
-	 *            the restored formula
+	 * @param p_literal
+	 *            the literal
 	 */
-	virtual void onBacktrack(Formula& p_formula) = 0;
+	virtual void onBacktrack(Literal& p_literal) = 0;
 	
 	
 	/**
