@@ -26,9 +26,6 @@
 #include "log.h"
 
 
-using namespace std;
-
-
 // METHODS
 /**
  * Loads a SAT problem from a CNF file.

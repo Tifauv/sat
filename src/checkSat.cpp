@@ -21,7 +21,6 @@
 #include "CnfLoader.h"
 #include "BasicSolutionChecker.h"
 
-using namespace std;
 
 
 /**
@@ -31,9 +30,9 @@ using namespace std;
  *            the command name as given to argv[0]
  */
 void usage(char* p_command) {
-	cout << "Usage: " << p_command << " <cnf_file> <sat_file>" << endl;
-	cout << "    <cnf_file>  a CNF problem" << endl;
-	cout << "    <sat_file>  a CNF solution" << endl;
+	std::cout << "Usage: " << p_command << " <cnf_file> <sat_file>" << std::endl;
+	std::cout << "    <cnf_file>  a CNF problem" << std::endl;
+	std::cout << "    <sat_file>  a CNF solution" << std::endl;
 }
 
 
@@ -58,7 +57,7 @@ int main(int p_argc, char* p_argv[]) {
 
 	// Initialize the logging system
 	if (log4c_init()) {
-		cout << "Log4c initialization failed, aborting." << endl;
+		std::cout << "Log4c initialization failed, aborting." << std::endl;
 		exit(-2);
 	}
 
@@ -81,11 +80,11 @@ int main(int p_argc, char* p_argv[]) {
 		BasicSolutionChecker checker(formula);
 		if (checker.checkSolution(solution)) {
 			rc = 0;
-			cout << "The solution is valid." << endl;
+			std::cout << "The solution is valid." << std::endl;
 		}
 		else {
 			rc = 1;
-			cout << "The solution is not valid." << endl;
+			std::cout << "The solution is not valid." << std::endl;
 		}
 
 		delete solution;
@@ -93,7 +92,7 @@ int main(int p_argc, char* p_argv[]) {
 
 	// Clean the logging system
 	if (log4c_fini())
-		cerr << "log4c cleanup failed." << endl;
+		std::cerr << "log4c cleanup failed." << std::endl;
 
 	return rc;
 }

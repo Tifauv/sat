@@ -30,8 +30,7 @@
 #include "LeastUsedPolaritySelector.h"
 #include "BacktrackCounterListener.h"
 
-using namespace std;
-using Clock = chrono::high_resolution_clock;
+using Clock = std::chrono::high_resolution_clock;
 
 
 /**
@@ -41,8 +40,8 @@ using Clock = chrono::high_resolution_clock;
  *            the command name as given to argv[0]
  */
 void usage(char* p_command) {
-	cout << "Usage: " << p_command << " <cnf_file>" << endl;
-	cout << "    <cnf_file>  a CNF problem" << endl;
+	std::cout << "Usage: " << p_command << " <cnf_file>" << std::endl;
+	std::cout << "    <cnf_file>  a CNF problem" << std::endl;
 }
 
 
@@ -67,7 +66,7 @@ int main(int p_argc, char* p_argv[]) {
 
 	// Initialize the logging system
 	if (log4c_init()) {
-		cerr << "Log4c initialization failed, aborting." << endl;
+		std::cerr << "Log4c initialization failed, aborting." << std::endl;
 		exit(-2);
 	}
 	
@@ -103,15 +102,15 @@ int main(int p_argc, char* p_argv[]) {
 		auto end = Clock::now();
 		
 		/* Output the solution */
-		cout << "c Solution to cnf file " << cnfFilename << endl;
-		cout << "c Backtracked " << backtrackListener.counter() << " times" << endl;
-		cout << "c Took " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << " milliseconds" << endl;
+		std::cout << "c Solution to cnf file " << cnfFilename << std::endl;
+		std::cout << "c Backtracked " << backtrackListener.counter() << " times" << std::endl;
+		std::cout << "c Took " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << " milliseconds" << std::endl;
 		interpretation.print();
 	}
 
 	// Clean the logging system
 	if (log4c_fini())
-		cerr << "log4c cleanup failed." << endl;
+		std::cerr << "log4c cleanup failed." << std::endl;
 
 	return 0;
 }
