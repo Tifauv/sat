@@ -15,7 +15,7 @@
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
 
 # The sources of SatCore
-set (SAT_CORE_SRCS
+set( SAT_CORE_SRCS
 	FormulaObject.cpp
 	Variable.cpp
 	Literal.cpp
@@ -30,9 +30,9 @@ set (SAT_CORE_SRCS
 	BasicSolutionChecker.cpp
 	NoopSolverListener.cpp
 )
-set (SAT_CORE_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR} PARENT_SCOPE)
+set( SAT_CORE_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR} PARENT_SCOPE )
 
 # Build libSatCore
-add_library (SatCore ${SAT_CORE_SRCS})
-target_compile_options(SatCore PUBLIC ${CFLAGS})
-target_link_libraries (SatCore ${LIBS})
+add_library( SatCore ${SAT_CORE_SRCS} )
+target_compile_options( SatCore PUBLIC )
+target_link_libraries(  SatCore ${LIBS} )

@@ -14,13 +14,13 @@
 #  along with this program; if not, write to the Free Software
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
 
-cmake_minimum_required (VERSION 3.0)
-project (Sat)
+cmake_minimum_required( VERSION 3.1 )
+project( Sat )
 
 # Load CMake modules
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
+set( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
 		"${CMAKE_SOURCE_DIR}/cmake/Modules/"
 )
 
-add_subdirectory (src)
-add_subdirectory (doc)
+add_subdirectory( src )
+add_subdirectory( doc )
