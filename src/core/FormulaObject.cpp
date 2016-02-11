@@ -17,6 +17,9 @@
 #include "FormulaObject.h"
 
 
+namespace sat {
+
+
 // CONSTRUCTORS
 /**
  *
@@ -67,3 +70,5 @@ bool FormulaObject::operator==(const FormulaObject& p_object) {
 bool FormulaObject::operator!=(const FormulaObject& p_object) {
 	return id() != p_object.id();
 }
+
+} // namespace sat

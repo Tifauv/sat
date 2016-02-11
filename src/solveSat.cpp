@@ -75,30 +75,30 @@ int main(int p_argc, char* p_argv[]) {
 		char* cnfFilename = p_argv[1];
 
 		// Load the formula
-		Formula formula;
-		CnfLoader loader;
+		sat::Formula formula;
+		sat::CnfLoader loader;
 		loader.loadProblem(cnfFilename, formula);
 		formula.log();
 
 		/* Build the literal selection strategy */
-		//FirstVariableSelector variableSelector;
-		MostUsedVariableSelector variableSelector;
-		//LeastUsedVariableSelector variableSelector;
-		//PositiveFirstPolaritySelector polaritySelector;
-		MostUsedPolaritySelector polaritySelector;
-		//LeastUsedPolaritySelector polaritySelector;
-		VariablePolarityLiteralSelector literalSelector(variableSelector, polaritySelector);
+		//sat::solver::selectors::FirstVariableSelector variableSelector;
+		sat::solver::selectors::MostUsedVariableSelector variableSelector;
+		//sat::solver::selectors::LeastUsedVariableSelector variableSelector;
+		//sat::solver::selectors::PositiveFirstPolaritySelector polaritySelector;
+		sat::solver::selectors::MostUsedPolaritySelector polaritySelector;
+		//sat::solver::selectors::LeastUsedPolaritySelector polaritySelector;
+		sat::solver::VariablePolarityLiteralSelector literalSelector(variableSelector, polaritySelector);
 		
 		/* Build the listeners */
-		BacktrackCounterListener backtrackListener;
+		sat::solver::listeners::BacktrackCounterListener backtrackListener;
 		
 		/* Build the solver */
-		HistoryBasedDpllSolver solver(formula, literalSelector);
+		sat::solver::HistoryBasedDpllSolver solver(formula, literalSelector);
 		solver.addListener(backtrackListener);
 		
 		/* Solve the problem */
 		auto start = Clock::now();
-		Interpretation& interpretation = solver.solve();
+		sat::solver::Interpretation& interpretation = solver.solve();
 		auto end = Clock::now();
 		
 		/* Output the solution */

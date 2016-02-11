@@ -20,7 +20,11 @@
 #include "SolutionChecker.h"
 #include "RawLiteral.h"
 
+namespace sat {
+
 class Formula;
+
+namespace checker {
 
 
 /**
@@ -71,5 +75,8 @@ protected:
 private:
 	Formula& m_formula;
 };
+
+} // namespace sat::checker
+} // namespace sat
 
 #endif // BASICSOLUTIONCHECKER_H

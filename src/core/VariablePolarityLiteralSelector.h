@@ -22,6 +22,10 @@
 #include "PolaritySelector.h"
 
 
+namespace sat {
+namespace solver {
+
+
 class VariablePolarityLiteralSelector : public LiteralSelector {
 public:
 	VariablePolarityLiteralSelector(VariableSelector& p_variableSelector, PolaritySelector& p_polaritySelector);
@@ -33,5 +37,8 @@ private:
 	VariableSelector& m_variableSelector;
 	PolaritySelector& m_polaritySelector;
 };
+
+} // namespace sat::solver
+} // namespace sat
 
 #endif // VariablePolarityLiteralSelector_h

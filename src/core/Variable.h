@@ -20,10 +20,13 @@
 #include <list>
 #include "FormulaObject.h"
 
-class Clause;
-
 #define SIGN_POSITIVE  1
 #define SIGN_NEGATIVE -1
+
+
+namespace sat {
+
+class Clause;
 
 
 /**
@@ -43,9 +46,9 @@ public:
 	unsigned int countNegativeOccurences() const;
 	unsigned int countOccurences() const;
 
+	Clause* occurence(int p_sign);
 	std::list<Clause*>::iterator beginOccurence(int p_sign);
 	std::list<Clause*>::iterator endOccurence(int p_sign);
-	std::list<Clause*>::iterator erase(std::list<Clause*>::iterator p_iterator, int p_sign);
 
 	void removePositiveOccurence(Clause* p_clause);
 	void removeNegativeOccurence(Clause* p_clause);
@@ -54,5 +57,7 @@ private:
 	std::list<Clause*> m_positiveOccurences;
 	std::list<Clause*> m_negativeOccurences;
 };
+
+} // namespace sat
 
 #endif // VARIABLE_H

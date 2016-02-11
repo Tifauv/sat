@@ -21,9 +21,12 @@
 #include <log4c.h>
 #include "Clause.h"
 #include "Variable.h"
-#include "History.h"
+#include "Literal.h"
 #include "utils.h"
 #include "log.h"
+
+
+namespace sat {
 
 
 // CONSTRUCTORS
@@ -150,72 +153,6 @@ Literal Formula::findLiteralFromUnaryClause() const {
 
 
 /**
- * Remove all the clauses that have the given literal (with the same sign).
- * 
- * @param p_literal
- *            the literal
- * @param p_history
- *            the history that stores the operations
- */
-void Formula::removeClausesWithLiteral(Literal& p_literal, History& p_history) {
-	log4c_category_info(log_formula, "Removing clauses that contain the literal %sx%u...", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
-	for (auto it = p_literal.beginOccurence(); it != p_literal.endOccurence(); it = p_literal.erase(it)) {
-		Clause* clause = *it;
-		
-		// Saving the clause into the history
-		log4c_category_debug(log_formula, "Saving clause %u in the history.", clause->id());
-		p_history.addClause(clause);
-		
-		// Removing the clause
-		log4c_category_debug(log_formula, "Removing clause %u.", clause->id());
-		
-		// Remove all links variable -> clause except the current iterator
-		for (auto literalIterator = clause->beginLiteral(); literalIterator != clause->endLiteral(); ++literalIterator)
-			if (p_literal != *literalIterator)
-				unlinkVariable(clause, *literalIterator);
-			
-		// Move the clause to the unused list
-		clause->setUnused();
-		m_clauses.erase(clause);
-		m_unusedClauses.insert(clause);
-		log4c_category_info(log_formula, "Clause %u removed.", clause->id());
-	}
-}
-
-
-/**
- * Removes the opposite of the given literal from the clauses.
- * If an empty clause is found, it is unsatisfiable and 
- * 
- * @return true if all the clauses could be reduced without producing an unsatisfiable one;
- *         false if an unsatisfiable clause was produced.
- */
-bool Formula::removeOppositeLiteralFromClauses(Literal& p_literal, History& p_history) {
-	log4c_category_info(log_formula, "Removing literal %sx%u from the clauses.", (p_literal.isPositive() ? "¬" : ""), p_literal.id());
-	for (auto it = p_literal.beginOppositeOccurence(); it != p_literal.endOppositeOccurence(); it = p_literal.eraseOpposite(it)) {
-		Clause* clause = *it;
-		
-		// Record the removal of the literal in the history
-		log4c_category_debug(log_formula, "Saving literal %sx%u of clause %u in the history.", (p_literal.isPositive() ? "¬" : ""), p_literal.id(), clause->id());
-		p_history.addLiteral(clause, -p_literal);
-		
-		// Remove the literal from the clause
-		clause->removeLiteral(-p_literal);
-		log4c_category_info(log_formula, "Literal %sx%u removed from clause %u.", (p_literal.isPositive() ? "¬" : ""), p_literal.id(), clause->id());
-
-		if (clause->isUnsatisfiable()) {
-			log4c_category_info(log_formula, "The produced clause is unsatisfiable.");
-			// Remove the link variable->literal now as otherwise it would not be done by the for loop
-			p_literal.eraseOpposite(it);
-			return false;
-		}
-	}
-
-	return true;
-}
-
-
-/**
  * Removes a link from a variable to a clause.
  *
  * @param p_clause
@@ -332,6 +269,46 @@ void Formula::addLiteralToClause(Clause* p_clause, Literal p_literal) {
 
 
 /**
+ * 
+ */
+void Formula::removeClause(Clause* p_clause) {
+	// Parameters check
+	if (isNull(p_clause)) {
+		log4c_category_error(log_formula, "Cannot remove a NULL clause.");
+		return;
+	}
+	
+	log4c_category_debug(log_formula, "Removing clause %u.", p_clause->id());
+	// Remove all links clause -> variables except the current iterator
+	for (auto literalIterator = p_clause->beginLiteral(); literalIterator != p_clause->endLiteral(); ++literalIterator)
+		unlinkVariable(p_clause, *literalIterator);
+	
+	// Move the clause to the unused list
+	p_clause->setUnused();
+	m_clauses.erase(p_clause);
+	m_unusedClauses.insert(p_clause);
+	
+	log4c_category_info(log_formula, "Clause %u removed.", p_clause->id());
+}
+
+
+/**
+ * 
+ */
+void Formula::removeLiteralFromClause(Clause* p_clause, Literal p_literal) {
+	// Parameters check
+	if (isNull(p_clause)) {
+		log4c_category_error(log_formula, "Cannot add a literal to a NULL clause.");
+		return;
+	}
+	
+	p_clause->removeLiteral(p_literal);
+	unlinkVariable(p_clause, p_literal);
+	log4c_category_info(log_formula, "Literal %sx%u removed from clause %u.", (p_literal.isPositive() ? "¬" : ""), p_literal.id(), p_clause->id());
+}
+
+
+/**
  * Tells whether there are clauses in the formula.
  */
 bool Formula::hasClauses() const {
@@ -415,3 +392,5 @@ void Formula::log() const {
 	}
 	log4c_category_debug(log_formula, "}");
 }
+
+} // namespace sat

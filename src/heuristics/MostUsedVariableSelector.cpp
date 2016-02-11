@@ -20,7 +20,12 @@
 #include "Variable.h"
 
 
-// METHODS 
+namespace sat {
+namespace solver {
+namespace selectors {
+
+
+// METHODS
 Variable* MostUsedVariableSelector::getVariable(Formula& p_formula) {
 	if (!p_formula.hasVariables())
 		return nullptr;
@@ -36,3 +41,7 @@ Variable* MostUsedVariableSelector::getVariable(Formula& p_formula) {
 
 	return selectedVar;
 }
+
+} // namespace sat::solver::selectors
+} // namespace sat::solver
+} // namespace sat

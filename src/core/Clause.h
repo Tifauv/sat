@@ -20,6 +20,9 @@
 #include <list>
 #include "FormulaObject.h"
 
+
+namespace sat {
+
 class Literal;
 
 
@@ -110,5 +113,7 @@ private:
 	/** The literals of the clause. */
 	std::list<Literal> m_literals;
 };
+
+} // namespace sat
 
 #endif // CLAUSE_H

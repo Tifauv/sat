@@ -22,12 +22,20 @@
 #include <functional>
 #include "Solver.h"
 
-class Interpretation;
-class Literal;
-class Formula;
-class History;
-class LiteralSelector;
-class SolverListener;
+
+namespace sat {
+	class Literal;
+	class Formula;
+}
+
+
+namespace sat {
+namespace solver {
+
+	class History;
+	class Interpretation;
+	class LiteralSelector;
+	class SolverListener;
 
 
 /**
@@ -117,6 +125,33 @@ protected:
 	 */
 	void backtrack(Literal p_literal, History& p_history);
 
+
+	/**
+	 * Removes the clauses containing the given literal.
+	 * 
+	 * @param p_literal
+	 *            the selected literal
+	 * @param p_history
+	 *            the history to save the operations
+	 */
+	void removeClausesWithLiteral(Literal& p_literal, History& p_history);
+
+	
+	/**
+	 * Removes the opposite of the given literal from the clauses.
+	 * If an empty clause is found, it is unsatisfiable and 
+	 * 
+	 * @param p_literal
+	 *            the selected literal
+	 * @param p_history
+	 *            the history to save the operations
+	 * 
+	 * @return true if all the clauses could be reduced without producing an unsatisfiable one;
+	 *         false if an unsatisfiable clause was produced.
+	 */
+	bool removeOppositeLiteralFromClauses(Literal& p_literal, History& p_history);
+
+
 private:
 	/** The formula beeing worked on. */
 	Formula& m_formula;
@@ -130,6 +165,9 @@ private:
 	/** The listeners. */
 	std::vector<std::reference_wrapper<SolverListener>> m_listeners;
 };
+
+} // namespace sat::solver
+} // namespace sat
 
 #endif // HISTORY_BASED_DPLL_SOLVER_H
 

@@ -20,6 +20,9 @@
 #include "FormulaObject.h"
 
 
+namespace sat {
+
+
 class RawLiteral {
 public:
 	explicit RawLiteral(int p_literal);
@@ -36,5 +39,7 @@ public:
 private:
 	int m_literal;
 };
+
+} // namespace sat
 
 #endif // RAWLITERAL_H

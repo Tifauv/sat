@@ -18,6 +18,7 @@
 
 #include <log4c.h>
 #include <algorithm>
+#include "Clause.h"
 #include "Formula.h"
 #include "Interpretation.h"
 #include "History.h"
@@ -25,6 +26,10 @@
 #include "SolverListener.h"
 #include "utils.h"
 #include "log.h"
+
+
+namespace sat {
+namespace solver {
 
 
 // CONSTRUCTORS
@@ -229,18 +234,13 @@ bool HistoryBasedDpllSolver::propagate(Literal p_literal, History& p_history) {
 	log4c_category_info(log_dpll, "Propagating literal %sx%u...", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
 
 	// Remove the clauses that contain the same sign as the given literal
-	m_formula.removeClausesWithLiteral(p_literal, p_history);
+	removeClausesWithLiteral(p_literal, p_history);
 
 	// Remove the literal from the clauses that contain the oposite sign
-	bool satisfiable = m_formula.removeOppositeLiteralFromClauses(p_literal, p_history);
+	bool satisfiable = removeOppositeLiteralFromClauses(p_literal, p_history);
 
 	// The variable is now empty, we can remove it
 	m_formula.removeVariable(p_literal.var());
-
-	// Notify the listeners
-	log4c_category_debug(log_dpll, "Notifying listeners...");
-	for (const auto& listener : m_listeners)
-		listener.get().onPropagate(p_literal);
 
 	return satisfiable;
 }
@@ -269,3 +269,68 @@ void HistoryBasedDpllSolver::backtrack(Literal p_literal, History& p_history) {
 	m_formula.log();
 	m_interpretation.log();
 }
+
+
+/**
+ * Removes the clauses containing the given literal.
+ * 
+ * @param p_literal
+ *            the selected literal
+ * @param p_history
+ *            the history to save the operations
+ */
+void HistoryBasedDpllSolver::removeClausesWithLiteral(Literal& p_literal, History& p_history) {
+	log4c_category_info(log_dpll, "Removing clauses that contain the literal %sx%u...", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
+	for (Clause* clause = p_literal.occurence(); clause != nullptr; clause = p_literal.occurence()) {
+		log4c_category_debug(log_dpll, "Saving clause %u in the history.", clause->id());
+		p_history.addClause(clause);
+		
+		m_formula.removeClause(clause);
+		log4c_category_info(log_dpll, "Clause %u removed.", clause->id());
+		
+		// Notify the listeners
+		log4c_category_debug(log_dpll, "Notifying listeners...");
+		for (const auto& listener : m_listeners)
+			listener.get().onPropagate(p_literal, clause);
+	}
+}
+
+
+/**
+ * Removes the opposite of the given literal from the clauses.
+ * If an empty clause is found, it is unsatisfiable and 
+ * 
+ * @param p_literal
+ *            the selected literal
+ * @param p_history
+ *            the history to save the operations
+ * 
+ * @return true if all the clauses could be reduced without producing an unsatisfiable one;
+ *         false if an unsatisfiable clause was produced.
+ */
+bool HistoryBasedDpllSolver::removeOppositeLiteralFromClauses(Literal& p_literal, History& p_history) {
+	log4c_category_info(log_dpll, "Removing literal %sx%u from the clauses.", (p_literal.isPositive() ? "¬" : ""), p_literal.id());
+	for (Clause* clause = p_literal.oppositeOccurence(); clause != nullptr; clause = p_literal.oppositeOccurence()) {
+		log4c_category_debug(log_dpll, "Saving literal %sx%u of clause %u in the history.", (p_literal.isPositive() ? "¬" : ""), p_literal.id(), clause->id());
+		p_history.addLiteral(clause, -p_literal);
+		
+		// Remove the literal from the clause
+		m_formula.removeLiteralFromClause(clause, -p_literal);
+
+		// Notify the listeners
+		log4c_category_debug(log_dpll, "Notifying listeners...");
+		for (const auto& listener : m_listeners)
+			listener.get().onPropagate(p_literal, clause);
+
+		// Check if the clause is still satisfiable
+		if (clause->isUnsatisfiable()) {
+			log4c_category_info(log_dpll, "The produced clause is unsatisfiable.");
+			return false;
+		}
+	}
+	
+	return true;
+}
+
+} // namespace sat::solver
+} // namespace sat

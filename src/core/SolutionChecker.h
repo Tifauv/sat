@@ -18,7 +18,13 @@
 #define SOLUTIONCHECKER_H
 
 #include <vector>
+
+
+namespace sat {
+
 class RawLiteral;
+
+namespace checker {
 
 
 /**
@@ -37,5 +43,8 @@ public:
 	 */
 	virtual bool checkSolution(std::vector<RawLiteral>* p_solution) = 0;
 };
+
+} // namespace sat::checker
+} // namespace sat
 
 #endif // SOLUTIONCHECKER_H

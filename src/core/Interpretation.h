@@ -21,6 +21,10 @@
 #include "Literal.h"
 
 
+namespace sat {
+namespace solver {
+
+
 /**
  * A SAT interpretation is a list of literals.
  * Additionnaly, it can be marked unsatisfiable.
@@ -87,5 +91,8 @@ private:
 	/** The list of literals. */
 	std::list<Literal> m_literals;
 };
+
+} // namespace sat::solver
+} // namespace sat
 
 #endif // INTERPRETATION_H

@@ -18,10 +18,16 @@
 
 #include <iostream>
 #include <log4c.h>
+#include "Variable.h"
+#include "Literal.h"
+#include "Clause.h"
 #include "Formula.h"
-#include "History.h"
 #include "utils.h"
 #include "log.h"
+
+
+namespace sat {
+namespace checker {
 
 
 // CONSTRUCTORS
@@ -84,8 +90,6 @@ bool BasicSolutionChecker::checkSolution(std::vector<RawLiteral>* p_solution) {
  *         false if it is unsatisfiable
  */
 bool BasicSolutionChecker::reduce(const RawLiteral& p_rawLiteral) {
-	History history;
-	
 	// Rebuild a Literal from a RawLiteral
 	for (auto it = m_formula.beginVariable(); it != m_formula.endVariable(); ++it) {
 		Variable* variable = *it;
@@ -95,10 +99,22 @@ bool BasicSolutionChecker::reduce(const RawLiteral& p_rawLiteral) {
 			log4c_category_info(log_dpll, "Reduction using literal %sx%u...", (literal.isNegative() ? "¬" : ""), literal.id());
 		
 			// Remove the clauses that contain the same sign as the given literal
-			m_formula.removeClausesWithLiteral(literal, history);
+			for (Clause* clause = literal.occurence(); clause != nullptr; clause = literal.occurence())
+				m_formula.removeClause(clause);
 		
 			// Remove the literal from the clauses that contain the oposite sign
-			bool satisfiable = m_formula.removeOppositeLiteralFromClauses(literal, history);
+			bool satisfiable = true;
+			for (Clause* clause = literal.oppositeOccurence(); clause != nullptr; clause = literal.oppositeOccurence()) {
+				// Remove the literal from the clause
+				m_formula.removeLiteralFromClause(clause, -literal);
+				
+				// Check if the clause is still satisfiable
+				if (clause->isUnsatisfiable()) {
+					log4c_category_info(log_dpll, "The produced clause is unsatisfiable.");
+					satisfiable = false;
+					break;
+				}
+			}
 		
 			// The variable is now empty, we can remove it
 			m_formula.removeVariable(variable);
@@ -109,3 +125,6 @@ bool BasicSolutionChecker::reduce(const RawLiteral& p_rawLiteral) {
 	
 	return true;
 }
+
+} // namespace sat::checker
+} // namespace sat

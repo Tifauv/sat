@@ -17,8 +17,13 @@
 #ifndef VariableSelector_h
 #define VariableSelector_h
 
+
+namespace sat {
+
 class Formula;
 class Variable;
+
+namespace solver {
 
 
 class VariableSelector {
@@ -29,5 +34,8 @@ public:
 	 */
 	virtual Variable* getVariable(Formula& p_formula) = 0;
 };
+
+} // namespace sat::solver
+} // namespace sat
 
 #endif // VariableSelector_h

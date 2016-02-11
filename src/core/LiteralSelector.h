@@ -17,13 +17,21 @@
 #ifndef LiteralSelector_h
 #define LiteralSelector_h
 
+
+namespace sat {
+
 class Formula;
 class Literal;
+
+namespace solver {
 
 
 class LiteralSelector {
 public:
 	virtual Literal getLiteral(Formula& p_formula) = 0;
 };
+
+} // namespace sat::solver
+} // namespace sat
 
 #endif // LiteralSelector_h

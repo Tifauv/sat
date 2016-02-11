@@ -17,13 +17,21 @@
 #ifndef PolaritySelector_h
 #define PolaritySelector_h
 
+
+namespace sat {
+
 class Variable;
 class Literal;
+
+namespace solver {
 
 
 class PolaritySelector {
 public:
 	virtual Literal getLiteral(Variable* p_variable) = 0;
 };
+
+} // namespace sat::solver
+} // namespace sat
 
 #endif // PolaritySelector_h

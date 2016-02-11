@@ -22,6 +22,10 @@
 #include "log.h"
 
 
+namespace sat {
+namespace solver {
+
+
 // CONSTRUCTORS
 /**
  * Creates an empty satisfiable interpretation.
@@ -146,3 +150,6 @@ void Interpretation::print() {
 		std::cout << " " << (int)(literal.sign() * literal.id());
 	std::cout << " 0" << std::endl;
 }
+
+} // namespace sat::solver
+} // namespace sat

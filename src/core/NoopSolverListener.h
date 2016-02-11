@@ -21,6 +21,11 @@
 #include "SolverListener.h"
 
 
+namespace sat {
+namespace solver {
+namespace listeners {
+
+
 /**
  * Implementation of a SolverListener that does nothing.
  * This is meant to be the base class for all implementations.
@@ -45,7 +50,7 @@ public:
 	 * Called when a literal has been propagated through the formula.
 	 * Does nothing.
 	 */
-	virtual void onPropagate(Literal&) override;
+	virtual void onPropagate(Literal&, Clause*) override;
 
 
 	/**
@@ -61,6 +66,10 @@ public:
 	 */
 	virtual void cleanup() override;
 };
+
+} // namespace sat::solver::listeners
+} // namespace sat::solver
+} // namespace sat
 
 #endif // NOOP_DPLL_SOLVER_H
 

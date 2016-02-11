@@ -23,6 +23,11 @@ class Formula;
 class Variable;
 
 
+namespace sat {
+namespace solver {
+namespace selectors {
+
+
 /**
  * Selects the most used variable in the formula's list.
  */
@@ -30,5 +35,9 @@ class LeastUsedVariableSelector : public VariableSelector {
 public:
 	Variable* getVariable(Formula& p_formula) override;
 };
+
+} // namespace sat::solver::selectors
+} // namespace sat::solver
+} // namespace sat
 
 #endif // LeastUsedVariableSelector_h

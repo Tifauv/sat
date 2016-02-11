@@ -22,7 +22,6 @@
 #include "BasicSolutionChecker.h"
 
 
-
 /**
  * Displays the usage message.
  * 
@@ -68,16 +67,16 @@ int main(int p_argc, char* p_argv[]) {
 		char* satFilename = p_argv[2];
 		
 		// Load the formula
-		Formula formula;
-		CnfLoader loader;
+		sat::Formula formula;
+		sat::CnfLoader loader;
 		loader.loadProblem(cnfFilename, formula);
 		formula.log();
 
 		// Load the SAT solution file
-		std::vector<RawLiteral>* solution = loader.loadSolution(satFilename);
+		std::vector<sat::RawLiteral>* solution = loader.loadSolution(satFilename);
 
 		// Check the solution
-		BasicSolutionChecker checker(formula);
+		sat::checker::BasicSolutionChecker checker(formula);
 		if (checker.checkSolution(solution)) {
 			rc = 0;
 			std::cout << "The solution is valid." << std::endl;

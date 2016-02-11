@@ -23,9 +23,18 @@ class Variable;
 class Literal;
 
 
+namespace sat {
+namespace solver {
+namespace selectors {
+
+
 class LeastUsedPolaritySelector : public PolaritySelector {
 public:
 	Literal getLiteral(Variable* p_variable) override;
 };
+
+} // namespace sat::solver::selectors
+} // namespace sat::solver
+} // namespace sat
 
 #endif // LeastUsedPolaritySelector_h

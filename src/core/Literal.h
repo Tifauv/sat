@@ -19,7 +19,8 @@
 
 #include "Variable.h"
 
-class Variable;
+namespace sat {
+
 class Clause;
 
 
@@ -37,13 +38,8 @@ public:
 	bool isPositive() const;
 	bool isNegative() const;
 
-	std::list<Clause*>::iterator beginOccurence();
-	std::list<Clause*>::iterator endOccurence();
-	std::list<Clause*>::iterator erase(std::list<Clause*>::iterator);
-
-	std::list<Clause*>::iterator beginOppositeOccurence();
-	std::list<Clause*>::iterator endOppositeOccurence();
-	std::list<Clause*>::iterator eraseOpposite(std::list<Clause*>::iterator);
+	Clause* occurence();
+	Clause* oppositeOccurence();
 
 	Literal operator-();
 	bool operator==(const Literal& p_literal);
@@ -53,5 +49,7 @@ private:
 	Variable* m_variable;
 	int m_sign;
 };
+
+} // namespace sat
 
 #endif // LITERAL_H

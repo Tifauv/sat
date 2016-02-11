@@ -14,14 +14,18 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
  */
-#ifndef HISTORY_H
-#define HISTORY_H
+#ifndef History_h
+#define History_h
 
 #include <list>
 #include "Literal.h"
 
+namespace sat {
+
 class Formula;
 class Clause;
+
+namespace solver {
 
 
 /**
@@ -107,5 +111,8 @@ private:
 	std::list<Step*> m_steps;
 };
 
-#endif // HISTORY_H
+} // namespace sat::solver
+} // namespace sat
+
+#endif // History_h
 

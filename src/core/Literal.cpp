@@ -16,6 +16,11 @@
  */
 #include "Literal.h"
 
+#include "Clause.h"
+
+
+namespace sat {
+
 
 // CONSTRUCTORS
 Literal::Literal() :
@@ -67,33 +72,13 @@ bool Literal::isNegative() const {
 
 
 // METHODS
-std::list<Clause*>::iterator Literal::beginOccurence() {
-	return var()->beginOccurence(m_sign);
+Clause* Literal::occurence() {
+	return var()->occurence(m_sign);
 }
 
 
-std::list<Clause*>::iterator Literal::endOccurence() {
-	return var()->endOccurence(m_sign);
-}
-
-
-std::list<Clause*>::iterator Literal::erase(std::list<Clause*>::iterator p_iterator) {
-	return var()->erase(p_iterator, m_sign);
-}
-
-
-std::list<Clause*>::iterator Literal::beginOppositeOccurence() {
-	return var()->beginOccurence(-m_sign);
-}
-
-
-std::list<Clause*>::iterator Literal::endOppositeOccurence() {
-	return var()->endOccurence(-m_sign);
-}
-
-
-std::list<Clause*>::iterator Literal::eraseOpposite(std::list<Clause*>::iterator p_iterator) {
-	return var()->erase(p_iterator, -m_sign);
+Clause* Literal::oppositeOccurence() {
+	return var()->occurence(-m_sign);
 }
 
 
@@ -111,3 +96,5 @@ bool Literal::operator==(const Literal& p_literal) {
 bool Literal::operator!=(const Literal& p_literal) {
 	return id() != p_literal.id();
 }
+
+} // namespace sat

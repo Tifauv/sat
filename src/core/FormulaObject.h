@@ -18,6 +18,9 @@
 #define FORMULA_OBJECT_H
 
 
+namespace sat {
+
+
 /** A variable id is an unsigned int. */
 using Id = unsigned int;
 
@@ -46,5 +49,7 @@ private:
 	/** Is the object currently used ?*/
 	bool m_unused;
 };
+
+} // namespace sat
 
 #endif // FORMULA_OBJECT_H

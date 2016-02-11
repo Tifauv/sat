@@ -21,10 +21,11 @@
 #include <unordered_set>
 #include "RawLiteral.h"
 
+namespace sat {
+
 class Clause;
 class Literal;
 class Variable;
-class History;
 
 
 class Formula {
@@ -36,11 +37,10 @@ public:
 
 	Literal findLiteralFromUnaryClause() const;
 
-	void removeClausesWithLiteral(Literal& p_literal, History& p_history);
-	bool removeOppositeLiteralFromClauses(Literal& p_literal, History& p_history);
-
 	void addClause(Clause* p_clause);
 	void addLiteralToClause(Clause* p_clause, Literal p_literal);
+	void removeClause(Clause* p_clause);
+	void removeLiteralFromClause(Clause* p_clause, Literal p_literal);
 
 	bool hasClauses() const;
 	bool hasVariables() const;
@@ -63,5 +63,7 @@ private:
 	std::unordered_set<Variable*> m_variables;
 	std::unordered_set<Variable*> m_unusedVariables;
 };
+
+} // namespace sat
 
 #endif // FORMULA_H

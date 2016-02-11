@@ -19,6 +19,9 @@
 #include "Variable.h"
 
 
+namespace sat {
+
+
 // CONSTRUCTORS
 RawLiteral::RawLiteral(int p_literal) :
 m_literal(p_literal) {
@@ -59,3 +62,5 @@ RawLiteral RawLiteral::operator-() {
 bool RawLiteral::operator==(const RawLiteral& p_literal) {
 	return id() == p_literal.id();
 }
+
+} // namespace sat

@@ -22,6 +22,9 @@
 #include "log.h"
 
 
+namespace sat {
+
+
 // CONSTRUCTORS
 /**
  *
@@ -92,6 +95,19 @@ unsigned int Variable::countOccurences() const {
 }
 
 
+Clause* Variable::occurence(int p_sign) {
+	if (p_sign == SIGN_POSITIVE) {
+		if (m_positiveOccurences.empty())
+			return nullptr;
+		return m_positiveOccurences.front();
+	}
+	
+	if (m_negativeOccurences.empty())
+		return nullptr;
+	return m_negativeOccurences.front();
+}
+
+
 std::list<Clause*>::iterator Variable::beginOccurence(int p_sign) {
 	if (p_sign == SIGN_POSITIVE)
 		return m_positiveOccurences.begin();
@@ -106,13 +122,6 @@ std::list<Clause*>::iterator Variable::endOccurence(int p_sign) {
 }
 
 
-std::list<Clause*>::iterator Variable::erase(std::list<Clause*>::iterator p_iterator, int p_sign) {
-	if (p_sign == SIGN_POSITIVE)
-		return m_positiveOccurences.erase(p_iterator);
-	return m_negativeOccurences.erase(p_iterator);
-}
-
-
 void Variable::removePositiveOccurence(Clause* p_clause) {
 	m_positiveOccurences.remove(p_clause);
 }
@@ -121,3 +130,5 @@ void Variable::removePositiveOccurence(Clause* p_clause) {
 void Variable::removeNegativeOccurence(Clause* p_clause) {
 	m_negativeOccurences.remove(p_clause);
 }
+
+} // namespace sat

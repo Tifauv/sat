@@ -19,13 +19,23 @@
 
 #include "PolaritySelector.h"
 
+
+namespace sat {
+
 class Variable;
 class Literal;
+
+namespace solver {
+namespace selectors {
 
 
 class PositiveFirstPolaritySelector : public PolaritySelector {
 public:
 	Literal getLiteral(Variable* p_variable) override;
 };
+
+} // namespace sat::solver::selectors
+} // namespace sat::solver
+} // namespace sat
 
 #endif // PositiveFirstPolaritySelector_h

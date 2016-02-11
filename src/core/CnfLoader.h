@@ -21,6 +21,9 @@
 #include "Formula.h"
 
 
+namespace sat {
+
+
 class CnfLoader {
 public:
 	/**
@@ -72,5 +75,7 @@ protected:
 	 */
 	int existsLiteral(RawLiteral& p_literal, std::vector<RawLiteral>& p_literals);
 };
+
+} // namespace sat
 
 #endif // CNFLOADER_H

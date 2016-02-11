@@ -23,6 +23,9 @@
 #include "log.h"
 
 
+namespace sat {
+namespace solver {
+
 
 /**
  * Creates a new history.
@@ -161,3 +164,6 @@ Clause* History::Step::clause() const {
 Literal History::Step::literal() const {
 	return m_literal;
 }
+
+} // namespace sat::solver
+} // namespace sat

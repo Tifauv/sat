@@ -20,7 +20,12 @@
 #include "Literal.h"
 
 
-// METHODS 
+namespace sat {
+namespace solver {
+namespace selectors {
+
+
+// METHODS
 Literal PositiveFirstPolaritySelector::getLiteral(Variable* p_variable) {
 	if (p_variable == nullptr) {
 		return Literal(nullptr, SIGN_POSITIVE);
@@ -31,3 +36,7 @@ Literal PositiveFirstPolaritySelector::getLiteral(Variable* p_variable) {
 		sign = SIGN_NEGATIVE;
 	return Literal(p_variable, sign);
 }
+
+} // namespace sat::solver::selectors
+} // namespace sat::solver
+} // namespace sat

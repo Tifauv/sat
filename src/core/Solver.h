@@ -14,10 +14,14 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
  */
-#ifndef SOLVER_H
-#define SOLVER_H
+#ifndef Solver_h
+#define Solver_h
 
 #include "Interpretation.h"
+
+
+namespace sat {
+namespace solver {
 
 
 /**
@@ -41,4 +45,7 @@ public:
 	virtual Interpretation& solve() = 0;
 };
 
-#endif // SOLVER_H
+} // namespace sat::solver
+} // namespace sat
+
+#endif // Solver_h

@@ -17,6 +17,12 @@
 #include "NoopSolverListener.h"
 
 #include "Literal.h"
+#include "Clause.h"
+
+
+namespace sat {
+namespace solver {
+namespace listeners {
 
 
 // INTERFACE METHODS
@@ -42,7 +48,7 @@ void NoopSolverListener::onDecide(Literal&) {
  * Called when a literal has been propagated through the formula.
  * Does nothing.
  */
-void NoopSolverListener::onPropagate(Literal&) {
+void NoopSolverListener::onPropagate(Literal&, Clause*) {
 	// Do nothing
 }
 
@@ -63,3 +69,7 @@ void NoopSolverListener::onBacktrack(Literal&) {
 void NoopSolverListener::cleanup() {
 	// Do nothing
 }
+
+} // namespace sat::solver::listeners
+} // namespace sat::solver
+} // namespace sat

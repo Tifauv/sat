@@ -21,6 +21,11 @@
 #include "NoopSolverListener.h"
 
 
+namespace sat {
+namespace solver {
+namespace listeners {
+
+
 /**
  * Implementation of a SolverListener that counts the number of backtracks.
  */
@@ -55,5 +60,8 @@ private:
 	unsigned int m_counter;
 };
 
-#endif // BACKTRACK_COUNTER_LISTENER_H
+} // namespace sat::solver::listeners
+} // namespace sat::solver
+} // namespace sat
 
+#endif // BACKTRACK_COUNTER_LISTENER_H

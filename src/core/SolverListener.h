@@ -18,7 +18,13 @@
 #ifndef SOLVER_LISTENER_H
 #define SOLVER_LISTENER_H
 
+
+namespace sat {
+
 class Literal;
+class Clause;
+
+namespace solver {
 
 
 /**
@@ -46,8 +52,10 @@ public:
 	 * 
 	 * @param p_literal
 	 *            the literal propagated through the formula
+	 * @param p_clause
+	 *            the clause modified by the literal
 	 */
-	virtual void onPropagate(Literal& p_literal) = 0;
+	virtual void onPropagate(Literal& p_literal, Clause* p_clause) = 0;
 	
 	
 	/**
@@ -64,6 +72,9 @@ public:
 	 */
 	virtual void cleanup() = 0;
 };
+
+} // namespace sat::solver
+} // namespace sat
 
 #endif // DPLL_SOLVER_H
 

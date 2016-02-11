@@ -22,6 +22,10 @@
 #include "log.h"
 
 
+namespace sat {
+namespace solver {
+
+
 // CONSTRUCTORS
 VariablePolarityLiteralSelector::VariablePolarityLiteralSelector(VariableSelector& p_variableSelector, PolaritySelector& p_polaritySelector) :
 m_variableSelector(p_variableSelector),
@@ -49,3 +53,6 @@ Literal VariablePolarityLiteralSelector::getLiteral(Formula& p_formula) {
 	log4c_category_debug(log_dpll, "Literal %sx%u selected.", (literal.isNegative() ? "¬" : ""), literal.id());
 	return literal;
 }
+
+} // namespace sat::solver
+} // namespace sat

@@ -17,6 +17,11 @@
 #include "BacktrackCounterListener.h"
 
 
+namespace sat {
+namespace solver {
+namespace listeners {
+
+
 // CONSTRUCTORS
 /**
  * Initializes the counter to zero.
@@ -51,3 +56,7 @@ void BacktrackCounterListener::init() {
 void BacktrackCounterListener::onBacktrack(Literal&) {
 	m_counter++;
 }
+
+} // namespace sat::solver::listeners
+} // namespace sat::solver
+} // namespace sat

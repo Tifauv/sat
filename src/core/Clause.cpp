@@ -22,6 +22,9 @@
 #include "log.h"
 
 
+namespace sat {
+
+
 // CONSTRUCTORS
 /**
  * Initializes a clause.
@@ -121,3 +124,5 @@ std::list<Literal>::const_iterator Clause::beginLiteral() const {
 std::list<Literal>::const_iterator Clause::endLiteral() const {
 	return m_literals.cend();
 }
+
+} // namespace sat

@@ -26,6 +26,9 @@
 #include "log.h"
 
 
+namespace sat {
+
+
 // METHODS
 /**
  * Loads a SAT problem from a CNF file.
@@ -188,3 +191,5 @@ int CnfLoader::existsLiteral(RawLiteral& p_literal, std::vector<RawLiteral>& p_l
 	}
 	return 0;
 }
+
+} // namespace sat

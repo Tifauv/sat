@@ -20,10 +20,19 @@
 #include "Variable.h"
 
 
-// METHODS 
+namespace sat {
+namespace solver {
+namespace selectors {
+
+
+// METHODS
 Variable* FirstVariableSelector::getVariable(Formula& p_formula) {
 	if (!p_formula.hasVariables())
 		return nullptr;
 
 	return *p_formula.beginVariable();
 }
+
+} // namespace sat::solver::selectors
+} // namespace sat::solver
+} // namespace sat
