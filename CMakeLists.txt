@@ -15,7 +15,7 @@
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
 
 cmake_minimum_required( VERSION 3.1 )
-project( Sat VERSION 2.1 LANGUAGES CXX )
+project( Sat VERSION 2.2 LANGUAGES CXX )
 
 # Load CMake modules
 set( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
