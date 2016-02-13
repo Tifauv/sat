@@ -16,6 +16,7 @@
  */
 #include "Variable.h"
 
+#include <algorithm>
 #include <log4c.h>
 #include "Clause.h"
 #include "utils.h"
@@ -108,14 +109,14 @@ Clause* Variable::occurence(int p_sign) {
 }
 
 
-std::list<Clause*>::iterator Variable::beginOccurence(int p_sign) {
+std::vector<Clause*>::iterator Variable::beginOccurence(int p_sign) {
 	if (p_sign == SIGN_POSITIVE)
 		return m_positiveOccurences.begin();
 	return m_negativeOccurences.begin();
 }
 
 
-std::list<Clause*>::iterator Variable::endOccurence(int p_sign) {
+std::vector<Clause*>::iterator Variable::endOccurence(int p_sign) {
 	if (p_sign == SIGN_POSITIVE)
 		return m_positiveOccurences.end();
 	return m_negativeOccurences.end();
@@ -123,12 +124,22 @@ std::list<Clause*>::iterator Variable::endOccurence(int p_sign) {
 
 
 void Variable::removePositiveOccurence(Clause* p_clause) {
-	m_positiveOccurences.remove(p_clause);
+	m_positiveOccurences.erase(
+		std::remove(
+			m_positiveOccurences.begin(),
+			m_positiveOccurences.end(),
+			p_clause),
+		m_positiveOccurences.end());
 }
 
 
 void Variable::removeNegativeOccurence(Clause* p_clause) {
-	m_negativeOccurences.remove(p_clause);
+	m_negativeOccurences.erase(
+		std::remove(
+			m_negativeOccurences.begin(),
+			m_negativeOccurences.end(),
+			p_clause),
+		m_negativeOccurences.end());
 }
 
 } // namespace sat

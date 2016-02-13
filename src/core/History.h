@@ -17,7 +17,7 @@
 #ifndef History_h
 #define History_h
 
-#include <list>
+#include <stack>
 #include "Literal.h"
 
 namespace sat {
@@ -27,42 +27,13 @@ class Clause;
 
 namespace solver {
 
+class HistoryStep;
+
 
 /**
  * An history is a list of steps.
  */
 class History {
-
-	/**
-	 * The history manages steps for two operations:
-	 *   - add a new clause,
-	 *   - add a literal to a clause
-	 */
-	enum class Operation {
-		AddClause,
-		AddLiteralToClause
-	};
-
-
-	/**
-	 * This is a step of the history.
-	 */
-	class Step {
-	public:
-		Step(Operation p_operation, Clause* p_clause);
-		Step(Operation p_operation, Clause* p_clause, Literal p_literal);
-
-		Operation operation() const;
-		Clause*   clause()    const;
-		Literal   literal()   const;
-
-	private:
-		Operation m_operation;
-		Clause*   m_clause;
-		Literal   m_literal;
-	};
-
-
 public:
 	/**
 	 * Creates a new history.
@@ -108,7 +79,7 @@ protected:
 
 private:
 	/** The steps of the history. */
-	std::list<Step*> m_steps;
+	std::stack<HistoryStep*> m_steps;
 };
 
 } // namespace sat::solver

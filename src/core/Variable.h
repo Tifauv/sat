@@ -17,7 +17,7 @@
 #ifndef VARIABLE_H
 #define VARIABLE_H
 
-#include <list>
+#include <vector>
 #include "FormulaObject.h"
 
 #define SIGN_POSITIVE  1
@@ -47,15 +47,15 @@ public:
 	unsigned int countOccurences() const;
 
 	Clause* occurence(int p_sign);
-	std::list<Clause*>::iterator beginOccurence(int p_sign);
-	std::list<Clause*>::iterator endOccurence(int p_sign);
+	std::vector<Clause*>::iterator beginOccurence(int p_sign);
+	std::vector<Clause*>::iterator endOccurence(int p_sign);
 
 	void removePositiveOccurence(Clause* p_clause);
 	void removeNegativeOccurence(Clause* p_clause);
 
 private:
-	std::list<Clause*> m_positiveOccurences;
-	std::list<Clause*> m_negativeOccurences;
+	std::vector<Clause*> m_positiveOccurences;
+	std::vector<Clause*> m_negativeOccurences;
 };
 
 } // namespace sat

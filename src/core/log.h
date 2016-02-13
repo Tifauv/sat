@@ -14,8 +14,8 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
  */
-#ifndef LOG_H
-#define LOG_H
+#ifndef log_h
+#define log_h
 
 #define LOG_CATEGORY_LOADER_CNF     "sat.loader.cnf"
 #define LOG_CATEGORY_DPLL           "sat.solver.dpll"
@@ -29,4 +29,18 @@
 #define log_history        log4c_category_get(LOG_CATEGORY_HISTORY)
 #define log_interpretation log4c_category_get(LOG_CATEGORY_INTERPRETATION)
 
-#endif // LOG_H
+#ifdef WITHOUT_LOG4C
+
+#define log4c_init() false
+#define log4c_fini() false
+
+#define log4c_category_debug(c, ...)
+#define log4c_category_info(c, ...)
+#define log4c_category_warn(c, ...)
+#define log4c_category_error(c, ...)
+#define log4c_category_is_debug_enabled(c) false
+#define log4c_category_is_info_enabled(c)  false
+
+#endif // WITHOUT_LOG4C
+
+#endif // log_h

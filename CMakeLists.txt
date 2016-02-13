@@ -15,12 +15,19 @@
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
 
 cmake_minimum_required( VERSION 3.1 )
-project( Sat )
+project( Sat VERSION 2.1 LANGUAGES CXX )
 
 # Load CMake modules
 set( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
 		"${CMAKE_SOURCE_DIR}/cmake/Modules/"
 )
+
+# Default to the Release build type
+if( NOT CMAKE_BUILD_TYPE )
+	set( CMAKE_BUILD_TYPE Release CACHE STRING
+		"Choose the type of build between: None, Debug, Release, RelWithDebInfo, MinSizeRel."
+		FORCE )
+endif()
 
 add_subdirectory( src )
 add_subdirectory( doc )

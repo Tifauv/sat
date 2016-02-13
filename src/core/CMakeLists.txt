@@ -23,6 +23,9 @@ set( SAT_CORE_SRCS
 	Clause.cpp
 	Formula.cpp
 	Interpretation.cpp
+	HistoryStep.cpp
+	RemoveClauseStep.cpp
+	RemoveLiteralFromClauseStep.cpp
 	History.cpp
 	HistoryBasedDpllSolver.cpp
 	VariablePolarityLiteralSelector.cpp

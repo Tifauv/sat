@@ -18,6 +18,7 @@
 #include <log4c.h>
 #include <chrono>
 
+#include "log.h"
 #include "CnfLoader.h"
 #include "HistoryBasedDpllSolver.h"
 #include "Interpretation.h"

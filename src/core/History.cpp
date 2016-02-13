@@ -17,6 +17,8 @@
 #include "History.h"
 
 #include <log4c.h>
+#include "RemoveClauseStep.h"
+#include "RemoveLiteralFromClauseStep.h"
 #include "Formula.h"
 #include "Clause.h"
 #include "utils.h"
@@ -45,7 +47,7 @@ History::~History() {
 
 
 /**
- * Adds an operation of type Operation::AddClause as last step of the history.
+ * Adds a step for a "remove clause" operation as last step of the history.
  *
  * @param p_clause
  *            the clause to save
@@ -57,17 +59,14 @@ void History::addClause(Clause* p_clause) {
 		return;
 	}
 
-	// Create the new step
-	Step* newStep = new Step(Operation::AddClause, p_clause);
-
 	// Add the new step
-	m_steps.push_front(newStep);
+	m_steps.push( new RemoveClauseStep(p_clause) );
 	log4c_category_info(log_history, "Clause %u added to the history.", p_clause->id());
 }
 
 
 /**
- * Adds an operation of type Operation::AddLiteralToClause as last step of the history.
+ * Adds a step for a "remove literal from clause" operation as last step of the history.
  *
  * @param p_clause
  *            the clause
@@ -81,11 +80,8 @@ void History::addLiteral(Clause* p_clause, Literal p_literal) {
 		return;
 	}
 
-	// Create the new step
-	Step* newStep = new Step(Operation::AddLiteralToClause, p_clause, p_literal);
-	
 	// Add the new step
-	m_steps.push_back(newStep);
+	m_steps.push( new RemoveLiteralFromClauseStep(p_clause, p_literal) );
 	log4c_category_info(log_history, "Literal %sx%u of clause %u added to the history.", (p_literal.isNegative() ? "¬" : ""), p_literal.id(), p_clause->id());
 }
 
@@ -99,27 +95,14 @@ void History::addLiteral(Clause* p_clause, Literal p_literal) {
 void History::replay(Formula& p_formula) {
 	// Replaying...
 	log4c_category_debug(log_history, "Replaying the history...");
-	for (auto it = m_steps.begin(); it != m_steps.end(); it = m_steps.erase(it)) {
-		Clause* clause  = (*it)->clause();
-		Literal literal = (*it)->literal();
+	while (!m_steps.empty()) {
+		HistoryStep* step = m_steps.top();
 
-		switch ((*it)->operation()) {
-			case Operation::AddClause:
-				p_formula.addClause(clause);
-				log4c_category_debug(log_history, "Added clause %u", clause->id());
-				break;
-
-			case Operation::AddLiteralToClause:
-				p_formula.addLiteralToClause(clause, literal);
-				log4c_category_debug(log_history, "Added %sx%u to clause %u", (literal.isNegative() ? "¬" : ""), literal.id(), clause->id());
-				break;
-
-			default:
-				log4c_category_warn(log_history, "An unknown operation code (%u) has been found in the history, skipping.", (*it)->operation());
-		}
+		step->undo(p_formula);
 
 		// Delete the step
-		delete *it;
+		m_steps.pop();
+		delete step;
 	}
 
 	// Result
@@ -131,38 +114,13 @@ void History::replay(Formula& p_formula) {
  * Removes and frees the last step of the history.
  */
 void History::clear() {
-	for (auto it = m_steps.begin(); it != m_steps.end(); it = m_steps.erase(it))
-		delete *it;
+	while (!m_steps.empty()) {
+		HistoryStep* step = m_steps.top();
+		// Delete the step
+		m_steps.pop();
+		delete step;
+	}
 	log4c_category_debug(log_history, "History cleared.");
-}
-
-
-History::Step::Step(History::Operation p_operation, Clause* p_clause) :
-m_operation(p_operation),
-m_clause(p_clause),
-m_literal() {
-}
-
-
-History::Step::Step(History::Operation p_operation, Clause* p_clause, Literal p_literal) :
-m_operation(p_operation),
-m_clause(p_clause),
-m_literal(p_literal) {
-}
-
-
-History::Operation History::Step::operation() const {
-	return m_operation;
-}
-
-
-Clause* History::Step::clause() const {
-	return m_clause;
-}
-
-
-Literal History::Step::literal() const {
-	return m_literal;
 }
 
 } // namespace sat::solver

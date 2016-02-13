@@ -16,6 +16,7 @@
  */
 #include "Clause.h"
 
+#include <algorithm>
 #include <log4c.h>
 #include "Literal.h"
 #include "utils.h"
@@ -67,7 +68,7 @@ void Clause::addLiteral(const Literal& p_literal) {
  *            a reference to the literal to remove.
  */
 void Clause::removeLiteral(const Literal& p_literal) {
-	m_literals.remove(p_literal);
+	m_literals.erase(std::remove(m_literals.begin(), m_literals.end(), p_literal), m_literals.end());
 	log4c_category_debug(log_formula, "Literal %sx%u removed from clause %u.", (p_literal.isNegative() ? "¬" : ""), p_literal.id(), id());
 }
 
@@ -111,7 +112,7 @@ Literal Clause::firstLiteral() const {
  *
  * @return a 'begin' iterator of the literals
  */
-std::list<Literal>::const_iterator Clause::beginLiteral() const {
+std::vector<Literal>::const_iterator Clause::beginLiteral() const {
 	return m_literals.cbegin();
 }
 
@@ -121,7 +122,7 @@ std::list<Literal>::const_iterator Clause::beginLiteral() const {
  *
  * @return an 'end' iterator of the literals
  */
-std::list<Literal>::const_iterator Clause::endLiteral() const {
+std::vector<Literal>::const_iterator Clause::endLiteral() const {
 	return m_literals.cend();
 }
 

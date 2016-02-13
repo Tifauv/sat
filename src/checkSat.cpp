@@ -18,6 +18,7 @@
 #include <vector>
 #include <log4c.h>
 
+#include "log.h"
 #include "CnfLoader.h"
 #include "BasicSolutionChecker.h"
 
