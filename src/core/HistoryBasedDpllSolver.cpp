@@ -53,7 +53,7 @@ m_literalSelector(p_literalSelector) {
  * Destructor.
  */
 HistoryBasedDpllSolver::~HistoryBasedDpllSolver() {
-	log4c_category_debug(log_dpll, "DPLL Solver deleted.");	
+	log4c_category_debug(log_dpll, "DPLL Solver deleted.");
 }
 
 
