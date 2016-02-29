@@ -29,5 +29,37 @@ if( NOT CMAKE_BUILD_TYPE )
 		FORCE )
 endif()
 
+# Build options
+option( USE_CLANG  "Build application with clang"   off )
+option( WITH_LOG4C "Enable the dependency on Log4c" off )
+
+
+# Declare common CFLAGS
+if( USE_CLANG )
+	set( CMAKE_CXX_FLAGS                "-Wall" )
+	set( CMAKE_CXX_FLAGS_DEBUG          "-O1 -g -fsanitize=address -fno-omit-frame-pointer" )
+	set( CMAKE_CXX_FLAGS_MINSIZEREL     "-Os" )
+	set( CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g" )
+	set( CMAKE_CXX_FLAGS_RELEASE        "-O3" )
+else( USE_CLANG )
+	set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic" )
+	set( CMAKE_CXX_FLAGS_DEBUG          "-O0 -ggdb" )
+	set( CMAKE_CXX_FLAGS_MINSIZEREL     "-Os -march=native" )
+	set( CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -march=native -g" )
+	set( CMAKE_CXX_FLAGS_RELEASE        "-O2 -march=native" )
+endif( USE_CLANG )
+
+# Declare log4c as a mandatory dependency if it is explicitely enabled
+if( WITH_LOG4C )
+	find_package( Log4C REQUIRED )
+	include_directories( ${LOG4C_INCLUDE_DIRS} )
+	set( CMAKE_INCLUDE_CURRENT_DIR on )
+	set( LIBS ${LIBS} ${LOG4C_LIBRARIES} )
+else( WITH_LOG4C )
+	add_definitions(-DWITHOUT_LOG4C)
+endif( WITH_LOG4C )
+
+
+# Directories to build
 add_subdirectory( src )
 add_subdirectory( doc )

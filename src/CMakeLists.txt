@@ -14,29 +14,9 @@
 #  along with this program; if not, write to the Free Software
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
 
-# Is Log4c disabled ?
-option( WITH_LOG4C "Enable the dependency on Log4c" )
-
-# Declare log4c as a mandatory dependency as long as it's enabled
-if( WITH_LOG4C )
-	find_package( Log4C REQUIRED )
-	include_directories( ${LOG4C_INCLUDE_DIRS} )
-	set( CMAKE_INCLUDE_CURRENT_DIR on )
-	set( LIBS ${LIBS} ${LOG4C_LIBRARIES} )
-else( WITH_LOG4C )
-	add_definitions(-DWITHOUT_LOG4C)
-endif( WITH_LOG4C )
-
 # Require C++11 standard by default
 set( CMAKE_CXX_STANDARD 11 )
 set( CMAKE_CXX_STANDARD_REQUIRED on )
-
-# Declare common CFLAGS
-set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic" )
-set( CMAKE_CXX_FLAGS_DEBUG          "-O0 -ggdb" )
-set( CMAKE_CXX_FLAGS_MINSIZEREL     "-Os -g" )
-set( CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g" )
-set( CMAKE_CXX_FLAGS_RELEASE        "-O2" )
 
 # Build libraries
 add_subdirectory( core )

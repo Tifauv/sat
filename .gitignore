@@ -1,5 +1,6 @@
 # Build directory
 build
+build-clang
 
 # CTags index
 tags
