@@ -27,6 +27,7 @@ class Formula;
 class Clause;
 
 namespace solver {
+namespace history {
 
 
 /**
@@ -93,6 +94,7 @@ private:
 	Literal   m_literal;
 };
 
+} // namespace sat::solver::history
 } // namespace sat::solver
 } // namespace sat
 

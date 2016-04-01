@@ -22,6 +22,7 @@
 
 namespace sat {
 namespace solver {
+namespace history {
 
 
 // CONSTRUCTORS
@@ -35,5 +36,6 @@ void RemoveClauseStep::undo(Formula& p_formula) const {
 	p_formula.addClause(clause());
 }
 
+} // namespace sat::solver::history
 } // namespace sat::solver
 } // namespace sat

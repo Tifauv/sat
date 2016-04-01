@@ -24,15 +24,17 @@
 
 
 namespace sat {
+
 	class Literal;
 	class Formula;
-}
 
-
-namespace sat {
 namespace solver {
 
+namespace history {
 	class History;
+}
+	using namespace history;
+
 	class Interpretation;
 	class LiteralSelector;
 	class SolverListener;

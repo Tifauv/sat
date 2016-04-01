@@ -26,6 +26,7 @@ class Formula;
 class Clause;
 
 namespace solver {
+namespace history {
 
 class HistoryStep;
 
@@ -82,6 +83,7 @@ private:
 	std::stack<HistoryStep*> m_steps;
 };
 
+} // namespace sat::solver::history
 } // namespace sat::solver
 } // namespace sat
 

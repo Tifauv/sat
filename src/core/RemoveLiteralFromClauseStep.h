@@ -26,6 +26,7 @@ class Formula;
 class Clause;
 
 namespace solver {
+namespace history {
 
 
 /**
@@ -54,6 +55,7 @@ public:
 	void undo(Formula& p_formula) const override;
 }; // class RemoveLiteralFromClauseStep
 
+} // namespace sat::solver::history
 } // namespace sat::solver
 } // namespace sat
 

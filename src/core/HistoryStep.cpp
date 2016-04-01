@@ -21,6 +21,7 @@
 
 namespace sat {
 namespace solver {
+namespace history {
 
 
 // CONSTRUCTORS
@@ -61,5 +62,6 @@ Literal HistoryStep::literal() const {
 	return m_literal;
 }
 
+} // namespace sat::solver::history
 } // namespace sat::solver
 } // namespace sat
