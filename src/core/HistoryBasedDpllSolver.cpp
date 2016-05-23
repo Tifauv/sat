@@ -168,7 +168,7 @@ void HistoryBasedDpllSolver::main() {
 	m_interpretation.log();
 
 	// Seconde réduction et test du résultat
-	log4c_category_debug(log_dpll, "Second reduction attempt...");
+	log4c_category_info(log_dpll, "Second reduction attempt...");
 	satisfiable = propagate(-chosen_literal, history);
 
 	/*
