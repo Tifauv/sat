@@ -23,12 +23,8 @@
 #include "HistoryBasedDpllSolver.h"
 #include "Interpretation.h"
 #include "VariablePolarityLiteralSelector.h"
-#include "FirstVariableSelector.h"
 #include "MostUsedVariableSelector.h"
-#include "LeastUsedVariableSelector.h"
-#include "PositiveFirstPolaritySelector.h"
 #include "MostUsedPolaritySelector.h"
-#include "LeastUsedPolaritySelector.h"
 #include "BacktrackCounterListener.h"
 
 using Clock = std::chrono::high_resolution_clock;
@@ -82,12 +78,8 @@ int main(int p_argc, char* p_argv[]) {
 		formula.log();
 
 		/* Build the literal selection strategy */
-		//sat::solver::selectors::FirstVariableSelector variableSelector;
 		sat::solver::selectors::MostUsedVariableSelector variableSelector;
-		//sat::solver::selectors::LeastUsedVariableSelector variableSelector;
-		//sat::solver::selectors::PositiveFirstPolaritySelector polaritySelector;
 		sat::solver::selectors::MostUsedPolaritySelector polaritySelector;
-		//sat::solver::selectors::LeastUsedPolaritySelector polaritySelector;
 		sat::solver::VariablePolarityLiteralSelector literalSelector(variableSelector, polaritySelector);
 		
 		/* Build the listeners */
