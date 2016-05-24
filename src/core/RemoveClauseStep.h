@@ -39,7 +39,7 @@ public:
 	 * @param p_clause
 	 *            the recorded clause
 	 */
-	RemoveClauseStep(Clause* p_clause);
+	explicit RemoveClauseStep(Clause* p_clause);
 
 
 	/**
