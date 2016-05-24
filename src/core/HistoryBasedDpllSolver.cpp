@@ -65,7 +65,7 @@ HistoryBasedDpllSolver::~HistoryBasedDpllSolver() {
  *            the listener to add
  */
 void HistoryBasedDpllSolver::addListener(SolverListener& p_listener) {
-	m_listeners.push_back(std::ref(p_listener));
+	m_listeners.addListener(p_listener);
 }
 
 
@@ -88,8 +88,7 @@ const Interpretation& HistoryBasedDpllSolver::getInterpretation() const {
 Interpretation& HistoryBasedDpllSolver::solve() {
 	// Initialize the listeners
 	log4c_category_debug(log_dpll, "Initializing listeners...");
-	for (const auto& listener : m_listeners)
-		listener.get().init();
+	m_listeners.init();
 
 	// Solving
 	log4c_category_debug(log_dpll, "Starting the DPLL algorithm.");
@@ -97,8 +96,7 @@ Interpretation& HistoryBasedDpllSolver::solve() {
 
 	// Cleaning the listeners
 	log4c_category_debug(log_dpll, "Cleaning listeners...");
-	for (const auto& listener : m_listeners)
-		listener.get().cleanup();
+	m_listeners.cleanup();
 
 	return m_interpretation;
 }
@@ -211,8 +209,7 @@ Literal HistoryBasedDpllSolver::decide() {
 
 	// Notify the listeners
 	log4c_category_debug(log_dpll, "Notifying listeners...");
-	for (const auto& listener : m_listeners)
-		listener.get().onDecide(chosen_literal);
+	m_listeners.onDecide(chosen_literal);
 
 	return chosen_literal;
 }
@@ -262,8 +259,7 @@ void HistoryBasedDpllSolver::backtrack(Literal p_literal, History& p_history) {
 
 	// Notify the listeners
 	log4c_category_debug(log_dpll, "Notifying listeners...");
-	for (const auto& listener : m_listeners)
-		listener.get().onBacktrack(p_literal);
+	m_listeners.onBacktrack(p_literal);
 
 	log4c_category_debug(log_dpll, "Restored state:");
 	m_formula.log();
@@ -290,8 +286,7 @@ void HistoryBasedDpllSolver::removeClausesWithLiteral(Literal& p_literal, Histor
 		
 		// Notify the listeners
 		log4c_category_debug(log_dpll, "Notifying listeners...");
-		for (const auto& listener : m_listeners)
-			listener.get().onPropagate(p_literal, clause);
+		m_listeners.onPropagate(p_literal, clause);
 	}
 }
 
@@ -319,8 +314,7 @@ bool HistoryBasedDpllSolver::removeOppositeLiteralFromClauses(Literal& p_literal
 
 		// Notify the listeners
 		log4c_category_debug(log_dpll, "Notifying listeners...");
-		for (const auto& listener : m_listeners)
-			listener.get().onPropagate(p_literal, clause);
+		m_listeners.onPropagate(p_literal, clause);
 
 		// Check if the clause is still satisfiable
 		if (clause->isUnsatisfiable()) {

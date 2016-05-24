@@ -27,6 +27,7 @@ set( SAT_CORE_SRCS
 	RemoveClauseStep.cpp
 	RemoveLiteralFromClauseStep.cpp
 	History.cpp
+	ListenerDispatcher.cpp
 	HistoryBasedDpllSolver.cpp
 	VariablePolarityLiteralSelector.cpp
 	CnfLoader.cpp

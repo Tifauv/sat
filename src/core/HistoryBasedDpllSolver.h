@@ -18,26 +18,25 @@
 #ifndef HISTORY_BASED_DPLL_SOLVER_H
 #define HISTORY_BASED_DPLL_SOLVER_H
 
-#include <vector>
-#include <functional>
 #include "Solver.h"
+#include "ListenerDispatcher.h"
 
 
 namespace sat {
-
-	class Literal;
-	class Formula;
+class Literal;
+class Formula;
 
 namespace solver {
 
 namespace history {
 	class History;
 }
-	using namespace history;
+using namespace history;
+using namespace listeners;
 
-	class Interpretation;
-	class LiteralSelector;
-	class SolverListener;
+class Interpretation;
+class LiteralSelector;
+class SolverListener;
 
 
 /**
@@ -164,8 +163,8 @@ private:
 	/** The literal selection algorithm. */
 	LiteralSelector& m_literalSelector;
 
-	/** The listeners. */
-	std::vector<std::reference_wrapper<SolverListener>> m_listeners;
+	/** The listener dispatcher. */
+	ListenerDispatcher m_listeners;
 };
 
 } // namespace sat::solver
