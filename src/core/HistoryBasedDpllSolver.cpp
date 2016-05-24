@@ -92,7 +92,7 @@ Interpretation& HistoryBasedDpllSolver::solve() {
 
 	// Solving
 	log4c_category_debug(log_dpll, "Starting the DPLL algorithm.");
-	main();
+	dpll();
 
 	// Cleaning the listeners
 	log4c_category_debug(log_dpll, "Cleaning listeners...");
@@ -105,7 +105,7 @@ Interpretation& HistoryBasedDpllSolver::solve() {
 /**
  * Main loop of the Davis-Putnam algorithm.
  */
-void HistoryBasedDpllSolver::main() {
+void HistoryBasedDpllSolver::dpll() {
 	log4c_category_info(log_dpll, "Current state:");
 	m_formula.log();
 	m_interpretation.log();
@@ -148,7 +148,7 @@ void HistoryBasedDpllSolver::main() {
 		log4c_category_info(log_dpll, "Added %sx%u to the interpretation.", (chosen_literal.isNegative() ? "¬" : ""), chosen_literal.id());
 
 		// Loop again
-		main();
+		dpll();
 		if (m_interpretation.isSatisfiable())
 			return;
 		else // Remove the current literal from the interpretation
@@ -178,7 +178,7 @@ void HistoryBasedDpllSolver::main() {
 		log4c_category_info(log_dpll, "Added %sx%u to the interpretation.", (chosen_literal.isPositive() ? "¬" : ""), chosen_literal.id());
 
 		// Loop again
-		main();
+		dpll();
 		if (m_interpretation.isSatisfiable())
 			return;
 		else // Remove the current literal from the interpretation

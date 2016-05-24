@@ -90,7 +90,7 @@ protected:
 	/**
 	 * Main loop of the Davis-Putnam algorithm.
 	 */
-	void main();
+	void dpll();
 
 
 	/**
