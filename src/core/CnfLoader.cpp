@@ -87,7 +87,7 @@ void CnfLoader::loadProblem(char* p_filename, Formula& p_formula) {
  *            the name of the file to load
  * 
  * @return nullptr if p_filename is nullptr,
- *         the interpretation loaded otherwise
+ *         the valuation loaded otherwise
  */
 std::vector<RawLiteral>* CnfLoader::loadSolution(char* p_filename) {
 	log4c_category_debug(log_cnf, "Loading solution from SAT file '%s'...", p_filename);

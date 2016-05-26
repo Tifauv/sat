@@ -17,7 +17,7 @@
 #ifndef Solver_h
 #define Solver_h
 
-#include "Interpretation.h"
+#include "Valuation.h"
 
 
 namespace sat {
@@ -30,19 +30,19 @@ namespace solver {
 class Solver {
 public:
 	/**
-	 * Getter for the internal interpretation.
+	 * Getter for the internal valuation.
 	 * 
-	 * @return the current interpretation at the moment of the call
+	 * @return the current valuation at the moment of the call
 	 */
-	virtual const Interpretation& getInterpretation() const = 0;
+	virtual const Valuation& getValuation() const = 0;
 
 
 	/**
 	 * Common entrypoint for SAT solvers.
 	 * 
-	 * @return an interpretation (satisfiable or not)
+	 * @return a valuation (satisfiable or not)
 	 */
-	virtual Interpretation& solve() = 0;
+	virtual Valuation& solve() = 0;
 };
 
 } // namespace sat::solver

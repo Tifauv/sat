@@ -21,7 +21,7 @@
 #include "log.h"
 #include "CnfLoader.h"
 #include "HistoryBasedDpllSolver.h"
-#include "Interpretation.h"
+#include "Valuation.h"
 #include "VariablePolarityLiteralSelector.h"
 #include "MostUsedVariableSelector.h"
 #include "MostUsedPolaritySelector.h"
@@ -91,14 +91,14 @@ int main(int p_argc, char* p_argv[]) {
 		
 		/* Solve the problem */
 		auto start = Clock::now();
-		sat::solver::Interpretation& interpretation = solver.solve();
+		sat::solver::Valuation& valuation = solver.solve();
 		auto end = Clock::now();
 		
 		/* Output the solution */
 		std::cout << "c Solution to cnf file " << cnfFilename << std::endl;
 		std::cout << "c Backtracked " << backtrackListener.counter() << " times" << std::endl;
 		std::cout << "c Took " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << " milliseconds" << std::endl;
-		interpretation.print();
+		valuation.print();
 	}
 
 	// Clean the logging system

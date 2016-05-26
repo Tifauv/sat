@@ -20,7 +20,7 @@
 #include <algorithm>
 #include "Clause.h"
 #include "Formula.h"
-#include "Interpretation.h"
+#include "Valuation.h"
 #include "History.h"
 #include "LiteralSelector.h"
 #include "SolverListener.h"
@@ -70,12 +70,12 @@ void HistoryBasedDpllSolver::addListener(SolverListener& p_listener) {
 
 
 /**
- * Gives the current interpretation.
+ * Gives the current valuation.
  * 
- * @return the current interpretation
+ * @return the current valuation
  */
-const Interpretation& HistoryBasedDpllSolver::getInterpretation() const {
-	return m_interpretation;
+const Valuation& HistoryBasedDpllSolver::getValuation() const {
+	return m_valuation;
 }
 
 
@@ -83,9 +83,9 @@ const Interpretation& HistoryBasedDpllSolver::getInterpretation() const {
  * Starter function of the solver.
  * Implements Solver.
  * 
- * @return an interpretation (satisfiable or not)
+ * @return a valuation (satisfiable or not)
  */
-Interpretation& HistoryBasedDpllSolver::solve() {
+Valuation& HistoryBasedDpllSolver::solve() {
 	// Initialize the listeners
 	log4c_category_debug(log_dpll, "Initializing listeners...");
 	m_listeners.init();
@@ -98,7 +98,7 @@ Interpretation& HistoryBasedDpllSolver::solve() {
 	log4c_category_debug(log_dpll, "Cleaning listeners...");
 	m_listeners.cleanup();
 
-	return m_interpretation;
+	return m_valuation;
 }
 
 
@@ -108,7 +108,7 @@ Interpretation& HistoryBasedDpllSolver::solve() {
 void HistoryBasedDpllSolver::dpll() {
 	log4c_category_info(log_dpll, "Current state:");
 	m_formula.log();
-	m_interpretation.log();
+	m_valuation.log();
 
 	/*
 	 * Stop case: if there is no clause left, we are done.
@@ -140,55 +140,55 @@ void HistoryBasedDpllSolver::dpll() {
 	bool satisfiable = propagate(chosen_literal, history);
 
 	/*
-	 * The reduced interpretation is satisfiable: we are done.
+	 * The reduced valuation is satisfiable: we are done.
 	 */
 	if (satisfiable) {
-		// Add the chosen literal to the current interpretation
-		m_interpretation.push(chosen_literal);
-		log4c_category_info(log_dpll, "Added %sx%u to the interpretation.", (chosen_literal.isNegative() ? "¬" : ""), chosen_literal.id());
+		// Add the chosen literal to the current valuation
+		m_valuation.push(chosen_literal);
+		log4c_category_info(log_dpll, "Added %sx%u to the valuation.", (chosen_literal.isNegative() ? "¬" : ""), chosen_literal.id());
 
 		// Loop again
 		dpll();
-		if (m_interpretation.isSatisfiable())
+		if (m_valuation.isSatisfiable())
 			return;
-		else // Remove the current literal from the interpretation
-			m_interpretation.pop();
+		else // Remove the current literal from the valuation
+			m_valuation.pop();
 	}
 
 	/*
-	 * The interpretation is not satisfiable: we try with the opposite literal.
+	 * The valuation is not satisfiable: we try with the opposite literal.
 	 */
-	log4c_category_info(log_dpll, "The current interpretation is unsatisfiable.");
+	log4c_category_info(log_dpll, "The current valuation is unsatisfiable.");
 	log4c_category_debug(log_dpll, "Rebuilding the formula before second attempt...");
 	history.replay(m_formula);
 	m_formula.log();
-	m_interpretation.setSatisfiable();
-	m_interpretation.log();
+	m_valuation.setSatisfiable();
+	m_valuation.log();
 
 	// Seconde réduction et test du résultat
 	log4c_category_info(log_dpll, "Second reduction attempt...");
 	satisfiable = propagate(-chosen_literal, history);
 
 	/*
-	 * The interpretation is satisfiable: we are done. We can return the current interpretation.
+	 * The valuation is satisfiable: we are done. We can return the current valuation.
 	 */
 	if (satisfiable) {
-		// Add the chosen literal to the current interpretation
-		m_interpretation.push(-chosen_literal);
-		log4c_category_info(log_dpll, "Added %sx%u to the interpretation.", (chosen_literal.isPositive() ? "¬" : ""), chosen_literal.id());
+		// Add the chosen literal to the current valuation
+		m_valuation.push(-chosen_literal);
+		log4c_category_info(log_dpll, "Added %sx%u to the valuation.", (chosen_literal.isPositive() ? "¬" : ""), chosen_literal.id());
 
 		// Loop again
 		dpll();
-		if (m_interpretation.isSatisfiable())
+		if (m_valuation.isSatisfiable())
 			return;
-		else // Remove the current literal from the interpretation
-			m_interpretation.pop();
+		else // Remove the current literal from the valuation
+			m_valuation.pop();
 	}
 	/*
-	 * The interpretation is also unsatisfiable with the opposite literal.
+	 * The valuation is also unsatisfiable with the opposite literal.
 	 */
 	else
-		m_interpretation.setUnsatisfiable();
+		m_valuation.setUnsatisfiable();
 
 	backtrack(chosen_literal, history);
 }
@@ -263,7 +263,7 @@ void HistoryBasedDpllSolver::backtrack(Literal p_literal, History& p_history) {
 
 	log4c_category_debug(log_dpll, "Restored state:");
 	m_formula.log();
-	m_interpretation.log();
+	m_valuation.log();
 }
 
 

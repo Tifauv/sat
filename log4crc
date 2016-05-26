@@ -20,9 +20,9 @@
 	<layout name="dated" type="dated"/>
 
 	<!-- specific categories =================================== -->
-	<category name="sat.loader.cnf"     priority="warn" appender="stderr"/>
-	<category name="sat.formula"        priority="warn" appender="stderr"/>
-	<category name="sat.interpretation" priority="warn" appender="stderr"/>
-	<category name="sat.history"        priority="warn" appender="stderr"/>
-	<category name="sat.solver.dpll"    priority="warn" appender="stderr"/>
+	<category name="sat.loader.cnf"  priority="warn" appender="stderr"/>
+	<category name="sat.formula"     priority="warn" appender="stderr"/>
+	<category name="sat.valuation"   priority="warn" appender="stderr"/>
+	<category name="sat.history"     priority="warn" appender="stderr"/>
+	<category name="sat.solver.dpll" priority="warn" appender="stderr"/>
 </log4c>

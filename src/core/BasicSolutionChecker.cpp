@@ -54,7 +54,7 @@ BasicSolutionChecker::~BasicSolutionChecker() {
 
 // INTERFACE METHODS
 /**
- * Check whether a given solution is a valid interpretation of the formula.
+ * Check whether a given solution is a valid valuation of the formula.
  * 
  * @param p_solution
  *            the solution to check

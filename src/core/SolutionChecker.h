@@ -33,7 +33,7 @@ namespace checker {
 class SolutionChecker {
 public:
 	/**
-	 * Check whether a given solution is a valid interpretation of a formula.
+	 * Check whether a given solution is a valid valuation of a formula.
 	 * 
 	 * @param p_solution
 	 *            the solution to check

@@ -44,7 +44,7 @@ public:
 	*            the name of the file to load
 	* 
 	* @return nullptr if p_filename is nullptr,
-	*         the interpretation loaded otherwise
+	*         the valuation loaded otherwise
 	*/
 	std::vector<RawLiteral>* loadSolution(char* p_filename);
 

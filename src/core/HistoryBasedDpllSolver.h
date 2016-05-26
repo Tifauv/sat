@@ -34,7 +34,7 @@ namespace history {
 using namespace history;
 using namespace listeners;
 
-class Interpretation;
+class Valuation;
 class LiteralSelector;
 class SolverListener;
 
@@ -71,19 +71,19 @@ public:
 
 
 	/**
-	 * Gives the current interpretation.
+	 * Gives the current valuation.
 	 * 
-	 * @return the current interpretation
+	 * @return the current valuation
 	 */
-	const Interpretation& getInterpretation() const override;
+	const Valuation& getValuation() const override;
 	
 
 	/**
 	 * Common entry point for all solvers.
 	 *
-	 * @return the interpretation found
+	 * @return the Valuation found
 	 */
-	Interpretation& solve() override;
+	Valuation& solve() override;
 
 
 protected:
@@ -157,8 +157,8 @@ private:
 	/** The formula beeing worked on. */
 	Formula& m_formula;
 
-	/** The interpretation . */
-	Interpretation m_interpretation;
+	/** The valuation . */
+	Valuation m_valuation;
 
 	/** The literal selection algorithm. */
 	LiteralSelector& m_literalSelector;

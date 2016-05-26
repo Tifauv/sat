@@ -22,7 +22,7 @@ set( SAT_CORE_SRCS
 	RawLiteral.cpp
 	Clause.cpp
 	Formula.cpp
-	Interpretation.cpp
+	Valuation.cpp
 	HistoryStep.cpp
 	RemoveClauseStep.cpp
 	RemoveLiteralFromClauseStep.cpp

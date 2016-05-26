@@ -14,8 +14,8 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
  */
-#ifndef INTERPRETATION_H
-#define INTERPRETATION_H
+#ifndef VALUATION_H
+#define VALUATION_H
 
 #include <list>
 #include "Literal.h"
@@ -26,38 +26,38 @@ namespace solver {
 
 
 /**
- * A SAT interpretation is a list of literals.
+ * A SAT valuation is a list of literals.
  * Additionnaly, it can be marked unsatisfiable.
  */
-class Interpretation {
+class Valuation {
 public:
 	/**
-	 * Creates an empty satisfiable interpretation.
+	 * Creates an empty satisfiable valuation.
 	 */
-	Interpretation();
+	Valuation();
 
 	/**
-	 * Deletes the interpretation.
+	 * Deletes the valuation.
 	 */
-	~Interpretation();
+	~Valuation();
 
 	/**
-	 * Tells whether this interpretation is satisfiable.
+	 * Tells whether this valuation is satisfiable.
 	 */
 	bool isSatisfiable() const;
 
 	/**
-	 * Tells whether this interpretation is unsatisfiable.
+	 * Tells whether this valuation is unsatisfiable.
 	 */
 	bool isUnsatisfiable() const;
 
 	/**
-	 * Sets the interpretation satisfiable.
+	 * Sets the valuation satisfiable.
 	 */
 	void setSatisfiable();
 
 	/**
-	 * Sets the interpretation unsatisfiable.
+	 * Sets the valuation unsatisfiable.
 	 */
 	void setUnsatisfiable();
 
@@ -75,12 +75,12 @@ public:
 	void pop();
 
 	/**
-	 * Logs the interpretation.
+	 * Logs the valuation.
 	 */
 	void log();
 
 	/**
-	 * Prints the interpretation to stdout.
+	 * Prints the valuation to stdout.
 	 */
 	void print();
 
@@ -95,4 +95,4 @@ private:
 } // namespace sat::solver
 } // namespace sat
 
-#endif // INTERPRETATION_H
+#endif // VALUATION_H

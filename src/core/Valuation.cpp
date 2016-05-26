@@ -14,7 +14,7 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
  */
-#include "Interpretation.h"
+#include "Valuation.h"
 
 #include <iostream>
 #include <log4c.h>
@@ -28,56 +28,56 @@ namespace solver {
 
 // CONSTRUCTORS
 /**
- * Creates an empty satisfiable interpretation.
+ * Creates an empty satisfiable valuation.
  */
-Interpretation::Interpretation() :
+Valuation::Valuation() :
 m_unsatisfiable(false) {
-	log4c_category_debug(log_interpretation, "New interpretation created.");
+	log4c_category_debug(log_valuation, "New valuation created.");
 }
 
 
 // DESTRUCTORS
 /**
- * Deletes the interpretation.
+ * Deletes the valuation.
  */
-Interpretation::~Interpretation() {
-	log4c_category_debug(log_interpretation, "Interpretation deleted.");
+Valuation::~Valuation() {
+	log4c_category_debug(log_valuation, "Valuation deleted.");
 }
 
 
 // GETTERS
 /**
- * Tells whether this interpretation is satisfiable.
+ * Tells whether this valuation is satisfiable.
  */
-bool Interpretation::isSatisfiable() const {
+bool Valuation::isSatisfiable() const {
 	return !m_unsatisfiable;
 }
 
 
 /**
- * Tells whether this interpretation is unsatisfiable.
+ * Tells whether this valuation is unsatisfiable.
  */
-bool Interpretation::isUnsatisfiable() const {
+bool Valuation::isUnsatisfiable() const {
 	return m_unsatisfiable;
 }
 
 
 // SETTERS
 /**
- * Sets the interpretation satisfiable.
+ * Sets the valuation satisfiable.
  */
-void Interpretation::setSatisfiable() {
+void Valuation::setSatisfiable() {
 	m_unsatisfiable = false;
-	log4c_category_debug(log_interpretation, "The interpretation is set satisfiable.");
+	log4c_category_debug(log_valuation, "The valuation is set satisfiable.");
 }
 
 
 /**
- * Sets the interpretation unsatisfiable.
+ * Sets the valuation unsatisfiable.
  */
-void Interpretation::setUnsatisfiable() {
+void Valuation::setUnsatisfiable() {
 	m_unsatisfiable = true;
-	log4c_category_debug(log_interpretation, "The interpretation is set unsatisfiable.");
+	log4c_category_debug(log_valuation, "The valuation is set unsatisfiable.");
 }
 
 
@@ -88,14 +88,14 @@ void Interpretation::setUnsatisfiable() {
  * @param p_literal
  *            the literal to add
  */
-void Interpretation::push(Literal p_literal) {
+void Valuation::push(Literal p_literal) {
 	m_literals.push_back(p_literal);
-	log4c_category_info(log_interpretation, "Literal %sx%u added to the interpretation.", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
+	log4c_category_info(log_valuation, "Literal %sx%u added to the valuation.", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
 	
 	// Reset the satisfiability status
 	if (isUnsatisfiable()) {
 		setSatisfiable();
-		log4c_category_info(log_interpretation, "The interpretation was unsatisfiable, and has now been set satisfiable.");
+		log4c_category_info(log_valuation, "The valuation was unsatisfiable, and has now been set satisfiable.");
 	}
 }
 
@@ -103,41 +103,41 @@ void Interpretation::push(Literal p_literal) {
 /**
  * Removes the last literal.
  */
-void Interpretation::pop() {
+void Valuation::pop() {
 	if (m_literals.empty())
 		return;
 	
 	Literal literal = m_literals.back();
 	m_literals.pop_back();
-	log4c_category_info(log_interpretation, "Literal %sx%u removed from the interpretation.", (literal.isNegative() ? "¬" : ""), literal.id());
+	log4c_category_info(log_valuation, "Literal %sx%u removed from the valuation.", (literal.isNegative() ? "¬" : ""), literal.id());
 }
 
 
 /**
- * Logs the interpretation.
+ * Logs the valuation.
  */
-void Interpretation::log() {
-	if (!log4c_category_is_info_enabled(log_interpretation))
+void Valuation::log() {
+	if (!log4c_category_is_info_enabled(log_valuation))
 		return;
 
 	if (isUnsatisfiable()) {
-		log4c_category_info(log_interpretation, "The interpretation is unsatisfiable.");
+		log4c_category_info(log_valuation, "The valuation is unsatisfiable.");
 		return;
 	}
 
 	// Otherwise, print the elements
-	std::string line = "Interpretation:";
+	std::string line = "Valuation:";
 	for (const auto& literal : m_literals)
 		line.append("  ").append(literal.isNegative() ? "¬" : "").append("x").append(std::to_string(literal.id()));
 
-	log4c_category_info(log_interpretation, line.data());
+	log4c_category_info(log_valuation, line.data());
 }
 
 
 /**
- * Prints the interpretation to stdout.
+ * Prints the valuation to stdout.
  */
-void Interpretation::print() {
+void Valuation::print() {
 	if (isUnsatisfiable()) {
 		std::cout << "s UNSATISFIABLE" << std::endl;
 		return;
