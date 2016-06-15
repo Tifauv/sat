@@ -35,7 +35,7 @@ public:
 
 	Clause* createClause(Id p_clauseId, std::vector<RawLiteral>& p_literals);
 
-	Literal findLiteralFromUnaryClause() const;
+	Literal findUnitLiteral() const;
 
 	void addClause(Clause* p_clause);
 	void addLiteralToClause(Clause* p_clause, Literal p_literal);

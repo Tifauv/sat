@@ -200,10 +200,10 @@ void HistoryBasedDpllSolver::dpll() {
  * @return the literal
  */
 Literal HistoryBasedDpllSolver::decide() {
-	// Search a literal from a unitary clause
-	Literal chosen_literal = m_formula.findLiteralFromUnaryClause();
+	// Search a unit literal
+	Literal chosen_literal = m_formula.findUnitLiteral();
 
-	// If there is no unitary clause, use the selector
+	// If there is no unit literal, use the selector
 	if (chosen_literal.var() == nullptr)
 		chosen_literal = m_literalSelector.getLiteral(m_formula);
 

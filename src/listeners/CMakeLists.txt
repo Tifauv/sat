@@ -19,6 +19,7 @@ include_directories( ${SAT_CORE_INCLUDE} )
 # The sources of SatHeuristics
 set( SAT_LISTENERS_SRCS
 	BacktrackCounterListener.cpp
+	LoggingListener.cpp
 )
 set( SAT_LISTENERS_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR} PARENT_SCOPE )
 

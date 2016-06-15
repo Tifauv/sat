@@ -29,6 +29,8 @@ set( SAT_CORE_SRCS
 	History.cpp
 	ListenerDispatcher.cpp
 	HistoryBasedDpllSolver.cpp
+	SolverStack.cpp
+	IterativeDpllSolver.cpp
 	VariablePolarityLiteralSelector.cpp
 	CnfLoader.cpp
 	BasicSolutionChecker.cpp

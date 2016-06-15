@@ -1,5 +1,5 @@
 /*  Copyright 2016 Olivier Serve
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
@@ -14,8 +14,8 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
  */
-#ifndef NOOP_SOLVER_LISTENER_H
-#define NOOP_SOLVER_LISTENER_H
+#ifndef LoggingListener_h
+#define LoggingListener_h
 
 #include "SolverListener.h"
 
@@ -24,51 +24,17 @@ namespace sat {
 namespace solver {
 namespace listeners {
 
-
-/**
- * Implementation of a SolverListener that does nothing.
- * This is meant to be the base class for all implementations.
- */
-class NoopSolverListener : public SolverListener {
+class LoggingListener : public SolverListener {
 public:
-	/**
-	 * Initialization called before a solving run. 
-	 * Does nothing.
-	 */
-	virtual void init() override;
-
-
-	/**
-	 * Called when a literal has been selected.
-	 * Does nothing.
-	 */
-	virtual void onDecide(Literal&) override;
-
-
-	/**
-	 * Called when a literal has been propagated through the formula.
-	 * Does nothing.
-	 */
-	virtual void onPropagate(Literal&, Clause*) override;
-
-
-	/**
-	 * Called when backtracking from the reduction of the formula by a literal.
-	 * Does nothing.
-	 */
-	virtual void onBacktrack(Literal&) override;
-
-
-	/**
-	 * Cleanup method called after a solving run.
-	 * Does nothing.
-	 */
-	virtual void cleanup() override;
+	void init() override;
+	void onDecide(Literal& p_literal) override;
+	void onPropagate(Literal& p_literal, Clause* p_clause) override;
+	void onBacktrack(Literal& p_literal) override;
+	void cleanup() override;
 };
 
 } // namespace sat::solver::listeners
 } // namespace sat::solver
 } // namespace sat
 
-#endif // NOOP_DPLL_SOLVER_H
-
+#endif // LoggingListener_h

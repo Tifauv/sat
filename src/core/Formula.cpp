@@ -130,12 +130,12 @@ Variable* Formula::findOrCreateVariable(Id p_variableId) {
 
 
 /**
- * Retrieves the literal from a unary clause.
+ * Retrieves a unit literal.
  *
  * @return the literal found,
  *         or a literal pointing to a nullptr variable if there is no unary clause
  */
-Literal Formula::findLiteralFromUnaryClause() const {
+Literal Formula::findUnitLiteral() const {
 	// Search an unary clause
 	auto isUnary([](Clause* clause) { return clause->isUnary(); } );
 	auto iterator = std::find_if(m_clauses.cbegin(), m_clauses.cend(), std::cref(isUnary));
@@ -143,8 +143,9 @@ Literal Formula::findLiteralFromUnaryClause() const {
 	// If a clause has been found, retrieve its literal
 	if (iterator != m_clauses.cend()) {
 		Clause* clause = *iterator;
-		log4c_category_debug(log_formula, "Unary clause %u found.", clause->id());
-		return clause->firstLiteral();
+		Literal unitLiteral = clause->firstLiteral();
+		log4c_category_debug(log_formula, "Unit literal %sx%u found in clause %u.", (unitLiteral.isNegative() ? "¬" : ""), unitLiteral. id(), clause->id());
+		return unitLiteral;
 	}
 
 	// No unary clause found

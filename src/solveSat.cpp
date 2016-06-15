@@ -21,11 +21,13 @@
 #include "log.h"
 #include "CnfLoader.h"
 #include "HistoryBasedDpllSolver.h"
+#include "IterativeDpllSolver.h"
 #include "Valuation.h"
 #include "VariablePolarityLiteralSelector.h"
 #include "MostUsedVariableSelector.h"
 #include "MostUsedPolaritySelector.h"
 #include "BacktrackCounterListener.h"
+#include "LoggingListener.h"
 
 using Clock = std::chrono::high_resolution_clock;
 
@@ -84,10 +86,13 @@ int main(int p_argc, char* p_argv[]) {
 		
 		/* Build the listeners */
 		sat::solver::listeners::BacktrackCounterListener backtrackListener;
+		sat::solver::listeners::LoggingListener loggingListener;
 		
 		/* Build the solver */
-		sat::solver::HistoryBasedDpllSolver solver(formula, literalSelector);
+		//sat::solver::HistoryBasedDpllSolver solver(formula, literalSelector);
+		sat::solver::IterativeDpllSolver solver(formula, literalSelector);
 		solver.addListener(backtrackListener);
+		solver.addListener(loggingListener);
 		
 		/* Solve the problem */
 		auto start = Clock::now();
