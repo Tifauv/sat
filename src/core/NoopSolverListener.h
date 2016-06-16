@@ -49,7 +49,7 @@ public:
 	 * Called when a literal has been propagated through the formula.
 	 * Does nothing.
 	 */
-	virtual void onPropagate(Literal&, Clause*) override;
+	virtual void onPropagate(Literal&) override;
 
 
 	/**

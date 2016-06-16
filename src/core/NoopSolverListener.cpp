@@ -48,7 +48,7 @@ void NoopSolverListener::onDecide(Literal&) {
  * Called when a literal has been propagated through the formula.
  * Does nothing.
  */
-void NoopSolverListener::onPropagate(Literal&, Clause*) {
+void NoopSolverListener::onPropagate(Literal&) {
 	// Do nothing
 }
 

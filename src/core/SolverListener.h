@@ -52,10 +52,8 @@ public:
 	 * 
 	 * @param p_literal
 	 *            the literal propagated through the formula
-	 * @param p_clause
-	 *            the clause modified by the literal
 	 */
-	virtual void onPropagate(Literal& p_literal, Clause* p_clause) = 0;
+	virtual void onPropagate(Literal& p_literal) = 0;
 	
 	
 	/**

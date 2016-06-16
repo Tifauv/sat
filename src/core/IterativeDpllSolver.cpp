@@ -97,6 +97,7 @@ void IterativeDpllSolver::dpll() {
 	Result result = Result::UNDEFINED;
 
 	while (result == Result::UNDEFINED) {
+		m_valuation.log();
 
 		// First, propagate all unitary clauses
 		fullUnitPropagate();
@@ -106,11 +107,12 @@ void IterativeDpllSolver::dpll() {
 			// Stop case
 			if (atTopLevel())
 				result = Result::UNSATISFIABLE;
-			else
+			else {
 				//applyConflict();
 				//applyExplain();
 				//applySubsumption();
 				applyBackjump();
+			}
 		}
 		// General case
 		else {
@@ -129,10 +131,8 @@ void IterativeDpllSolver::dpll() {
 			*/
 
 			// Stop case
-			if (allVariablesAssigned()) {
+			if (allVariablesAssigned())
 				result = Result::SATISFIABLE;
-				backtrackToTop();
-			}
 			else
 				applyDecide();
 		}
@@ -155,6 +155,10 @@ bool IterativeDpllSolver::allVariablesAssigned() const {
 
 
 // Unit propagation
+/**
+ * Runs a unit propagation until there is no more unit literal
+ * or a conflict is found.
+ */
 void IterativeDpllSolver::fullUnitPropagate() {
 	bool satisfiable;
 
@@ -164,6 +168,12 @@ void IterativeDpllSolver::fullUnitPropagate() {
 }
 
 
+/**
+ * Searches a unit literal and propagates it.
+ *
+ * @return true if a unit literal is found and propagated,
+ *         false otherwise
+ */
 bool IterativeDpllSolver::applyUnitPropagate() {
 	// Search a unit literal
 	Literal literal = m_formula.findUnitLiteral();
@@ -178,13 +188,24 @@ bool IterativeDpllSolver::applyUnitPropagate() {
 	m_listeners.onAssert(literal);
 	*/
 
-	applyPropagate(literal);
+	propagateLiteral(literal);
 
 	return true;
 }
 
 
-void IterativeDpllSolver::applyPropagate(Literal p_literal) {
+/**
+ * Propagates a literal.
+ * First, the clauses that contain the literal are removed from the formula.
+ * Then, the opposite of the literal is removed from the clauses that contain it.
+ *
+ * @param p_literal
+ *            the literal to propagate
+ *
+ * @see #removeClausesWithLiteral(Literal&)
+ * @see #removeOppositeLiteralFromClauses(Literal&)
+ */
+void IterativeDpllSolver::propagateLiteral(Literal p_literal) {
 	log4c_category_info(log_dpll, "Propagating literal %sx%u...", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
 
 	// Remove the clauses that contain the same sign as the given literal
@@ -195,6 +216,9 @@ void IterativeDpllSolver::applyPropagate(Literal p_literal) {
 
 	// The variable is now empty, we can remove it
 	m_formula.removeVariable(p_literal.var());
+
+	// Notify the listeners
+	m_listeners.onPropagate(p_literal);
 }
 
 
@@ -202,7 +226,7 @@ void IterativeDpllSolver::applyPropagate(Literal p_literal) {
  * Removes the clauses containing the given literal.
  *
  * @param p_literal
- *            the selected literal
+ *            the literal to propagate
  */
 void IterativeDpllSolver::removeClausesWithLiteral(Literal& p_literal) {
 	log4c_category_info(log_dpll, "Removing clauses that contain the literal %sx%u...", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
@@ -212,10 +236,6 @@ void IterativeDpllSolver::removeClausesWithLiteral(Literal& p_literal) {
 
 		m_formula.removeClause(clause);
 		log4c_category_info(log_dpll, "Clause %u removed.", clause->id());
-
-		// Notify the listeners
-		log4c_category_debug(log_dpll, "Notifying listeners...");
-		m_listeners.onPropagate(p_literal, clause);
 	}
 }
 
@@ -238,10 +258,6 @@ void IterativeDpllSolver::removeOppositeLiteralFromClauses(Literal& p_literal) {
 
 		// Remove the literal from the clause
 		m_formula.removeLiteralFromClause(clause, -p_literal);
-
-		// Notify the listeners
-		log4c_category_debug(log_dpll, "Notifying listeners...");
-		m_listeners.onPropagate(p_literal, clause);
 
 		// Check if the clause is still satisfiable
 		if (clause->isUnsatisfiable()) {
@@ -268,10 +284,22 @@ void IterativeDpllSolver::setConflictClause(Clause* p_clause) {
 }
 
 
+void IterativeDpllSolver::resetConflictClause() {
+	m_conflictClause = nullptr;
+}
+
+
 // Backtracking
 void IterativeDpllSolver::applyBackjump() {
+	resetConflictClause();
+
 	// Current implementation only backtracks once at a time
+	Literal currentLiteral = m_valuation.top();
 	backtrack();
+
+	// Try with the opposite literal
+	propagateLiteral(-currentLiteral);
+	m_valuation.push(-currentLiteral);
 }
 
 
@@ -282,12 +310,6 @@ void IterativeDpllSolver::backtrack() {
 }
 
 
-void IterativeDpllSolver::backtrackToTop() {
-	while (!atTopLevel())
-		backtrack();
-}
-
-
 // Decide
 void IterativeDpllSolver::applyDecide() {
 	m_stack.nextLevel();
@@ -295,7 +317,7 @@ void IterativeDpllSolver::applyDecide() {
 	Literal selectedLiteral = m_literalSelector.getLiteral(m_formula);
 	m_listeners.onDecide(selectedLiteral);
 
-	applyPropagate(selectedLiteral);
+	propagateLiteral(selectedLiteral);
 	m_valuation.push(selectedLiteral);
 }
 

@@ -94,17 +94,17 @@ protected:
 
 	void fullUnitPropagate();
 	bool applyUnitPropagate();
-	void applyPropagate(Literal p_literal);
+	void propagateLiteral(Literal p_literal);
 	void removeClausesWithLiteral(Literal& p_literal);
 	void removeOppositeLiteralFromClauses(Literal& p_literal);
 
 	bool isConflicting() const;
 	Clause* getConflictClause() const;
 	void setConflictClause(Clause*);
+	void resetConflictClause();
 
 	void applyBackjump();
 	void backtrack();
-	void backtrackToTop();
 
 	void applyDecide();
 

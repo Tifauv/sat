@@ -70,6 +70,14 @@ public:
 	void push(Literal p_literal);
 
 	/**
+	 * Gives the last literal.
+	 * This is the one that would be removed by a call to {@link #pop()}.
+	 *
+	 * @return the last literal
+	 */
+	Literal top() const;
+
+	/**
 	 * Removes the last literal.
 	 */          
 	void pop();

@@ -19,7 +19,6 @@
 #include "log4c.h"
 #include "log.h"
 #include "Literal.h"
-#include "Clause.h"
 
 
 namespace sat {
@@ -37,8 +36,8 @@ void LoggingListener::onDecide(Literal& p_literal) {
 }
 
 
-void LoggingListener::onPropagate(Literal& p_literal, Clause* p_clause) {
-	log4c_category_info(log_dpll, "Propagated literal %sx%u to clause %u.", (p_literal.isNegative() ? "¬" : ""), p_literal.id(), p_clause->id());
+void LoggingListener::onPropagate(Literal& p_literal) {
+	log4c_category_info(log_dpll, "Propagated literal %sx%u.", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
 
 }
 

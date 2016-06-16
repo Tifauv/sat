@@ -63,9 +63,9 @@ void ListenerDispatcher::onDecide(Literal& p_literal) {
 /**
  * Called when a literal has been propagated through the formula.
  */
-void ListenerDispatcher::onPropagate(Literal& p_literal, Clause* p_clause) {
+void ListenerDispatcher::onPropagate(Literal& p_literal) {
 	for (const auto& listener : m_listeners)
-		listener.get().onPropagate(p_literal, p_clause);
+		listener.get().onPropagate(p_literal);
 }
 
 

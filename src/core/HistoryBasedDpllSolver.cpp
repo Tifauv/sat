@@ -86,16 +86,12 @@ const Valuation& HistoryBasedDpllSolver::getValuation() const {
  * @return a valuation (satisfiable or not)
  */
 Valuation& HistoryBasedDpllSolver::solve() {
-	// Initialize the listeners
-	log4c_category_debug(log_dpll, "Initializing listeners...");
 	m_listeners.init();
 
 	// Solving
 	log4c_category_debug(log_dpll, "Starting the DPLL algorithm.");
 	dpll();
 
-	// Cleaning the listeners
-	log4c_category_debug(log_dpll, "Cleaning listeners...");
 	m_listeners.cleanup();
 
 	return m_valuation;
@@ -204,12 +200,12 @@ Literal HistoryBasedDpllSolver::decide() {
 	Literal chosen_literal = m_formula.findUnitLiteral();
 
 	// If there is no unit literal, use the selector
-	if (chosen_literal.var() == nullptr)
+	if (chosen_literal.var() == nullptr) {
 		chosen_literal = m_literalSelector.getLiteral(m_formula);
 
-	// Notify the listeners
-	log4c_category_debug(log_dpll, "Notifying listeners...");
-	m_listeners.onDecide(chosen_literal);
+		// Notify the listeners
+		m_listeners.onDecide(chosen_literal);
+	}
 
 	return chosen_literal;
 }
@@ -239,6 +235,9 @@ bool HistoryBasedDpllSolver::propagate(Literal p_literal, History& p_history) {
 	// The variable is now empty, we can remove it
 	m_formula.removeVariable(p_literal.var());
 
+	// Notify the listeners
+	m_listeners.onPropagate(p_literal);
+
 	return satisfiable;
 }
 
@@ -258,7 +257,6 @@ void HistoryBasedDpllSolver::backtrack(Literal p_literal, History& p_history) {
 	p_history.replay(m_formula);
 
 	// Notify the listeners
-	log4c_category_debug(log_dpll, "Notifying listeners...");
 	m_listeners.onBacktrack(p_literal);
 
 	log4c_category_debug(log_dpll, "Restored state:");
@@ -280,13 +278,7 @@ void HistoryBasedDpllSolver::removeClausesWithLiteral(Literal& p_literal, Histor
 	for (Clause* clause = p_literal.occurence(); clause != nullptr; clause = p_literal.occurence()) {
 		log4c_category_debug(log_dpll, "Saving clause %u in the history.", clause->id());
 		p_history.addClause(clause);
-		
 		m_formula.removeClause(clause);
-		log4c_category_info(log_dpll, "Clause %u removed.", clause->id());
-		
-		// Notify the listeners
-		log4c_category_debug(log_dpll, "Notifying listeners...");
-		m_listeners.onPropagate(p_literal, clause);
 	}
 }
 
@@ -311,10 +303,6 @@ bool HistoryBasedDpllSolver::removeOppositeLiteralFromClauses(Literal& p_literal
 		
 		// Remove the literal from the clause
 		m_formula.removeLiteralFromClause(clause, -p_literal);
-
-		// Notify the listeners
-		log4c_category_debug(log_dpll, "Notifying listeners...");
-		m_listeners.onPropagate(p_literal, clause);
 
 		// Check if the clause is still satisfiable
 		if (clause->isUnsatisfiable()) {

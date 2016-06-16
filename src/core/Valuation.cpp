@@ -16,6 +16,7 @@
  */
 #include "Valuation.h"
 
+#include <assert.h>
 #include <iostream>
 #include <log4c.h>
 #include "utils.h"
@@ -101,12 +102,25 @@ void Valuation::push(Literal p_literal) {
 
 
 /**
+ * Gives the last literal.
+ * This is the one that would be removed by a call to {@link #pop()}.
+ *
+ * @return the last literal
+ */
+Literal Valuation::top() const {
+	assert(!m_literals.empty());
+
+	return m_literals.back();
+}
+
+
+/**
  * Removes the last literal.
  */
 void Valuation::pop() {
 	if (m_literals.empty())
 		return;
-	
+
 	Literal literal = m_literals.back();
 	m_literals.pop_back();
 	log4c_category_info(log_valuation, "Literal %sx%u removed from the valuation.", (literal.isNegative() ? "¬" : ""), literal.id());

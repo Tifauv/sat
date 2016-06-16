@@ -28,7 +28,7 @@ class LoggingListener : public SolverListener {
 public:
 	void init() override;
 	void onDecide(Literal& p_literal) override;
-	void onPropagate(Literal& p_literal, Clause* p_clause) override;
+	void onPropagate(Literal& p_literal) override;
 	void onBacktrack(Literal& p_literal) override;
 	void cleanup() override;
 };
