@@ -19,7 +19,7 @@
 #define ITERATIVE_DPLL_SOLVER_H
 
 #include "Solver.h"
-#include "SolverStack.h"
+#include "ResolutionStack.h"
 #include "ListenerDispatcher.h"
 
 
@@ -104,7 +104,6 @@ protected:
 	void resetConflictClause();
 
 	void applyBackjump();
-	void backtrack();
 
 	void applyDecide();
 
@@ -119,8 +118,8 @@ private:
 	/** A conflicting clause. */
 	Clause* m_conflictClause;
 
-	/** The algorithm's processing stack. */
-	SolverStack m_stack;
+	/** The algorithm's resolution stack. */
+	ResolutionStack m_resolution;
 
 	/** The literal selection algorithm. */
 	LiteralSelector& m_literalSelector;

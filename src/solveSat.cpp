@@ -89,10 +89,10 @@ int main(int p_argc, char* p_argv[]) {
 		sat::solver::listeners::LoggingListener loggingListener;
 		
 		/* Build the solver */
-		sat::solver::HistoryBasedDpllSolver solver(formula, literalSelector);
-		//sat::solver::IterativeDpllSolver solver(formula, literalSelector);
+		//sat::solver::HistoryBasedDpllSolver solver(formula, literalSelector);
+		sat::solver::IterativeDpllSolver solver(formula, literalSelector);
 		solver.addListener(backtrackListener);
-		solver.addListener(loggingListener);
+		//solver.addListener(loggingListener);
 		
 		/* Solve the problem */
 		auto start = Clock::now();

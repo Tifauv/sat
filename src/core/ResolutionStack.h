@@ -14,43 +14,64 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
  */
-#ifndef SolverStack_h
-#define SolverStack_h
+#ifndef ResolutionStack_h
+#define ResolutionStack_h
 
-#include <stack>
-#include "History.h"
+#include <deque>
+#include "ResolutionStackLevel.h"
+#include "Valuation.h"
 
 namespace sat {
 namespace solver {
-
-using namespace history;
 
 /**
  * @brief Explicit storage for the stacked histories.
  * It is needed by the iterative solver as opposed to the recursive one which
  * lets the recursion stack manage it.
  */
-class SolverStack {
+class ResolutionStack {
 public:
-	SolverStack();
-	~SolverStack();
+	ResolutionStack();
+	~ResolutionStack();
 
 	/* Level management */
 	void nextLevel();
 	void popLevel();
-	std::stack<History*>::size_type currentLevel() const;
+	std::stack<ResolutionStackLevel*>::size_type currentLevel() const;
 
-	/* Current level operations */
+	/* Current level literals operations */
+	/**
+	 * Appends a literal.
+	 *
+	 * @param p_literal
+	 *            the literal
+	 */
+	void pushLiteral(Literal p_literal);
+
+	/**
+	 * Gives the last decision literal.
+	 * This is the first literal from the current level.
+	 *
+	 * @return the last literal
+	 */
+	Literal lastDecisionLiteral() const;
+
+	void logCurrentLiterals() const;
+
+	/* Current level history operations */
 	void addClause(Clause* p_clause);
 	void addLiteral(Clause* p_clause, Literal p_literal);
 	void replay(Formula& p_formula) const;
 
+	/* Valuation generation */
+	const Valuation generateValuation() const;
+
 private:
 	/** The histories for each level. */
-	std::stack<History*> m_histories;
+	std::deque<ResolutionStackLevel*> m_resolutionLevels;
 };
 
 } // namespace sat::solver
 } // namespace sat
 
-#endif // SolverStack_h
+#endif // ResolutionStack_h

@@ -21,8 +21,8 @@
 
 	<!-- specific categories =================================== -->
 	<category name="sat.loader.cnf"  priority="warn" appender="stderr"/>
-	<category name="sat.formula"     priority="info" appender="stderr"/>
-	<category name="sat.valuation"   priority="info" appender="stderr"/>
-	<category name="sat.history"     priority="info" appender="stderr"/>
-	<category name="sat.solver.dpll" priority="info" appender="stderr"/>
+	<category name="sat.formula"     priority="warn" appender="stderr"/>
+	<category name="sat.valuation"   priority="warn" appender="stderr"/>
+	<category name="sat.history"     priority="warn" appender="stderr"/>
+	<category name="sat.solver.dpll" priority="warn" appender="stderr"/>
 </log4c>

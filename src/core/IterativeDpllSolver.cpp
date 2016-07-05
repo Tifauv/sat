@@ -21,7 +21,6 @@
 #include "Literal.h"
 #include "Clause.h"
 #include "Formula.h"
-#include "SolverStack.h"
 #include "LiteralSelector.h"
 
 namespace sat {
@@ -93,11 +92,10 @@ Valuation& IterativeDpllSolver::solve() {
  * Main loop of the DPLL algorithm.
  */
 void IterativeDpllSolver::dpll() {
-	m_stack.nextLevel();
 	Result result = Result::UNDEFINED;
 
 	while (result == Result::UNDEFINED) {
-		m_valuation.log();
+		m_resolution.logCurrentLiterals();
 
 		// First, propagate all unitary clauses
 		fullUnitPropagate();
@@ -140,12 +138,14 @@ void IterativeDpllSolver::dpll() {
 
 	if (result == Result::UNSATISFIABLE)
 		m_valuation.setUnsatisfiable();
+	else
+		m_valuation = m_resolution.generateValuation();
 }
 
 
 // Recursion control
 bool IterativeDpllSolver::atTopLevel() const {
-	return m_stack.currentLevel() == 0;
+	return m_resolution.currentLevel() == 0;
 }
 
 
@@ -189,7 +189,6 @@ bool IterativeDpllSolver::applyUnitPropagate() {
 	*/
 
 	propagateLiteral(literal);
-
 	return true;
 }
 
@@ -217,6 +216,9 @@ void IterativeDpllSolver::propagateLiteral(Literal p_literal) {
 	// The variable is now empty, we can remove it
 	m_formula.removeVariable(p_literal.var());
 
+	// Add the literal to the current valuation
+	m_resolution.pushLiteral(p_literal);
+
 	// Notify the listeners
 	m_listeners.onPropagate(p_literal);
 }
@@ -232,7 +234,7 @@ void IterativeDpllSolver::removeClausesWithLiteral(Literal& p_literal) {
 	log4c_category_info(log_dpll, "Removing clauses that contain the literal %sx%u...", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
 	for (Clause* clause = p_literal.occurence(); clause != nullptr; clause = p_literal.occurence()) {
 		log4c_category_debug(log_dpll, "Saving clause %u in the history.", clause->id());
-		m_stack.addClause(clause);
+		m_resolution.addClause(clause);
 
 		m_formula.removeClause(clause);
 		log4c_category_info(log_dpll, "Clause %u removed.", clause->id());
@@ -254,7 +256,7 @@ void IterativeDpllSolver::removeOppositeLiteralFromClauses(Literal& p_literal) {
 	log4c_category_info(log_dpll, "Removing literal %sx%u from the clauses.", (p_literal.isPositive() ? "¬" : ""), p_literal.id());
 	for (Clause* clause = p_literal.oppositeOccurence(); clause != nullptr; clause = p_literal.oppositeOccurence()) {
 		log4c_category_debug(log_dpll, "Saving literal %sx%u of clause %u in the history.", (p_literal.isPositive() ? "¬" : ""), p_literal.id(), clause->id());
-		m_stack.addLiteral(clause, -p_literal);
+		m_resolution.addLiteral(clause, -p_literal);
 
 		// Remove the literal from the clause
 		m_formula.removeLiteralFromClause(clause, -p_literal);
@@ -293,32 +295,27 @@ void IterativeDpllSolver::resetConflictClause() {
 void IterativeDpllSolver::applyBackjump() {
 	resetConflictClause();
 
-	// Current implementation only backtracks once at a time
-	Literal currentLiteral = m_valuation.top();
-	backtrack();
+	// Rewind to the last decision literal
+	Literal currentLiteral = m_resolution.lastDecisionLiteral();
+	m_resolution.replay(m_formula);
+	m_resolution.popLevel();
+
+	// Notify the listeners
+	m_listeners.onBacktrack(currentLiteral);
 
 	// Try with the opposite literal
 	propagateLiteral(-currentLiteral);
-	m_valuation.push(-currentLiteral);
-}
-
-
-void IterativeDpllSolver::backtrack() {
-	m_stack.replay(m_formula);
-	m_stack.popLevel();
-	m_valuation.pop();
 }
 
 
 // Decide
 void IterativeDpllSolver::applyDecide() {
-	m_stack.nextLevel();
+	m_resolution.nextLevel();
 
 	Literal selectedLiteral = m_literalSelector.getLiteral(m_formula);
 	m_listeners.onDecide(selectedLiteral);
 
 	propagateLiteral(selectedLiteral);
-	m_valuation.push(selectedLiteral);
 }
 
 
