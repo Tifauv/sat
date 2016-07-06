@@ -26,7 +26,7 @@
 #include "VariablePolarityLiteralSelector.h"
 #include "MostUsedVariableSelector.h"
 #include "MostUsedPolaritySelector.h"
-#include "BacktrackCounterListener.h"
+#include "StatisticsListener.h"
 #include "LoggingListener.h"
 
 using Clock = std::chrono::high_resolution_clock;
@@ -85,13 +85,13 @@ int main(int p_argc, char* p_argv[]) {
 		sat::solver::VariablePolarityLiteralSelector literalSelector(variableSelector, polaritySelector);
 		
 		/* Build the listeners */
-		sat::solver::listeners::BacktrackCounterListener backtrackListener;
 		sat::solver::listeners::LoggingListener loggingListener;
+		sat::solver::listeners::StatisticsListener statsListener;
 		
 		/* Build the solver */
 		//sat::solver::HistoryBasedDpllSolver solver(formula, literalSelector);
 		sat::solver::IterativeDpllSolver solver(formula, literalSelector);
-		solver.addListener(backtrackListener);
+		solver.addListener(statsListener);
 		//solver.addListener(loggingListener);
 		
 		/* Solve the problem */
@@ -101,7 +101,7 @@ int main(int p_argc, char* p_argv[]) {
 		
 		/* Output the solution */
 		std::cout << "c Solution to cnf file " << cnfFilename << std::endl;
-		std::cout << "c Backtracked " << backtrackListener.counter() << " times" << std::endl;
+		std::cout << "c " << statsListener << std::endl;
 		std::cout << "c Took " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << " milliseconds" << std::endl;
 		valuation.print();
 	}

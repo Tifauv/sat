@@ -1,5 +1,5 @@
 /*  Copyright 2016 Olivier Serve
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
@@ -14,47 +14,56 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
  */
-#include "BacktrackCounterListener.h"
+#include "StatisticsListener.h"
+
+#include "Literal.h"
 
 
 namespace sat {
 namespace solver {
 namespace listeners {
 
-
-// CONSTRUCTORS
+// INTERFACE METHODS
 /**
- * Initializes the counter to zero.
+ * Resets the counters to zero.
  */
-BacktrackCounterListener::BacktrackCounterListener() :
-m_counter(0) {
-}
-
-
-// GETTERS
-/**
- * Gives the current value of the counter.
- */
-unsigned int BacktrackCounterListener::counter() {
-	return m_counter;
-}
-
-
-// METHODS
-/**
- * Resets the counter to zero.
- */
-void BacktrackCounterListener::init() {
-	m_counter = 0;
+void StatisticsListener::init() {
+	m_decisions = 0;
+	m_propagations = 0;
+	m_backtracks = 0;
 }
 
 
 /**
- * Called when backtracking from the reduction of the formula by a literal.
- * Increments the counter.
+ * Increments the decision counter.
  */
-void BacktrackCounterListener::onBacktrack(Literal&) {
-	m_counter++;
+void StatisticsListener::onDecide(Literal& p_literal) {
+	m_decisions++;
+}
+
+
+/**
+ * Increments the propagation counter.
+ */
+void StatisticsListener::onPropagate(Literal& p_literal) {
+	m_propagations++;
+}
+
+
+/**
+ * Increments the backtracks counter.
+ */
+void StatisticsListener::onBacktrack(Literal& p_literal) {
+	m_backtracks++;
+}
+
+
+/**
+ * Prints the current statistics to the given stream.
+ */
+std::ostream& operator<<(std::ostream& p_outStream, const StatisticsListener& p_stats) {
+	p_outStream << "Statistics [ Decisions: " << p_stats.m_decisions << "  |  Propagations: " << p_stats.m_propagations << "  |  Backtracks: " << p_stats.m_backtracks << " ]";
+	return p_outStream;
 }
 
 } // namespace sat::solver::listeners

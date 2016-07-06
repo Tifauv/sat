@@ -1,5 +1,5 @@
 /*  Copyright 2016 Olivier Serve
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
@@ -14,54 +14,62 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
  */
-
-#ifndef BACKTRACK_COUNTER_LISTENER_H
-#define BACKTRACK_COUNTER_LISTENER_H
+#ifndef StatisticsListener_h
+#define StatisticsListener_h
 
 #include "NoopSolverListener.h"
+#include <ostream>
 
 
 namespace sat {
 namespace solver {
 namespace listeners {
 
-
 /**
- * Implementation of a SolverListener that counts the number of backtracks.
+ * @brief Statistics gathering listener.
+ * It maintains a counter for each of the listenable operation.
+ * 
  */
-class BacktrackCounterListener : public NoopSolverListener {
+class StatisticsListener : public NoopSolverListener {
 public:
 	/**
-	 * Initializes the counter to zero.
-	 */
-	explicit BacktrackCounterListener();
-
-
-	/**
-	 * Gives the current value of the counter.
-	 */ 
-	unsigned int counter();
-
-
-	/**
-	 * Resets the counter to zero.
+	 * Resets the counters to zero.
 	 */
 	void init() override;
 
+	/**
+	 * Increments the decision counter.
+	 */
+	void onDecide(Literal& p_literal) override;
 
 	/**
-	 * Called when backtracking from the reduction of the formula by a literal.
-	 * Increments the counter.
+	 * Increments the propagation counter.
 	 */
-	void onBacktrack(Literal&) override;
+	void onPropagate(Literal& p_literal) override;
 
+	/**
+	 * Increments the backtracks counter.
+	 */
+	void onBacktrack(Literal& p_literal) override;
+
+	/**
+	 * Prints the current statistics to the given stream.
+	 */
+	friend std::ostream& operator<<(std::ostream& p_outStream, const StatisticsListener& p_stats);
 
 private:
-	unsigned int m_counter;
+	/** The number of decisions made. */
+	unsigned int m_decisions;
+
+	/** The number of literal propagations done. */
+	unsigned int m_propagations;
+
+	/** The number of backtracks. */
+	unsigned int m_backtracks;
 };
 
 } // namespace sat::solver::listeners
 } // namespace sat::solver
 } // namespace sat
 
-#endif // BACKTRACK_COUNTER_LISTENER_H
+#endif // LoggingListener_h
