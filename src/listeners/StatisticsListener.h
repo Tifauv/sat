@@ -14,8 +14,8 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
  */
-#ifndef StatisticsListener_h
-#define StatisticsListener_h
+#ifndef STATISTICS_LISTENER_H
+#define STATISTICS_LISTENER_H
 
 #include "NoopSolverListener.h"
 #include <ostream>
