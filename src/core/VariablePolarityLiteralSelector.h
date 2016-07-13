@@ -14,8 +14,8 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
  */
-#ifndef VariablePolarityLiteralSelector_h
-#define VariablePolarityLiteralSelector_h
+#ifndef VARIABLE_POLARITY_LITERAL_SELECTOR_H
+#define VARIABLE_POLARITY_LITERAL_SELECTOR_H
 
 #include "LiteralSelector.h"
 #include "VariableSelector.h"

@@ -14,8 +14,8 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
  */
-#ifndef ResolutionStack_h
-#define ResolutionStack_h
+#ifndef RESOLLUTION_STACK_H
+#define RESOLLUTION_STACK_H
 
 #include <deque>
 #include "ResolutionStackLevel.h"

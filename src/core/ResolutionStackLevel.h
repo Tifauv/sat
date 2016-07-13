@@ -14,8 +14,8 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
  */
-#ifndef ResolutionStackLevel_h
-#define ResolutionStackLevel_h
+#ifndef RESOLUTION_STACK_LEVEL_H
+#define RESOLUTION_STACK_LEVEL_H
 
 #include <list>
 #include <string>
