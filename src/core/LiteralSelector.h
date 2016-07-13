@@ -14,8 +14,8 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
  */
-#ifndef LiteralSelector_h
-#define LiteralSelector_h
+#ifndef LITERAL_SELECTOR_H
+#define LITERAL_SELECTOR_H
 
 
 namespace sat {

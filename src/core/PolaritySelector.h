@@ -14,8 +14,8 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
  */
-#ifndef PolaritySelector_h
-#define PolaritySelector_h
+#ifndef POLARITY_SELECTOR_H
+#define POLARITY_SELECTOR_H
 
 
 namespace sat {
