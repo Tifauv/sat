@@ -29,6 +29,11 @@
 #include "ChronoListener.h"
 #include "LoggingListener.h"
 
+/* Exit codes */
+#define EXIT_SUCCESS        0
+#define EXIT_NO_ARGS       -1
+#define EXIT_LOG4C_FAILURE -2
+
 
 /**
  * Displays the usage message.
@@ -58,13 +63,13 @@ int main(int p_argc, char* p_argv[]) {
 	// No argument: display usage and exit
 	if (p_argc != 2) {
 		usage(p_argv[0]);
-		exit(-1);
+		exit(EXIT_NO_ARGS);
 	}
 
 	// Initialize the logging system
 	if (log4c_init()) {
 		std::cerr << "Log4c initialization failed, aborting." << std::endl;
-		exit(-2);
+		exit(EXIT_LOG4C_FAILURE);
 	}
 	
 	{
@@ -108,5 +113,5 @@ int main(int p_argc, char* p_argv[]) {
 	if (log4c_fini())
 		std::cerr << "log4c cleanup failed." << std::endl;
 
-	return 0;
+	return EXIT_SUCCESS;
 }
