@@ -14,8 +14,8 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
  */
-#ifndef PositiveFirstPolaritySelector_h
-#define PositiveFirstPolaritySelector_h
+#ifndef POSITIVE_FIRST_POLARITY_SELECTOR_H
+#define POSITIVE_FIRST_POLARITY_SELECTOR_H
 
 #include "PolaritySelector.h"
 
