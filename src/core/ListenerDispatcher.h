@@ -14,7 +14,6 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
  */
-
 #ifndef LISTENER_DISPATCHER_H
 #define LISTENER_DISPATCHER_H
 
