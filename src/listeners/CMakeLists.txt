@@ -20,6 +20,7 @@ include_directories( ${SAT_CORE_INCLUDE} )
 set( SAT_LISTENERS_SRCS
 	LoggingListener.cpp
 	StatisticsListener.cpp
+	ChronoListener.cpp
 )
 set( SAT_LISTENERS_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR} PARENT_SCOPE )
 
