@@ -14,8 +14,8 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
  */
-#ifndef CNFLOADER_H
-#define CNFLOADER_H
+#ifndef CNF_LOADER_H
+#define CNF_LOADER_H
 
 #include <vector>
 #include "Formula.h"

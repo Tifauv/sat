@@ -14,8 +14,8 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
  */
-#ifndef RAWLITERAL_H
-#define RAWLITERAL_H
+#ifndef RAW_LITERAL_H
+#define RAW_LITERAL_H
 
 #include "FormulaObject.h"
 
