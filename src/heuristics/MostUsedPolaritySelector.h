@@ -14,8 +14,8 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
  */
-#ifndef MostUsedPolaritySelector_h
-#define MostUsedPolaritySelector_h
+#ifndef MOST_USED_POLARITY_SELECTOR_H
+#define MOST_USED_POLARITY_SELECTOR_H
 
 #include "PolaritySelector.h"
 
