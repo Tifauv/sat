@@ -14,8 +14,8 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
  */
-#ifndef FirstVariableSelector_h
-#define FirstVariableSelector_h
+#ifndef FIRST_VARIABLE_SELECTOR_H
+#define FIRST_VARIABLE_SELECTOR_H
 
 #include "VariableSelector.h"
 
