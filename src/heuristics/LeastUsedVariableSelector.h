@@ -14,8 +14,8 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
  */
-#ifndef LeastUsedVariableSelector_h
-#define LeastUsedVariableSelector_h
+#ifndef LEAST_USED_VARIABLE_SELECTOR_H
+#define LEAST_USED_VARIABLE_SELECTOR_H
 
 #include "VariableSelector.h"
 
