@@ -14,8 +14,8 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
  */
-#ifndef HistoryStep_h
-#define HistoryStep_h
+#ifndef HISTORY_STEP_H
+#define HISTORY_STEP_H
 
 
 #include "Literal.h"
