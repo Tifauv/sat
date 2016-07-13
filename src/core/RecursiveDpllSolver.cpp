@@ -14,7 +14,7 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
  */
-#include "HistoryBasedDpllSolver.h"
+#include "RecursiveDpllSolver.h"
 
 #include <log4c.h>
 #include <algorithm>
@@ -41,7 +41,7 @@ namespace solver {
  * @param p_literalSelector
  *            the literal selection strategy
  */
-HistoryBasedDpllSolver::HistoryBasedDpllSolver(Formula& p_formula, LiteralSelector& p_literalSelector) : 
+RecursiveDpllSolver::RecursiveDpllSolver(Formula& p_formula, LiteralSelector& p_literalSelector) : 
 m_formula(p_formula),
 m_literalSelector(p_literalSelector) {
 	log4c_category_debug(log_dpll, "DPLL Solver created.");
@@ -52,7 +52,7 @@ m_literalSelector(p_literalSelector) {
 /**
  * Destructor.
  */
-HistoryBasedDpllSolver::~HistoryBasedDpllSolver() {
+RecursiveDpllSolver::~RecursiveDpllSolver() {
 	log4c_category_debug(log_dpll, "DPLL Solver deleted.");
 }
 
@@ -64,7 +64,7 @@ HistoryBasedDpllSolver::~HistoryBasedDpllSolver() {
  * @param p_listener
  *            the listener to add
  */
-void HistoryBasedDpllSolver::addListener(SolverListener& p_listener) {
+void RecursiveDpllSolver::addListener(SolverListener& p_listener) {
 	m_listeners.addListener(p_listener);
 }
 
@@ -74,7 +74,7 @@ void HistoryBasedDpllSolver::addListener(SolverListener& p_listener) {
  * 
  * @return the current valuation
  */
-const Valuation& HistoryBasedDpllSolver::getValuation() const {
+const Valuation& RecursiveDpllSolver::getValuation() const {
 	return m_valuation;
 }
 
@@ -85,7 +85,7 @@ const Valuation& HistoryBasedDpllSolver::getValuation() const {
  * 
  * @return a valuation (satisfiable or not)
  */
-Valuation& HistoryBasedDpllSolver::solve() {
+Valuation& RecursiveDpllSolver::solve() {
 	m_listeners.init();
 
 	// Solving
@@ -101,7 +101,7 @@ Valuation& HistoryBasedDpllSolver::solve() {
 /**
  * Main loop of the Davis-Putnam algorithm.
  */
-void HistoryBasedDpllSolver::dpll() {
+void RecursiveDpllSolver::dpll() {
 	log4c_category_info(log_dpll, "Current state:");
 	m_formula.log();
 	m_valuation.log();
@@ -195,7 +195,7 @@ void HistoryBasedDpllSolver::dpll() {
  * 
  * @return the literal
  */
-Literal HistoryBasedDpllSolver::decide() {
+Literal RecursiveDpllSolver::decide() {
 	// Search a unit literal
 	Literal chosen_literal = m_formula.findUnitLiteral();
 
@@ -223,7 +223,7 @@ Literal HistoryBasedDpllSolver::decide() {
  * @return true if the reduction is satisfiable
  *         false if it is unsatisfiable
  */
-bool HistoryBasedDpllSolver::propagate(Literal p_literal, History& p_history) {
+bool RecursiveDpllSolver::propagate(Literal p_literal, History& p_history) {
 	log4c_category_info(log_dpll, "Propagating literal %sx%u...", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
 
 	// Remove the clauses that contain the same sign as the given literal
@@ -250,7 +250,7 @@ bool HistoryBasedDpllSolver::propagate(Literal p_literal, History& p_history) {
  * @param p_history
  *            the history to replay
  */
-void HistoryBasedDpllSolver::backtrack(Literal p_literal, History& p_history) {
+void RecursiveDpllSolver::backtrack(Literal p_literal, History& p_history) {
 	log4c_category_debug(log_dpll, "Restoring state before backtracking...");
 
 	// Reconstruction du graphe
@@ -273,7 +273,7 @@ void HistoryBasedDpllSolver::backtrack(Literal p_literal, History& p_history) {
  * @param p_history
  *            the history to save the operations
  */
-void HistoryBasedDpllSolver::removeClausesWithLiteral(Literal& p_literal, History& p_history) {
+void RecursiveDpllSolver::removeClausesWithLiteral(Literal& p_literal, History& p_history) {
 	log4c_category_info(log_dpll, "Removing clauses that contain the literal %sx%u...", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
 	for (Clause* clause = p_literal.occurence(); clause != nullptr; clause = p_literal.occurence()) {
 		log4c_category_debug(log_dpll, "Saving clause %u in the history.", clause->id());
@@ -295,7 +295,7 @@ void HistoryBasedDpllSolver::removeClausesWithLiteral(Literal& p_literal, Histor
  * @return true if all the clauses could be reduced without producing an unsatisfiable one;
  *         false if an unsatisfiable clause was produced.
  */
-bool HistoryBasedDpllSolver::removeOppositeLiteralFromClauses(Literal& p_literal, History& p_history) {
+bool RecursiveDpllSolver::removeOppositeLiteralFromClauses(Literal& p_literal, History& p_history) {
 	log4c_category_info(log_dpll, "Removing literal %sx%u from the clauses.", (p_literal.isPositive() ? "¬" : ""), p_literal.id());
 	for (Clause* clause = p_literal.oppositeOccurence(); clause != nullptr; clause = p_literal.oppositeOccurence()) {
 		log4c_category_debug(log_dpll, "Saving literal %sx%u of clause %u in the history.", (p_literal.isPositive() ? "¬" : ""), p_literal.id(), clause->id());

@@ -15,8 +15,8 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
  */
 
-#ifndef HISTORY_BASED_DPLL_SOLVER_H
-#define HISTORY_BASED_DPLL_SOLVER_H
+#ifndef RECURSIVE_DPLL_SOLVER_H
+#define RECURSIVE_DPLL_SOLVER_H
 
 #include "Solver.h"
 #include "ListenerDispatcher.h"
@@ -40,9 +40,9 @@ class SolverListener;
 
 
 /**
- * Implementation of a DPLL solver.
+ * Recursive implementation of a DPLL solver.
  */
-class HistoryBasedDpllSolver : public Solver {
+class RecursiveDpllSolver : public Solver {
 public:
 	/**
 	 * Constructor.
@@ -52,13 +52,13 @@ public:
 	 * @param p_literalSelector
 	 *            the literal selection strategy
 	 */
-	explicit HistoryBasedDpllSolver(Formula& p_formula, LiteralSelector& p_literalSelector);
+	explicit RecursiveDpllSolver(Formula& p_formula, LiteralSelector& p_literalSelector);
 
 
 	/**
 	 * Destructor.
 	 */
-	~HistoryBasedDpllSolver();
+	~RecursiveDpllSolver();
 
 
 	/**
@@ -170,5 +170,5 @@ private:
 } // namespace sat::solver
 } // namespace sat
 
-#endif // HISTORY_BASED_DPLL_SOLVER_H
+#endif // RECURSIVE_DPLL_SOLVER_H
 

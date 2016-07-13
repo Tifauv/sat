@@ -16,20 +16,18 @@
  */
 #include <iostream>
 #include <log4c.h>
-#include <chrono>
 
 #include "log.h"
 #include "CnfLoader.h"
-#include "HistoryBasedDpllSolver.h"
+#include "RecursiveDpllSolver.h"
 #include "IterativeDpllSolver.h"
 #include "Valuation.h"
 #include "VariablePolarityLiteralSelector.h"
 #include "MostUsedVariableSelector.h"
 #include "MostUsedPolaritySelector.h"
 #include "StatisticsListener.h"
+#include "ChronoListener.h"
 #include "LoggingListener.h"
-
-using Clock = std::chrono::high_resolution_clock;
 
 
 /**
@@ -84,25 +82,25 @@ int main(int p_argc, char* p_argv[]) {
 		sat::solver::selectors::MostUsedPolaritySelector polaritySelector;
 		sat::solver::VariablePolarityLiteralSelector literalSelector(variableSelector, polaritySelector);
 		
-		/* Build the listeners */
-		sat::solver::listeners::LoggingListener loggingListener;
-		sat::solver::listeners::StatisticsListener statsListener;
-		
 		/* Build the solver */
-		//sat::solver::HistoryBasedDpllSolver solver(formula, literalSelector);
+		//sat::solver::RecursiveDpllSolver solver(formula, literalSelector);
 		sat::solver::IterativeDpllSolver solver(formula, literalSelector);
-		solver.addListener(statsListener);
-		//solver.addListener(loggingListener);
+
+		/* Build and add the listeners */
+		//sat::solver::listeners::LoggingListener logging;
+		sat::solver::listeners::StatisticsListener stats;
+		sat::solver::listeners::ChronoListener chrono;
+		//solver.addListener(logging);
+		solver.addListener(stats);
+		solver.addListener(chrono);
 		
 		/* Solve the problem */
-		auto start = Clock::now();
 		sat::solver::Valuation& valuation = solver.solve();
-		auto end = Clock::now();
 		
 		/* Output the solution */
 		std::cout << "c Solution to cnf file " << cnfFilename << std::endl;
-		std::cout << "c " << statsListener << std::endl;
-		std::cout << "c Took " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << " milliseconds" << std::endl;
+		std::cout << "c " << stats  << std::endl;
+		std::cout << "c " << chrono << std::endl;
 		valuation.print();
 	}
 
