@@ -14,8 +14,8 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
  */
-#ifndef BASICSOLUTIONCHECKER_H
-#define BASICSOLUTIONCHECKER_H
+#ifndef BASIC_SOLUTION_CHECKER_H
+#define BASIC_SOLUTION_CHECKER_H
 
 #include "SolutionChecker.h"
 #include "RawLiteral.h"
