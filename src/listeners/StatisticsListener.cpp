@@ -37,7 +37,7 @@ void StatisticsListener::init() {
 /**
  * Increments the decision counter.
  */
-void StatisticsListener::onDecide(Literal& p_literal) {
+void StatisticsListener::onDecide(Literal&) {
 	m_decisions++;
 }
 
@@ -45,7 +45,7 @@ void StatisticsListener::onDecide(Literal& p_literal) {
 /**
  * Increments the propagation counter.
  */
-void StatisticsListener::onPropagate(Literal& p_literal) {
+void StatisticsListener::onPropagate(Literal&) {
 	m_propagations++;
 }
 
@@ -53,7 +53,7 @@ void StatisticsListener::onPropagate(Literal& p_literal) {
 /**
  * Increments the backtracks counter.
  */
-void StatisticsListener::onBacktrack(Literal& p_literal) {
+void StatisticsListener::onBacktrack(Literal&) {
 	m_backtracks++;
 }
 
