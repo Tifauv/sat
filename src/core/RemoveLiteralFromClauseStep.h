@@ -14,8 +14,8 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
  */
-#ifndef RemoveLiteralFromClauseStep_h
-#define RemoveLiteralFromClauseStep_h
+#ifndef REMOVE_LITERAL_FROM_CLAUSE_STEP_H
+#define REMOVE_LITERAL_FROM_CLAUSE_STEP_H
 
 #include "HistoryStep.h"
 
