@@ -28,7 +28,7 @@ set( SAT_CORE_SRCS
 	RemoveLiteralFromClauseStep.cpp
 	History.cpp
 	ListenerDispatcher.cpp
-	HistoryBasedDpllSolver.cpp
+	RecursiveDpllSolver.cpp
 	ResolutionStackLevel.cpp
 	ResolutionStack.cpp
 	IterativeDpllSolver.cpp
