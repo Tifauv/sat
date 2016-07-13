@@ -14,8 +14,8 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
  */
-#ifndef LoggingListener_h
-#define LoggingListener_h
+#ifndef LOGGING_LISTENER_H
+#define LOGGING_LISTENER_H
 
 #include "SolverListener.h"
 
