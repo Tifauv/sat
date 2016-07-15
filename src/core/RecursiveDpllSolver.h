@@ -17,8 +17,7 @@
 #ifndef RECURSIVE_DPLL_SOLVER_H
 #define RECURSIVE_DPLL_SOLVER_H
 
-#include "Solver.h"
-#include "ListenerDispatcher.h"
+#include "ListenableSolver.h"
 
 
 namespace sat {
@@ -31,17 +30,15 @@ namespace history {
 	class History;
 }
 using namespace history;
-using namespace listeners;
 
 class Valuation;
 class LiteralSelector;
-class SolverListener;
 
 
 /**
  * Recursive implementation of a DPLL solver.
  */
-class RecursiveDpllSolver : public Solver {
+class RecursiveDpllSolver : public ListenableSolver {
 public:
 	/**
 	 * Constructor.
@@ -58,15 +55,6 @@ public:
 	 * Destructor.
 	 */
 	~RecursiveDpllSolver();
-
-
-	/**
-	 * Register a listener
-	 * 
-	 * @param p_listener
-	 *            the listener to add
-	 */
-	void addListener(SolverListener& p_listener);
 
 
 	/**
@@ -161,9 +149,6 @@ private:
 
 	/** The literal selection algorithm. */
 	LiteralSelector& m_literalSelector;
-
-	/** The listener dispatcher. */
-	ListenerDispatcher m_listeners;
 };
 
 } // namespace sat::solver

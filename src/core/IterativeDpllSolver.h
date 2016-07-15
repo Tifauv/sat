@@ -17,9 +17,8 @@
 #ifndef ITERATIVE_DPLL_SOLVER_H
 #define ITERATIVE_DPLL_SOLVER_H
 
-#include "Solver.h"
+#include "ListenableSolver.h"
 #include "ResolutionStack.h"
-#include "ListenerDispatcher.h"
 
 
 namespace sat {
@@ -28,17 +27,14 @@ class Formula;
 
 namespace solver {
 
-using namespace listeners;
-
 class Valuation;
 class LiteralSelector;
-class SolverListener;
 
 
 /**
  * @brief Iterative implementation of a DPLL solver.
  */
-class IterativeDpllSolver : public Solver {
+class IterativeDpllSolver : public ListenableSolver {
 public:
 	/**
 	 * Constructor.
@@ -55,15 +51,6 @@ public:
 	 * Destructor.
 	 */
 	~IterativeDpllSolver();
-
-
-	/**
-	 * Register a listener
-	 *
-	 * @param p_listener
-	 *            the listener to add
-	 */
-	void addListener(SolverListener& p_listener);
 
 
 	/**
@@ -122,9 +109,6 @@ private:
 
 	/** The literal selection algorithm. */
 	LiteralSelector& m_literalSelector;
-
-	/** The listener dispatcher. */
-	ListenerDispatcher m_listeners;
 };
 
 } // namespace sat::solver

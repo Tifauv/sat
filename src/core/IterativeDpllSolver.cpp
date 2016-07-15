@@ -48,17 +48,6 @@ IterativeDpllSolver::~IterativeDpllSolver() {
 
 // METHODS
 /**
- * Register a listener.
- *
- * @param p_listener
- *            the listener to register
- */
-void IterativeDpllSolver::addListener(SolverListener& p_listener) {
-	m_listeners.addListener(p_listener);
-}
-
-
-/**
  * Gives the current valuation.
  *
  * @return the current valuation
@@ -76,13 +65,13 @@ const Valuation& IterativeDpllSolver::getValuation() const {
  */
 Valuation& IterativeDpllSolver::solve() {
 	// Initialize the listeners
-	m_listeners.init();
+	listeners().init();
 
 	// Solving
 	dpll();
 
 	// Cleaning the listeners
-	m_listeners.cleanup();
+	listeners().cleanup();
 
 	return m_valuation;
 }
@@ -184,8 +173,8 @@ bool IterativeDpllSolver::applyUnitPropagate() {
 
 	// Notify listeners
 	/* TODO enable later when the API is cleaned
-	m_listeners.onPropagate(literal);
-	m_listeners.onAssert(literal);
+	dispatcher().onPropagate(literal);
+	dispatcher().onAssert(literal);
 	*/
 
 	propagateLiteral(literal);
@@ -220,7 +209,7 @@ void IterativeDpllSolver::propagateLiteral(Literal p_literal) {
 	m_resolution.pushLiteral(p_literal);
 
 	// Notify the listeners
-	m_listeners.onPropagate(p_literal);
+	listeners().onPropagate(p_literal);
 }
 
 
@@ -301,7 +290,7 @@ void IterativeDpllSolver::applyBackjump() {
 	m_resolution.popLevel();
 
 	// Notify the listeners
-	m_listeners.onBacktrack(currentLiteral);
+	listeners().onBacktrack(currentLiteral);
 
 	// Try with the opposite literal
 	propagateLiteral(-currentLiteral);
@@ -313,7 +302,7 @@ void IterativeDpllSolver::applyDecide() {
 	m_resolution.nextLevel();
 
 	Literal selectedLiteral = m_literalSelector.getLiteral(m_formula);
-	m_listeners.onDecide(selectedLiteral);
+	listeners().onDecide(selectedLiteral);
 
 	propagateLiteral(selectedLiteral);
 }

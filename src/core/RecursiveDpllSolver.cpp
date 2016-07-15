@@ -23,7 +23,6 @@
 #include "Valuation.h"
 #include "History.h"
 #include "LiteralSelector.h"
-#include "SolverListener.h"
 #include "utils.h"
 #include "log.h"
 
@@ -59,17 +58,6 @@ RecursiveDpllSolver::~RecursiveDpllSolver() {
 
 // METHODS
 /**
- * Register a listener
- * 
- * @param p_listener
- *            the listener to add
- */
-void RecursiveDpllSolver::addListener(SolverListener& p_listener) {
-	m_listeners.addListener(p_listener);
-}
-
-
-/**
  * Gives the current valuation.
  * 
  * @return the current valuation
@@ -86,13 +74,13 @@ const Valuation& RecursiveDpllSolver::getValuation() const {
  * @return a valuation (satisfiable or not)
  */
 Valuation& RecursiveDpllSolver::solve() {
-	m_listeners.init();
+	listeners().init();
 
 	// Solving
 	log4c_category_debug(log_dpll, "Starting the DPLL algorithm.");
 	dpll();
 
-	m_listeners.cleanup();
+	listeners().cleanup();
 
 	return m_valuation;
 }
@@ -204,7 +192,7 @@ Literal RecursiveDpllSolver::decide() {
 		chosen_literal = m_literalSelector.getLiteral(m_formula);
 
 		// Notify the listeners
-		m_listeners.onDecide(chosen_literal);
+		listeners().onDecide(chosen_literal);
 	}
 
 	return chosen_literal;
@@ -236,7 +224,7 @@ bool RecursiveDpllSolver::propagate(Literal p_literal, History& p_history) {
 	m_formula.removeVariable(p_literal.var());
 
 	// Notify the listeners
-	m_listeners.onPropagate(p_literal);
+	listeners().onPropagate(p_literal);
 
 	return satisfiable;
 }
@@ -257,7 +245,7 @@ void RecursiveDpllSolver::backtrack(Literal p_literal, History& p_history) {
 	p_history.replay(m_formula);
 
 	// Notify the listeners
-	m_listeners.onBacktrack(p_literal);
+	listeners().onBacktrack(p_literal);
 
 	log4c_category_debug(log_dpll, "Restored state:");
 	m_formula.log();

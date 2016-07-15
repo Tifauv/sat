@@ -1,4 +1,4 @@
-/*  Copyright 2015 Olivier Serve
+/*  Copyright 2016 Olivier Serve
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -14,38 +14,32 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
  */
-#ifndef SOLVER_H
-#define SOLVER_H
-
-#include "Valuation.h"
+#include "ListenableSolver.h"
 
 
 namespace sat {
 namespace solver {
 
+// METHODS
+/**
+ * Register a listener.
+ *
+ * @param p_listener
+ *            the listener to register
+ */
+void ListenableSolver::addListener(SolverListener& p_listener) {
+	m_listeners.addListener(p_listener);
+}
+
 
 /**
- * Interface for SAT solvers.
+ * @brief ListenableSolver::dispatcher
+ * @return
  */
-class Solver {
-public:
-	/**
-	 * Getter for the internal valuation.
-	 * 
-	 * @return the current valuation at the moment of the call
-	 */
-	virtual const Valuation& getValuation() const = 0;
+ListenerDispatcher& ListenableSolver::listeners() {
+	return m_listeners;
+}
 
-
-	/**
-	 * Common entrypoint for SAT solvers.
-	 * 
-	 * @return a valuation (satisfiable or not)
-	 */
-	virtual Valuation& solve() = 0;
-};
 
 } // namespace sat::solver
 } // namespace sat
-
-#endif // SOLVER_H
