@@ -80,7 +80,8 @@ protected:
 
 	void fullUnitPropagate();
 	bool applyUnitPropagate();
-	void propagateLiteral(Literal p_literal);
+	void assertLiteral(Literal p_literal);
+	void reduceFormula(Literal p_literal);
 	void removeClausesWithLiteral(Literal& p_literal);
 	void removeOppositeLiteralFromClauses(Literal& p_literal);
 

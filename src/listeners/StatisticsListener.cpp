@@ -30,13 +30,14 @@ namespace listeners {
 void StatisticsListener::init() {
 	m_decisions = 0;
 	m_propagations = 0;
+	m_assertions = 0;
 	m_conflicts = 0;
 	m_backtracks = 0;
 }
 
 
 /**
- * Increments the decision counter.
+ * Increments the literal decision counter.
  */
 void StatisticsListener::onDecide(Literal&) {
 	m_decisions++;
@@ -44,10 +45,18 @@ void StatisticsListener::onDecide(Literal&) {
 
 
 /**
- * Increments the propagation counter.
+ * Increments the unit propagation counter.
  */
 void StatisticsListener::onPropagate(Literal&) {
 	m_propagations++;
+}
+
+
+/**
+ * Increments the literal assertion counter.
+ */
+void StatisticsListener::onAssert(Literal&) {
+	m_assertions++;
 }
 
 
@@ -72,10 +81,11 @@ void StatisticsListener::onBacktrack(Literal&) {
  */
 std::ostream& operator<<(std::ostream& p_outStream, const StatisticsListener& p_stats) {
 	p_outStream << "Statistics [ " <<
-				   p_stats.m_decisions    << " decisions  |  " <<
-				   p_stats.m_propagations << " propagations  |  " <<
-				   p_stats.m_conflicts    << " conflicts  |  " <<
-				   p_stats.m_backtracks   << " backtracks ]";
+			p_stats.m_decisions    << " decisions  |  "    <<
+			p_stats.m_propagations << " propagations  |  " <<
+			p_stats.m_assertions   << " assertions  |  "   <<
+			p_stats.m_conflicts    << " conflicts  |  "    <<
+			p_stats.m_backtracks   << " backtracks ]";
 	return p_outStream;
 }
 

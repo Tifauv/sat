@@ -45,10 +45,19 @@ void NoopSolverListener::onDecide(Literal&) {
 
 
 /**
- * Called when a literal has been propagated through the formula.
+ * Called when a unit-literal has been propagated.
  * Does nothing.
  */
 void NoopSolverListener::onPropagate(Literal&) {
+	// Do nothing
+}
+
+
+/**
+ * Called when a literal has been used to reduce the formula.
+ * Does nothing.
+ */
+void NoopSolverListener::onAssert(Literal&) {
 	// Do nothing
 }
 

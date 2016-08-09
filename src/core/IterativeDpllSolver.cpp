@@ -172,12 +172,9 @@ bool IterativeDpllSolver::applyUnitPropagate() {
 		return false;
 
 	// Notify listeners
-	/* TODO enable later when the API is cleaned
-	dispatcher().onPropagate(literal);
-	dispatcher().onAssert(literal);
-	*/
+	listeners().onPropagate(literal);
 
-	propagateLiteral(literal);
+	assertLiteral(literal);
 	return true;
 }
 
@@ -193,9 +190,15 @@ bool IterativeDpllSolver::applyUnitPropagate() {
  * @see #removeClausesWithLiteral(Literal&)
  * @see #removeOppositeLiteralFromClauses(Literal&)
  */
-void IterativeDpllSolver::propagateLiteral(Literal p_literal) {
-	log4c_category_info(log_dpll, "Propagating literal %sx%u...", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
+void IterativeDpllSolver::assertLiteral(Literal p_literal) {
+	reduceFormula(p_literal);
 
+	// Notify the listeners
+	listeners().onAssert(p_literal);
+}
+
+
+void IterativeDpllSolver::reduceFormula(Literal p_literal) {
 	// Remove the clauses that contain the same sign as the given literal
 	removeClausesWithLiteral(p_literal);
 
@@ -207,9 +210,6 @@ void IterativeDpllSolver::propagateLiteral(Literal p_literal) {
 
 	// Add the literal to the current valuation
 	m_resolution.pushLiteral(p_literal);
-
-	// Notify the listeners
-	listeners().onPropagate(p_literal);
 }
 
 
@@ -300,7 +300,7 @@ void IterativeDpllSolver::applyBackjump() {
 	listeners().onBacktrack(currentLiteral);
 
 	// Try with the opposite literal
-	propagateLiteral(-currentLiteral);
+	reduceFormula(-currentLiteral);
 }
 
 
@@ -311,7 +311,7 @@ void IterativeDpllSolver::applyDecide() {
 	Literal selectedLiteral = m_literalSelector.getLiteral(m_formula);
 	listeners().onDecide(selectedLiteral);
 
-	propagateLiteral(selectedLiteral);
+	assertLiteral(selectedLiteral);
 }
 
 

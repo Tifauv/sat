@@ -61,10 +61,15 @@ public:
 
 
 	/**
-	 * Called when a literal has been propagated through the formula.
+	 * Called when a unit-literal has been propagated.
 	 */
 	void onPropagate(Literal&) override;
 
+
+	/**
+	 * Called when a literal has been used to reduce the formula.
+	 */
+	void onAssert(Literal&) override;
 
 	/**
 	 * Called when a conflict has been reached.

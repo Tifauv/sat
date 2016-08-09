@@ -24,6 +24,16 @@ set( SAT_HEURISTICS_SRCS
 	PositiveFirstPolaritySelector.cpp
 	MostUsedPolaritySelector.cpp
 	LeastUsedPolaritySelector.cpp
+	PolarityCachingSelector.cpp
+)
+set( SAT_HEURISTICS_HEADERS
+	FirstVariableSelector.h
+	MostUsedVariableSelector.h
+	LeastUsedVariableSelector.h
+	PositiveFirstPolaritySelector.h
+	MostUsedPolaritySelector.h
+	LeastUsedPolaritySelector.h
+	PolarityCachingSelector.h
 )
 set( SAT_HEURISTICS_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR} PARENT_SCOPE )
 

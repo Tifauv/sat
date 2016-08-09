@@ -14,29 +14,38 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
  */
-#ifndef LOGGING_LISTENER_H
-#define LOGGING_LISTENER_H
+#include "PolarityCachingSelector.h"
 
-#include "SolverListener.h"
-
+#include "Literal.h"
+#include "utils.h"
 
 namespace sat {
 namespace solver {
-namespace listeners {
+namespace selectors {
 
-class LoggingListener : public SolverListener {
-public:
-	void init() override;
-	void onDecide(Literal& p_literal) override;
-	void onPropagate(Literal& p_literal) override;
-	void onAssert(Literal& p_literal) override;
-	void onConflict(Clause* p_clause) override;
-	void onBacktrack(Literal& p_literal) override;
-	void cleanup() override;
-};
+// CONSTRUCTOR
+PolarityCachingSelector::PolarityCachingSelector(PolaritySelector& p_defaultSelector) :
+	m_defaultSelector(p_defaultSelector) {
+}
 
-} // namespace sat::solver::listeners
+
+// PolaritySelector interface
+Literal PolarityCachingSelector::getLiteral(Variable* p_variable) {
+	// If a polarity has already been cached, return it
+	auto iter = m_preferredPolarity.find(p_variable->id());
+	if (iter != m_preferredPolarity.end())
+		return Literal(p_variable, iter->second);
+
+	// Otherwise, use the default selector
+	return m_defaultSelector.getLiteral(p_variable);
+}
+
+
+// SolverListener interface
+void PolarityCachingSelector::onAssert(Literal& p_literal) {
+	m_preferredPolarity[p_literal.id()] = p_literal.isPositive();
+}
+
+} // namespace sat::solver::selectors
 } // namespace sat::solver
 } // namespace sat
-
-#endif // LoggingListener_h

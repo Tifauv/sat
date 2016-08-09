@@ -14,29 +14,39 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
  */
-#ifndef LOGGING_LISTENER_H
-#define LOGGING_LISTENER_H
+#ifndef POLARITY_CACHING_SELECTOR_H
+#define POLARITY_CACHING_SELECTOR_H
 
-#include "SolverListener.h"
+#include <unordered_map>
+#include "PolaritySelector.h"
+#include "NoopSolverListener.h"
+
+class Variable;
+class Literal;
 
 
 namespace sat {
 namespace solver {
-namespace listeners {
+namespace selectors {
 
-class LoggingListener : public SolverListener {
+class PolarityCachingSelector : public PolaritySelector, public listeners::NoopSolverListener {
 public:
-	void init() override;
-	void onDecide(Literal& p_literal) override;
-	void onPropagate(Literal& p_literal) override;
+	PolarityCachingSelector(PolaritySelector& p_defaultSelector);
+
+	Literal getLiteral(Variable *p_variable) override;
+
 	void onAssert(Literal& p_literal) override;
-	void onConflict(Clause* p_clause) override;
-	void onBacktrack(Literal& p_literal) override;
-	void cleanup() override;
+
+private:
+	/** The cache of polarities used. */
+	std::unordered_map<unsigned int, int> m_preferredPolarity;
+
+	/** The default polarity selector. */
+	PolaritySelector& m_defaultSelector;
 };
 
-} // namespace sat::solver::listeners
+} // namespace sat::solver::selectors
 } // namespace sat::solver
 } // namespace sat
 
-#endif // LoggingListener_h
+#endif // POLARITYCACHINGSELECTOR_H

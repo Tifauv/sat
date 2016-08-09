@@ -47,12 +47,21 @@ public:
 	
 	
 	/**
-	 * Called when the formula has been reduced by a literal.
+	 * Called when a unit-literal has been propagated.
 	 * 
 	 * @param p_literal
 	 *            the literal propagated through the formula
 	 */
 	virtual void onPropagate(Literal& p_literal) = 0;
+
+
+	/**
+	 * Called when a literal has been used to reduce the formula.
+	 *
+	 * @param p_literal
+	 *            the literal that has been used
+	 */
+	virtual void onAssert(Literal& p_literal) = 0;
 	
 
 	/**

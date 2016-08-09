@@ -38,6 +38,37 @@ set( SAT_CORE_SRCS
 	BasicSolutionChecker.cpp
 	NoopSolverListener.cpp
 )
+set( SAT_CORE_HEADERS
+	log.h
+	utils.h
+	FormulaObject.h
+	Variable.h
+	Literal.h
+	RawLiteral.h
+	Clause.h
+	Formula.h
+	Valuation.h
+	VariableSelector.h
+	PolaritySelector.h
+	LiteralSelector.h
+	SolverListener.h
+	Solver.h
+	HistoryStep.h
+	RemoveClauseStep.h
+	RemoveLiteralFromClauseStep.h
+	History.h
+	ListenerDispatcher.h
+	ListenableSolver.h
+	RecursiveDpllSolver.h
+	ResolutionStackLevel.h
+	ResolutionStack.h
+	IterativeDpllSolver.h
+	VariablePolarityLiteralSelector.h
+	CnfLoader.h
+	SolutionChecker.h
+	BasicSolutionChecker.h
+	NoopSolverListener.h
+)
 set( SAT_CORE_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR} PARENT_SCOPE )
 
 # Build libSatCore

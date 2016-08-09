@@ -38,7 +38,16 @@ void LoggingListener::onDecide(Literal& p_literal) {
 
 void LoggingListener::onPropagate(Literal& p_literal) {
 	log4c_category_info(log_dpll, "Propagated literal %sx%u.", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
+}
 
+
+void LoggingListener::onAssert(Literal& p_literal) {
+	log4c_category_info(log_dpll, "Asserted literal %sx%u.", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
+}
+
+
+void LoggingListener::onConflict(Clause* p_clause) {
+	log4c_category_info(log_dpll, "Clause #%u generated a conflict.", p_clause->id());
 }
 
 

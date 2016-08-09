@@ -46,10 +46,17 @@ public:
 
 
 	/**
-	 * Called when a literal has been propagated through the formula.
+	 * Called when a unit-literal has been propagated.
 	 * Does nothing.
 	 */
 	virtual void onPropagate(Literal&) override;
+
+
+	/**
+	 * Called when a literal has been used to reduce the formula.
+	 * Does nothing.
+	 */
+	virtual void onAssert(Literal&) override;
 
 
 	/**

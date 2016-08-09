@@ -38,14 +38,19 @@ public:
 	void init() override;
 
 	/**
-	 * Increments the decision counter.
+	 * Increments the literal decision counter.
 	 */
 	void onDecide(Literal&) override;
 
 	/**
-	 * Increments the propagation counter.
+	 * Increments the unit propagation counter.
 	 */
 	void onPropagate(Literal&) override;
+
+	/**
+	 * Increments the literal assertion counter.
+	 */
+	void onAssert(Literal&) override;
 
 	/**
 	 * Increments the conflicts counter.
@@ -63,11 +68,14 @@ public:
 	friend std::ostream& operator<<(std::ostream& p_outStream, const StatisticsListener& p_stats);
 
 private:
-	/** The number of decisions made. */
+	/** The number of literal decisions made. */
 	unsigned int m_decisions;
 
-	/** The number of literal propagations done. */
+	/** The number of unit propagations done. */
 	unsigned int m_propagations;
+
+	/** The number of literal asserted. */
+	unsigned int m_assertions;
 
 	/** The number of conflicts. */
 	unsigned int m_conflicts;
