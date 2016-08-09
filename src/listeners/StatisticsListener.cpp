@@ -71,11 +71,11 @@ void StatisticsListener::onBacktrack(Literal&) {
  * Prints the current statistics to the given stream.
  */
 std::ostream& operator<<(std::ostream& p_outStream, const StatisticsListener& p_stats) {
-	p_outStream << "Statistics [ Decisions: " << p_stats.m_decisions <<
-				   "  |  Propagations: " << p_stats.m_propagations <<
-				   "  |  Conflicts: " << p_stats.m_conflicts <<
-				   "  |  Backtracks: " << p_stats.m_backtracks <<
-				   " ]";
+	p_outStream << "Statistics [ " <<
+				   p_stats.m_decisions    << " decisions  |  " <<
+				   p_stats.m_propagations << " propagations  |  " <<
+				   p_stats.m_conflicts    << " conflicts  |  " <<
+				   p_stats.m_backtracks   << " backtracks ]";
 	return p_outStream;
 }
 
