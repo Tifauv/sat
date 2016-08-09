@@ -50,35 +50,36 @@ public:
 
 	/**
 	 * Initialization called before a solving run.
-	 * Does nothing.
 	 */
 	void init() override;
 
 
 	/**
 	 * Called when a literal has been selected.
-	 * Does nothing.
 	 */
 	void onDecide(Literal&) override;
 
 
 	/**
 	 * Called when a literal has been propagated through the formula.
-	 * Does nothing.
 	 */
 	void onPropagate(Literal&) override;
 
 
 	/**
+	 * Called when a conflict has been reached.
+	 */
+	void onConflict(Clause*) override;
+
+
+	/**
 	 * Called when backtracking from the reduction of the formula by a literal.
-	 * Does nothing.
 	 */
 	void onBacktrack(Literal&) override;
 
 
 	/**
 	 * Cleanup method called after a solving run.
-	 * Does nothing.
 	 */
 	void cleanup() override;
 

@@ -70,6 +70,15 @@ void ListenerDispatcher::onPropagate(Literal& p_literal) {
 
 
 /**
+ * Called when a conflict clause has been produced.
+ */
+void ListenerDispatcher::onConflict(Clause* p_clause) {
+	for (const auto& listener : m_listeners)
+		listener.get().onConflict(p_clause);
+}
+
+
+/**
  * Called when backtracking from the reduction of the formula by a literal.
  */
 void ListenerDispatcher::onBacktrack(Literal& p_literal) {

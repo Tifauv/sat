@@ -53,6 +53,13 @@ public:
 
 
 	/**
+	 * Called when a conflict has been reached.
+	 * Does nothing.
+	 */
+	virtual void onConflict(Clause*) override;
+
+
+	/**
 	 * Called when backtracking from the reduction of the formula by a literal.
 	 * Does nothing.
 	 */

@@ -95,7 +95,7 @@ void IterativeDpllSolver::dpll() {
 			if (atTopLevel())
 				result = Result::UNSATISFIABLE;
 			else {
-				//applyConflict();
+				applyConflict();
 				//applyExplain();
 				//applySubsumption();
 				applyBackjump();
@@ -280,10 +280,17 @@ void IterativeDpllSolver::resetConflictClause() {
 }
 
 
+void IterativeDpllSolver::applyConflict() {
+	// Notify the listeners
+	listeners().onConflict(getConflictClause());
+
+	// Clean the conflict clause
+	resetConflictClause();
+}
+
+
 // Backtracking
 void IterativeDpllSolver::applyBackjump() {
-	resetConflictClause();
-
 	// Rewind to the last decision literal
 	Literal currentLiteral = m_resolution.lastDecisionLiteral();
 	m_resolution.replay(m_formula);

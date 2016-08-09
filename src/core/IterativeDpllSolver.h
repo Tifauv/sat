@@ -88,6 +88,7 @@ protected:
 	Clause* getConflictClause() const;
 	void setConflictClause(Clause*);
 	void resetConflictClause();
+	void applyConflict();
 
 	void applyBackjump();
 

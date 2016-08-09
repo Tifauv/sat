@@ -54,6 +54,15 @@ void NoopSolverListener::onPropagate(Literal&) {
 
 
 /**
+ * Called when a conflict has been reached.
+ * Does nothing.
+ */
+void NoopSolverListener::onConflict(Clause*) {
+	// Do nothing
+}
+
+
+/**
  * Called when backtracking from the reduction of the formula by a literal.
  * Does nothing.
  */

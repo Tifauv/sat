@@ -40,17 +40,22 @@ public:
 	/**
 	 * Increments the decision counter.
 	 */
-	void onDecide(Literal& p_literal) override;
+	void onDecide(Literal&) override;
 
 	/**
 	 * Increments the propagation counter.
 	 */
-	void onPropagate(Literal& p_literal) override;
+	void onPropagate(Literal&) override;
+
+	/**
+	 * Increments the conflicts counter.
+	 */
+	void onConflict(Clause*) override;
 
 	/**
 	 * Increments the backtracks counter.
 	 */
-	void onBacktrack(Literal& p_literal) override;
+	void onBacktrack(Literal&) override;
 
 	/**
 	 * Prints the current statistics to the given stream.
@@ -63,6 +68,9 @@ private:
 
 	/** The number of literal propagations done. */
 	unsigned int m_propagations;
+
+	/** The number of conflicts. */
+	unsigned int m_conflicts;
 
 	/** The number of backtracks. */
 	unsigned int m_backtracks;

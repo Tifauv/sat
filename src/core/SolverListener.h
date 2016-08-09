@@ -54,7 +54,17 @@ public:
 	 */
 	virtual void onPropagate(Literal& p_literal) = 0;
 	
+
+	/**
+	 * Called when a conflict has been reached.
+	 * The clause that generated the conflict is given as parameter.
+	 *
+	 * @param p_conflictClause
+	 *            the clause that generated the conflict
+	 */
+	virtual void onConflict(Clause* p_conflictClause) = 0;
 	
+
 	/**
 	 * Called when backtracking from the reduction of the formula by a literal.
 	 * 

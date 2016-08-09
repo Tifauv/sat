@@ -30,6 +30,7 @@ namespace listeners {
 void StatisticsListener::init() {
 	m_decisions = 0;
 	m_propagations = 0;
+	m_conflicts = 0;
 	m_backtracks = 0;
 }
 
@@ -51,6 +52,14 @@ void StatisticsListener::onPropagate(Literal&) {
 
 
 /**
+ * Increments the conflicts counter.
+ */
+void StatisticsListener::onConflict(Clause*) {
+	m_conflicts++;
+}
+
+
+/**
  * Increments the backtracks counter.
  */
 void StatisticsListener::onBacktrack(Literal&) {
@@ -62,7 +71,11 @@ void StatisticsListener::onBacktrack(Literal&) {
  * Prints the current statistics to the given stream.
  */
 std::ostream& operator<<(std::ostream& p_outStream, const StatisticsListener& p_stats) {
-	p_outStream << "Statistics [ Decisions: " << p_stats.m_decisions << "  |  Propagations: " << p_stats.m_propagations << "  |  Backtracks: " << p_stats.m_backtracks << " ]";
+	p_outStream << "Statistics [ Decisions: " << p_stats.m_decisions <<
+				   "  |  Propagations: " << p_stats.m_propagations <<
+				   "  |  Conflicts: " << p_stats.m_conflicts <<
+				   "  |  Backtracks: " << p_stats.m_backtracks <<
+				   " ]";
 	return p_outStream;
 }
 
