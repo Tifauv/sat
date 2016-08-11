@@ -98,6 +98,7 @@ int main(int p_argc, char* p_argv[]) {
 		//solver.addListener(logging);
 		solver.addListener(stats);
 		solver.addListener(chrono);
+		solver.addListener(cachingPolaritySelector);
 		
 		/* Solve the problem */
 		sat::solver::Valuation& valuation = solver.solve();

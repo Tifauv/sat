@@ -43,7 +43,7 @@ Literal PolarityCachingSelector::getLiteral(Variable* p_variable) {
 
 // SolverListener interface
 void PolarityCachingSelector::onAssert(Literal& p_literal) {
-	m_preferredPolarity[p_literal.id()] = p_literal.isPositive();
+	m_preferredPolarity[p_literal.id()] = p_literal.sign();
 }
 
 } // namespace sat::solver::selectors
