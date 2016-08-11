@@ -31,7 +31,8 @@ ResolutionStack::ResolutionStack() {
 
 // DESTRUCTORS
 ResolutionStack::~ResolutionStack() {
-
+	for (auto it = m_resolutionLevels.begin(); it != m_resolutionLevels.end(); it = m_resolutionLevels.erase(it))
+		delete *it;
 }
 
 
