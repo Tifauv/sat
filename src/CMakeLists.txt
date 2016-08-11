@@ -20,18 +20,20 @@ set( CMAKE_CXX_STANDARD_REQUIRED on )
 
 # Build libraries
 add_subdirectory( core )
+add_subdirectory( recursivesolver )
 add_subdirectory( heuristics )
 add_subdirectory( listeners )
 
 # Include the libraries include directories
 include_directories( ${SAT_CORE_INCLUDE} )
+include_directories( ${SAT_RECURSIVE_SOLVER_INCLUDE} )
 include_directories( ${SAT_HEURISTICS_INCLUDE} )
 include_directories( ${SAT_LISTENERS_INCLUDE} )
 
 # Build solveSat
 add_executable( solveSat solveSat.cpp )
 target_compile_options( solveSat PRIVATE )
-target_link_libraries(  solveSat LINK_PUBLIC SatCore SatHeuristics SatListeners ${LIBS} )
+target_link_libraries(  solveSat LINK_PUBLIC SatCore SatRecursiveSolver SatHeuristics SatListeners ${LIBS} )
 
 # Build checkSat
 add_executable( checkSat checkSat.cpp )

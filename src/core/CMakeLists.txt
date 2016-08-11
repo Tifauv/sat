@@ -23,13 +23,8 @@ set( SAT_CORE_SRCS
 	Clause.cpp
 	Formula.cpp
 	Valuation.cpp
-	HistoryStep.cpp
-	RemoveClauseStep.cpp
-	RemoveLiteralFromClauseStep.cpp
-	History.cpp
 	ListenerDispatcher.cpp
 	ListenableSolver.cpp
-	RecursiveDpllSolver.cpp
 	ResolutionStackLevel.cpp
 	ResolutionStack.cpp
 	IterativeDpllSolver.cpp
