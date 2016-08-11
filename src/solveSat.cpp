@@ -107,7 +107,7 @@ int main(int p_argc, char* p_argv[]) {
 		std::cout << "c Solution to cnf file " << cnfFilename << std::endl;
 		std::cout << "c " << stats  << std::endl;
 		std::cout << "c " << chrono << std::endl;
-		valuation.print();
+		std::cout << valuation;
 	}
 
 	// Clean the logging system

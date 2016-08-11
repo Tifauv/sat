@@ -17,8 +17,9 @@
 #ifndef VALUATION_H
 #define VALUATION_H
 
-#include <list>
 #include "Literal.h"
+#include <list>
+#include <ostream>
 
 
 namespace sat {
@@ -88,9 +89,10 @@ public:
 	void log();
 
 	/**
-	 * Prints the valuation to stdout.
+	 * Prints the valuation to the given stream.
 	 */
-	void print();
+	friend std::ostream& operator<<(std::ostream& p_outStream, const Valuation& p_valuation);
+
 
 private:
 	/** The satisfiability flag. */

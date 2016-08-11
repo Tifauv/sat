@@ -149,20 +149,21 @@ void Valuation::log() {
 
 
 /**
- * Prints the valuation to stdout.
+ * Prints the valuation to the given stream.
  */
-void Valuation::print() {
-	if (isUnsatisfiable()) {
-		std::cout << "s UNSATISFIABLE" << std::endl;
-		return;
+std::ostream& operator<<(std::ostream& p_outStream, const Valuation& p_valuation) {
+	if (p_valuation.isUnsatisfiable()) {
+		p_outStream << "s UNSATISFIABLE" << std::endl;
+		return p_outStream;
 	}
-	
+
 	// Otherwise, print the elements
-	std::cout << "s SATISFIABLE" << std::endl;
-	std::cout << "v";
-	for (const auto& literal : m_literals)
-		std::cout << " " << (int)(literal.sign() * literal.id());
-	std::cout << " 0" << std::endl;
+	p_outStream << "s SATISFIABLE" << std::endl;
+	p_outStream << "v";
+	for (const auto& literal : p_valuation.m_literals)
+		p_outStream << " " << (int)(literal.sign() * literal.id());
+	p_outStream << " 0" << std::endl;
+	return p_outStream;
 }
 
 } // namespace sat::solver
