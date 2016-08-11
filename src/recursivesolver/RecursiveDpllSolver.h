@@ -24,12 +24,13 @@ namespace sat {
 class Literal;
 class Formula;
 
-namespace solver {
-
 namespace history {
 	class History;
 }
 using namespace history;
+
+namespace solver {
+
 
 class Valuation;
 class LiteralSelector;

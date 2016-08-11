@@ -24,7 +24,6 @@ namespace sat {
 
 class Formula;
 
-namespace solver {
 namespace history {
 
 
@@ -52,8 +51,7 @@ public:
 	void undo(Formula& p_formula) const override;
 }; // class RemoveClauseStep
 
-} // namespace sat::solver::history
-} // namespace sat::solver
+} // namespace sat::history
 } // namespace sat
 
 #endif // RemoveClauseStep_h

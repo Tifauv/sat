@@ -26,7 +26,6 @@
 
 
 namespace sat {
-namespace solver {
 namespace history {
 
 
@@ -124,6 +123,5 @@ void History::clear() {
 	log4c_category_debug(log_history, "History cleared.");
 }
 
-} // namespace sat::solver::history
-} // namespace sat::solver
+} // namespace sat::history
 } // namespace sat

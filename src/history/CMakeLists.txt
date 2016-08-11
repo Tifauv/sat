@@ -14,15 +14,18 @@
 #  along with this program; if not, write to the Free Software
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
 
-include_directories( ${SAT_CORE_INCLUDE} ${SAT_HISTORY_INCLUDE} )
+include_directories( ${SAT_CORE_INCLUDE} )
 
 # The sources of SatRecursiveSolver
-set( SAT_RECURSIVE_SOLVER_SRCS
-	RecursiveDpllSolver.cpp
+set( SAT_HISTORY_SRCS
+		HistoryStep.cpp
+		RemoveClauseStep.cpp
+		RemoveLiteralFromClauseStep.cpp
+		History.cpp
 )
-set( SAT_RECURSIVE_SOLVER_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR} PARENT_SCOPE )
+set( SAT_HISTORY_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR} PARENT_SCOPE )
 
-# Build libSatRecursiveSolver
-add_library( SatRecursiveSolver ${SAT_RECURSIVE_SOLVER_SRCS} )
-target_compile_options( SatRecursiveSolver PUBLIC )
-target_link_libraries(  SatRecursiveSolver LINK_PUBLIC SatCore SatHistory ${LIBS} )
+# Build libSatHistory
+add_library( SatHistory ${SAT_HISTORY_SRCS} )
+target_compile_options( SatHistory PUBLIC )
+target_link_libraries(  SatHistory LINK_PUBLIC SatCore ${LIBS} )

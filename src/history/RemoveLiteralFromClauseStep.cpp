@@ -24,7 +24,6 @@
 
 
 namespace sat {
-namespace solver {
 namespace history {
 
 
@@ -39,6 +38,5 @@ void RemoveLiteralFromClauseStep::undo(Formula& p_formula) const {
 	p_formula.addLiteralToClause(clause(), literal());
 }
 
-} // namespace sat::solver::history
-} // namespace sat::solver
+} // namespace sat::history
 } // namespace sat

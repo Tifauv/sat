@@ -22,9 +22,10 @@
 #include "History.h"
 
 namespace sat {
-namespace solver {
 
 using namespace history;
+
+namespace solver {
 
 
 /**

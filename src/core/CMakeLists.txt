@@ -25,9 +25,13 @@ set( SAT_CORE_SRCS
 	Valuation.cpp
 	ListenerDispatcher.cpp
 	ListenableSolver.cpp
-	ResolutionStackLevel.cpp
-	ResolutionStack.cpp
-	IterativeDpllSolver.cpp
+	#HistoryStep.cpp
+	#RemoveClauseStep.cpp
+	#RemoveLiteralFromClauseStep.cpp
+	#History.cpp
+	#ResolutionStackLevel.cpp
+	#ResolutionStack.cpp
+	#IterativeDpllSolver.cpp
 	VariablePolarityLiteralSelector.cpp
 	CnfLoader.cpp
 	BasicSolutionChecker.cpp

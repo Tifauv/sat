@@ -19,7 +19,6 @@
 
 #include "log.h"
 #include "CnfLoader.h"
-#include "RecursiveDpllSolver.h"
 #include "IterativeDpllSolver.h"
 #include "Valuation.h"
 #include "VariablePolarityLiteralSelector.h"
@@ -90,7 +89,6 @@ int main(int p_argc, char* p_argv[]) {
 		sat::solver::VariablePolarityLiteralSelector literalSelector(variableSelector, cachingPolaritySelector);
 		
 		/* Build the solver */
-		//sat::solver::RecursiveDpllSolver solver(formula, literalSelector);
 		sat::solver::IterativeDpllSolver solver(formula, literalSelector);
 
 		/* Build and add the listeners */

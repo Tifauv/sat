@@ -16,13 +16,15 @@
 
 include_directories( ${SAT_CORE_INCLUDE} ${SAT_HISTORY_INCLUDE} )
 
-# The sources of SatRecursiveSolver
-set( SAT_RECURSIVE_SOLVER_SRCS
-	RecursiveDpllSolver.cpp
+# The sources of SatIterativeSolver
+set( SAT_ITERATIVE_SOLVER_SRCS
+		ResolutionStackLevel.cpp
+		ResolutionStack.cpp
+		IterativeDpllSolver.cpp
 )
-set( SAT_RECURSIVE_SOLVER_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR} PARENT_SCOPE )
+set( SAT_ITERATIVE_SOLVER_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR} PARENT_SCOPE )
 
-# Build libSatRecursiveSolver
-add_library( SatRecursiveSolver ${SAT_RECURSIVE_SOLVER_SRCS} )
-target_compile_options( SatRecursiveSolver PUBLIC )
-target_link_libraries(  SatRecursiveSolver LINK_PUBLIC SatCore SatHistory ${LIBS} )
+# Build libSatIterativeSolver
+add_library( SatIterativeSolver ${SAT_ITERATIVE_SOLVER_SRCS} )
+target_compile_options( SatIterativeSolver PUBLIC )
+target_link_libraries(  SatIterativeSolver LINK_PUBLIC SatCore SatHistory ${LIBS} )

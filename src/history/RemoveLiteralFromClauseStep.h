@@ -14,11 +14,10 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
  */
-#ifndef HISTORY_STEP_H
-#define HISTORY_STEP_H
+#ifndef REMOVE_LITERAL_FROM_CLAUSE_STEP_H
+#define REMOVE_LITERAL_FROM_CLAUSE_STEP_H
 
-
-#include "Literal.h"
+#include "HistoryStep.h"
 
 
 namespace sat {
@@ -26,59 +25,25 @@ namespace sat {
 class Formula;
 class Clause;
 
-namespace solver {
 namespace history {
 
 
 /**
- * @brief This is a step of the history.
- * 
- * This is a virtual class. Subclasses must implement the {@link #undo(Formula&) const} method.
+ * A step representing a "literal removed from clause" operation.
  */
-class HistoryStep {
+class RemoveLiteralFromClauseStep : public HistoryStep {
 public:
 	/**
-	 * Initialize a step with a clause.
+	 * Initialize the step.
 	 * 
 	 * @param p_clause
-	 *            the clause to record
-	 */
-	explicit HistoryStep(Clause* p_clause);
-
-
-	/**
-	 * Initialize a step with a clause.
-	 * 
-	 * @param p_clause
-	 *            the clause to record
+	 *            the recorded clause
 	 * @param p_literal
-	 *            the literal to record
+	 *            the recorded literal
 	 */
-	explicit HistoryStep(Clause* p_clause, Literal p_literal);
-
-
-	/**
-	 * Destructor.
-	 */
-	virtual ~HistoryStep();
-
-
-	/**
-	 * Give the clause recorded in this step.
-	 * 
-	 * @return a pointer to the clause
-	 */
-	Clause* clause() const;
-
-
-	/**
-	 * Give the literal recorder in this step.
-	 * 
-	 * @return the literal (can be empty)
-	 */
-	Literal literal() const;
-
-
+	RemoveLiteralFromClauseStep(Clause* p_clause, Literal p_literal);
+	
+	
 	/**
 	 * Replay the operation of the step.
 	 * Must be implemented in subclasses.
@@ -86,16 +51,10 @@ public:
 	 * @param p_formula
 	 *            the formula in which to replay the operation
 	 */
-	virtual void undo(Formula& p_formula) const = 0;
+	void undo(Formula& p_formula) const override;
+}; // class RemoveLiteralFromClauseStep
 
-
-private:
-	Clause*   m_clause;
-	Literal   m_literal;
-};
-
-} // namespace sat::solver::history
-} // namespace sat::solver
+} // namespace sat::history
 } // namespace sat
 
-#endif // HistoryStep_h
+#endif // RemoveLiteralFromClauseStep_h
