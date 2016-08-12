@@ -22,6 +22,11 @@ set( SAT_LISTENERS_SRCS
 	StatisticsListener.cpp
 	ChronoListener.cpp
 )
+set( SAT_LISTENERS_HEADERS
+	LoggingListener.h
+	StatisticsListener.h
+	ChronoListener.h
+)
 set( SAT_LISTENERS_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR} PARENT_SCOPE )
 
 # Build libSatListeners

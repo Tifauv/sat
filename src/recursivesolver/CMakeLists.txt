@@ -20,6 +20,9 @@ include_directories( ${SAT_CORE_INCLUDE} ${SAT_HISTORY_INCLUDE} )
 set( SAT_RECURSIVE_SOLVER_SRCS
 	RecursiveDpllSolver.cpp
 )
+set( SAT_RECURSIVE_SOLVER_HEADERS
+	RecursiveDpllSolver.h
+)
 set( SAT_RECURSIVE_SOLVER_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR} PARENT_SCOPE )
 
 # Build libSatRecursiveSolver

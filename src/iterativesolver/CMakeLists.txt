@@ -22,6 +22,11 @@ set( SAT_ITERATIVE_SOLVER_SRCS
 		ResolutionStack.cpp
 		IterativeDpllSolver.cpp
 )
+set( SAT_ITERATIVE_SOLVER_HEADERS
+		ResolutionStackLevel.h
+		ResolutionStack.h
+		IterativeDpllSolver.h
+)
 set( SAT_ITERATIVE_SOLVER_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR} PARENT_SCOPE )
 
 # Build libSatIterativeSolver

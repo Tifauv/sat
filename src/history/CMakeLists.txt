@@ -18,10 +18,16 @@ include_directories( ${SAT_CORE_INCLUDE} )
 
 # The sources of SatRecursiveSolver
 set( SAT_HISTORY_SRCS
-		HistoryStep.cpp
-		RemoveClauseStep.cpp
-		RemoveLiteralFromClauseStep.cpp
-		History.cpp
+	HistoryStep.cpp
+	RemoveClauseStep.cpp
+	RemoveLiteralFromClauseStep.cpp
+	History.cpp
+)
+set( SAT_HISTORY_HEADERS
+	HistoryStep.h
+	RemoveClauseStep.h
+	RemoveLiteralFromClauseStep.h
+	History.h
 )
 set( SAT_HISTORY_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR} PARENT_SCOPE )
 
