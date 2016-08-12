@@ -35,8 +35,21 @@ public:
 	~ResolutionStack();
 
 	/* Level management */
+	/**
+	 * Creates a new resolution level in the stack.
+	 * This new level becomes the current one.
+	 */
 	void nextLevel();
+
+	/**
+	 * Deletes the current level from the stack.
+	 * The previous level becomes the current one (or none if the stack is empty).
+	 */
 	void popLevel();
+
+	/**
+	 * Gives the current depth (number of levels) of the stack.
+	 */
 	std::stack<ResolutionStackLevel*>::size_type currentLevel() const;
 
 	/* Current level literals operations */
@@ -56,14 +69,44 @@ public:
 	 */
 	Literal lastDecisionLiteral() const;
 
+	/**
+	 * Logs the stack.
+	 */
 	void logCurrentLiterals() const;
 
 	/* Current level history operations */
+	/**
+	 * Stores a 'clause removed' operation to the current level's history.
+	 *
+	 * @param p_clause
+	 *            the clause that is removed from the formula
+	 */
 	void addClause(Clause* p_clause);
+
+	/**
+	 * Stores a 'literal removed from clause' operation to the current level's history.
+	 *
+	 * @param p_clause
+	 *            the clause that is modified
+	 * @param p_literal
+	 *            the literal that is remove from that clause
+	 */
 	void addLiteral(Clause* p_clause, Literal p_literal);
+
+	/**
+	 * Replays the history stored in the current level.
+	 *
+	 * @param p_formula
+	 *            the formula in which to replay the history
+	 */
 	void replay(Formula& p_formula) const;
 
 	/* Valuation generation */
+	/**
+	 * Generates a valuation from the current stack.
+	 *
+	 * @return a Valuation
+	 */
 	const Valuation generateValuation() const;
 
 private:

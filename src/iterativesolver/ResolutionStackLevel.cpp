@@ -37,31 +37,71 @@ ResolutionStackLevel::~ResolutionStackLevel() {
 
 
 // METHODS
+/**
+ * Appends a literal.
+ *
+ * @param p_literal
+ *            the literal
+ */
 void ResolutionStackLevel::pushLiteral(Literal p_literal) {
 	m_literals.push_back(p_literal);
 	log4c_category_info(log_history, "Literal %sx%u added to the current resolution level.", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
 }
 
 
+/**
+ * Gives the first literal.
+ * This is the literal that was selected by a decision.
+ *
+ * @return the last literal
+ */
 Literal ResolutionStackLevel::firstLiteral() const {
 	assert(!m_literals.empty());
 
 	return m_literals.front();
 }
 
+
+/**
+ * Returns the literals in this level.
+ *
+ * @return the current list of literals
+ */
 const std::list<Literal> ResolutionStackLevel::literals() const {
 	return m_literals;
 }
 
+
+/**
+ * Save a removed clause in the history.
+ *
+ * @param p_clause
+ *            the clause that was removed from the formula
+ */
 void ResolutionStackLevel::saveRemovedClause(Clause *p_clause) {
 	m_history.addClause(p_clause);
 }
 
 
+/**
+ * Save a literal removed from a clause in the history.
+ *
+ * @param p_clause
+ *            the clause that was modified
+ * @param p_literal
+ *            the literal removed from that clause
+ */
 void ResolutionStackLevel::saveRemovedLiteralFromClause(Clause *p_clause, Literal p_literal) {
 	m_history.addLiteral(p_clause, p_literal);
 }
 
+
+/**
+ * Replays the current history upon a given formula.
+ *
+ * @param p_formula
+ *            the formula in which to replay the history
+ */
 void ResolutionStackLevel::replay(Formula &p_formula) {
 	m_history.replay(p_formula);
 }

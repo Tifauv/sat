@@ -54,6 +54,11 @@ public:
 	 */
 	Literal firstLiteral() const;
 
+	/**
+	 * Returns the literals in this level.
+	 *
+	 * @return the current list of literals
+	 */
 	const std::list<Literal> literals() const;
 
 	/**
@@ -61,7 +66,23 @@ public:
 	 * @param p_clause
 	 */
 	void saveRemovedClause(Clause* p_clause);
+
+	/**
+	 * Save a literal removed from a clause in the history.
+	 *
+	 * @param p_clause
+	 *            the clause that was modified
+	 * @param p_literal
+	 *            the literal removed from that clause
+	 */
 	void saveRemovedLiteralFromClause(Clause* p_clause, Literal p_literal);
+
+	/**
+	 * Replays the current history upon a given formula.
+	 *
+	 * @param p_formula
+	 *            the formula in which to replay the history
+	 */
 	void replay(Formula& p_formula);
 
 private:

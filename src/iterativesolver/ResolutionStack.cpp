@@ -24,12 +24,18 @@ namespace sat {
 namespace solver {
 
 // CONSTRUCTORS
+/**
+ * Initializes the stack with the first level.
+ */
 ResolutionStack::ResolutionStack() {
 	nextLevel();
 }
 
 
 // DESTRUCTORS
+/**
+ * Deletes all the resolution levels from the stack.
+ */
 ResolutionStack::~ResolutionStack() {
 	for (auto it = m_resolutionLevels.begin(); it != m_resolutionLevels.end(); it = m_resolutionLevels.erase(it))
 		delete *it;
@@ -37,11 +43,19 @@ ResolutionStack::~ResolutionStack() {
 
 
 // LEVEL MANAGEMENT
+/**
+ * Creates a new resolution level in the stack.
+ * This new level becomes the current one.
+ */
 void ResolutionStack::nextLevel() {
 	m_resolutionLevels.push_back(new ResolutionStackLevel());
 }
 
 
+/**
+ * Deletes the current level from the stack.
+ * The previous level becomes the current one (or none if the stack is empty).
+ */
 void ResolutionStack::popLevel() {
 	ResolutionStackLevel* level = m_resolutionLevels.back();
 	m_resolutionLevels.pop_back();
@@ -49,24 +63,39 @@ void ResolutionStack::popLevel() {
 }
 
 
+/**
+ * Gives the current depth (number of levels) of the stack.
+ */
 std::stack<ResolutionStackLevel*>::size_type ResolutionStack::currentLevel() const {
 	return m_resolutionLevels.size();
 }
 
 
 // CURRENT LEVEL LITERALS OPERATIONS
+/**
+ * Appends a literal.
+ *
+ * @param p_literal
+ *            the literal
+ */
 void ResolutionStack::pushLiteral(Literal p_literal) {
 	m_resolutionLevels.back()->pushLiteral(p_literal);
 }
 
 
+/**
+ * Gives the last decision literal.
+ * This is the first literal from the current level.
+ *
+ * @return the last literal
+ */
 Literal ResolutionStack::lastDecisionLiteral() const {
 	return m_resolutionLevels.back()->firstLiteral();
 }
 
 
 /**
- * Logs the valuation.
+ * Logs the stack.
  */
 void ResolutionStack::logCurrentLiterals() const {
 	if (!log4c_category_is_info_enabled(log_valuation))
@@ -82,22 +111,47 @@ void ResolutionStack::logCurrentLiterals() const {
 
 
 // CURRENT LEVEL HISTORY OPERATIONS
+/**
+ * Stores a 'clause removed' operation to the current level's history.
+ *
+ * @param p_clause
+ *            the clause that is removed from the formula
+ */
 void ResolutionStack::addClause(Clause* p_clause) {
 	m_resolutionLevels.back()->saveRemovedClause(p_clause);
 }
 
 
+/**
+ * Stores a 'literal removed from clause' operation to the current level's history.
+ *
+ * @param p_clause
+ *            the clause that is modified
+ * @param p_literal
+ *            the literal that is remove from that clause
+ */
 void ResolutionStack::addLiteral(Clause* p_clause, Literal p_literal) {
 	m_resolutionLevels.back()->saveRemovedLiteralFromClause(p_clause, p_literal);
 }
 
 
+/**
+ * Replays the history stored in the current level.
+ *
+ * @param p_formula
+ *            the formula in which to replay the history
+ */
 void ResolutionStack::replay(Formula& p_formula) const {
 	m_resolutionLevels.back()->replay(p_formula);
 }
 
 
 // VALUATION GENERATION
+/**
+ * Generates a valuation from the current stack.
+ *
+ * @return a Valuation
+ */
 const Valuation ResolutionStack::generateValuation() const {
 	Valuation valuation;
 
