@@ -40,12 +40,6 @@ m_literalSelector(p_literalSelector) {
 }
 
 
-// DESTRUCTORS
-IterativeDpllSolver::~IterativeDpllSolver() {
-
-}
-
-
 // METHODS
 /**
  * Gives the current valuation.
@@ -132,7 +126,7 @@ void IterativeDpllSolver::dpll() {
 }
 
 
-// Recursion control
+// ITERATION CONTROL
 bool IterativeDpllSolver::atTopLevel() const {
 	return m_resolution.currentLevel() == 0;
 }
@@ -143,7 +137,7 @@ bool IterativeDpllSolver::allVariablesAssigned() const {
 }
 
 
-// Unit propagation
+// UNIT PROPAGATION
 /**
  * Runs a unit propagation until there is no more unit literal
  * or a conflict is found.
@@ -179,16 +173,15 @@ bool IterativeDpllSolver::applyUnitPropagate() {
 }
 
 
+// LITERAL ASSERTION
 /**
- * Propagates a literal.
- * First, the clauses that contain the literal are removed from the formula.
- * Then, the opposite of the literal is removed from the clauses that contain it.
+ * Like #reduceFormula(Literal) but also notifies the listeners of
+ * the onAssert() event.
  *
  * @param p_literal
  *            the literal to propagate
  *
- * @see #removeClausesWithLiteral(Literal&)
- * @see #removeOppositeLiteralFromClauses(Literal&)
+ * @see #reduceFormula(Literal)
  */
 void IterativeDpllSolver::assertLiteral(Literal p_literal) {
 	reduceFormula(p_literal);
@@ -198,6 +191,18 @@ void IterativeDpllSolver::assertLiteral(Literal p_literal) {
 }
 
 
+/**
+ * Reduces a formula with a given literal.
+ * First, the clauses that contain the literal are removed from the formula.
+ * Then, the opposite of the literal is removed from the clauses that contain it.
+ * Last, the literal is added to the resolution stack.
+ *
+ * @param p_literal
+ *            the literal to propagate
+ *
+ * @see #removeClausesWithLiteral(Literal&)
+ * @see #removeOppositeLiteralFromClauses(Literal&)
+ */
 void IterativeDpllSolver::reduceFormula(Literal p_literal) {
 	// Remove the clauses that contain the same sign as the given literal
 	removeClausesWithLiteral(p_literal);
@@ -259,27 +264,51 @@ void IterativeDpllSolver::removeOppositeLiteralFromClauses(Literal& p_literal) {
 }
 
 
-// Conflict
+// CONFLICT
+/**
+ * Tells whether a conflict clause has been encountered or not.
+ *
+ * @return true if a conclict clause has been reached
+ */
 bool IterativeDpllSolver::isConflicting() const {
 	return m_conflictClause != nullptr;
 }
 
 
+/**
+ * Gives the conflict clause encountered.
+ *
+ * @return the conflict clause
+ */
 Clause* IterativeDpllSolver::getConflictClause() const {
 	return m_conflictClause;
 }
 
 
+/**
+ * Updates the conflict clause.
+ *
+ * @param p_clause
+ *            the new conflict clause
+ */
 void IterativeDpllSolver::setConflictClause(Clause* p_clause) {
 	m_conflictClause = p_clause;
 }
 
 
+/**
+ * Resets the conflict clause to nullptr.
+ */
 void IterativeDpllSolver::resetConflictClause() {
 	m_conflictClause = nullptr;
 }
 
 
+/**
+ * Applies the conflict rule.
+ * The listeners are notified of the onConflict() event,
+ * then the conflict clause is reset.
+ */
 void IterativeDpllSolver::applyConflict() {
 	// Notify the listeners
 	listeners().onConflict(getConflictClause());
@@ -289,7 +318,13 @@ void IterativeDpllSolver::applyConflict() {
 }
 
 
-// Backtracking
+// BACKTRACKING
+/**
+ * Rewinds the whole current resolution level and try with the opposite of the last decision literal.
+ * This means the current history is replayed then the current resolution level is deleted.
+ * The listeners are notified of the onBacktrack() event.
+ * Finally, the opposite of the current decision literal is tried.
+ */
 void IterativeDpllSolver::applyBackjump() {
 	// Rewind to the last decision literal
 	Literal currentLiteral = m_resolution.lastDecisionLiteral();
@@ -304,7 +339,11 @@ void IterativeDpllSolver::applyBackjump() {
 }
 
 
-// Decide
+// DECIDE
+/**
+ * Creates a new resolution level, selects a decision literal,
+ * calls the listeners' onDecide() event then asserts the literal.
+ */
 void IterativeDpllSolver::applyDecide() {
 	m_resolution.nextLevel();
 
@@ -313,7 +352,6 @@ void IterativeDpllSolver::applyDecide() {
 
 	assertLiteral(selectedLiteral);
 }
-
 
 } // namespace sat::solver
 } // namespace sat

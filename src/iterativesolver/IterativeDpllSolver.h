@@ -48,12 +48,6 @@ public:
 
 
 	/**
-	 * Destructor.
-	 */
-	~IterativeDpllSolver();
-
-
-	/**
 	 * Gives the current valuation.
 	 *
 	 * @return the current valuation
@@ -75,24 +69,120 @@ protected:
 	 */
 	void dpll();
 
+	// ITERATION CONTROL
 	bool atTopLevel() const;
 	bool allVariablesAssigned() const;
 
+	// UNIT PROPAGATION
+	/**
+	 * Runs a unit propagation until there is no more unit literal
+	 * or a conflict is found.
+	 */
 	void fullUnitPropagate();
+
+	/**
+	 * Searches a unit literal and propagates it.
+	 *
+	 * @return true if a unit literal is found and propagated,
+	 *         false otherwise
+	 */
 	bool applyUnitPropagate();
+
+	// LITERAL ASSERTION
+	/**
+	 * Like #reduceFormula(Literal) but also notifies the listeners of
+	 * the onAssert() event.
+	 *
+	 * @param p_literal
+	 *            the literal to propagate
+	 *
+	 * @see #reduceFormula(Literal)
+	 */
 	void assertLiteral(Literal p_literal);
+
+	/**
+	 * Reduces a formula with a given literal.
+	 * First, the clauses that contain the literal are removed from the formula.
+	 * Then, the opposite of the literal is removed from the clauses that contain it.
+	 * Last, the literal is added to the resolution stack.
+	 *
+	 * @param p_literal
+	 *            the literal to propagate
+	 *
+	 * @see #removeClausesWithLiteral(Literal&)
+	 * @see #removeOppositeLiteralFromClauses(Literal&)
+	 */
 	void reduceFormula(Literal p_literal);
+
+	/**
+	 * Removes the clauses containing the given literal.
+	 *
+	 * @param p_literal
+	 *            the literal to propagate
+	 */
 	void removeClausesWithLiteral(Literal& p_literal);
+
+	/**
+	 * Removes the opposite of the given literal from the clauses.
+	 * If an empty clause is found, it is unsatisfiable and
+	 *
+	 * @param p_literal
+	 *            the selected literal
+	 *
+	 * @return true if all the clauses could be reduced without producing an unsatisfiable one;
+	 *         false if an unsatisfiable clause was produced.
+	 */
 	void removeOppositeLiteralFromClauses(Literal& p_literal);
 
+	// CONFLICT
+	/**
+	 * Tells whether a conflict clause has been encountered or not.
+	 *
+	 * @return true if a conclict clause has been reached
+	 */
 	bool isConflicting() const;
+
+	/**
+	 * Gives the conflict clause encountered.
+	 *
+	 * @return the conflict clause
+	 */
 	Clause* getConflictClause() const;
+
+	/**
+	 * Updates the conflict clause.
+	 *
+	 * @param p_clause
+	 *            the new conflict clause
+	 */
 	void setConflictClause(Clause*);
+
+	/**
+	 * Resets the conflict clause to nullptr.
+	 */
 	void resetConflictClause();
+
+	/**
+	 * Applies the conflict rule.
+	 * The listeners are notified of the onConflict() event,
+	 * then the conflict clause is reset.
+	 */
 	void applyConflict();
 
+	// BACKTRACK
+	/**
+	 * Rewinds the whole current resolution level and try with the opposite of the last decision literal.
+	 * This means the current history is replayed then the current resolution level is deleted.
+	 * The listeners are notified of the onBacktrack() event.
+	 * Finally, the opposite of the current decision literal is tried.
+	 */
 	void applyBackjump();
 
+	// DECIDE
+	/**
+	 * Creates a new resolution level, selects a decision literal,
+	 * calls the listeners' onDecide() event then asserts the literal.
+	 */
 	void applyDecide();
 
 
