@@ -30,8 +30,8 @@ if( NOT CMAKE_BUILD_TYPE )
 endif()
 
 # Build options
-option( USE_CLANG  "Build application with clang"   off )
-option( WITH_LOG4C "Enable the dependency on Log4c" off )
+option( USE_CLANG    "Build application with clang"                            off )
+option( WITH_LOGGING "Enable the LoggingListener (adds a dependency on Log4c)" off )
 
 
 # Declare common CFLAGS
@@ -49,15 +49,15 @@ else( USE_CLANG )
 	set( CMAKE_CXX_FLAGS_RELEASE        "-O2 -march=native" )
 endif( USE_CLANG )
 
-# Declare log4c as a mandatory dependency if it is explicitely enabled
-if( WITH_LOG4C )
+# Declare log4c as a mandatory dependency if logging is explicitely enabled
+if( WITH_LOGGING )
 	find_package( Log4C REQUIRED )
 	include_directories( ${LOG4C_INCLUDE_DIRS} )
 	set( CMAKE_INCLUDE_CURRENT_DIR on )
 	set( LIBS ${LIBS} ${LOG4C_LIBRARIES} )
-else( WITH_LOG4C )
+else( WITH_LOGGING )
 	add_definitions(-DWITHOUT_LOG4C)
-endif( WITH_LOG4C )
+endif( WITH_LOGGING )
 
 
 # Directories to build

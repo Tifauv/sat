@@ -18,7 +18,6 @@ include_directories( ${SAT_CORE_INCLUDE} )
 
 # The sources of SatHeuristics
 set( SAT_LISTENERS_SRCS
-	LoggingListener.cpp
 	StatisticsListener.cpp
 	ChronoListener.cpp
 )
@@ -27,6 +26,17 @@ set( SAT_LISTENERS_HEADERS
 	StatisticsListener.h
 	ChronoListener.h
 )
+# Add the LoggingListener if compiled with -DWITH_LOGGING
+if( WITH_LOGGING )
+	set( SAT_LISTENERS_SRCS
+		LoggingListener.cpp
+	)
+	set( SAT_LISTENERS_HEADERS
+		LoggingListener.h
+	)
+endif( WITH_LOGGING )
+
+
 set( SAT_LISTENERS_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR} PARENT_SCOPE )
 
 # Build libSatListeners
