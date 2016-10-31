@@ -17,8 +17,12 @@
 #ifndef HISTORY_H
 #define HISTORY_H
 
+#include <memory>
 #include <stack>
 #include "Literal.h"
+#include "HistoryStep.h"
+
+using namespace std;
 
 namespace sat {
 
@@ -27,8 +31,6 @@ class Clause;
 
 namespace history {
 
-class HistoryStep;
-
 
 /**
  * An history is a list of steps.
@@ -36,22 +38,12 @@ class HistoryStep;
 class History {
 public:
 	/**
-	 * Creates a new history.
-	 */
-	History();
-
-	/**
-	 * Frees the memory used by an history.
-	 */
-	~History();
-
-	/**
 	 * Adds an operation of type OP_ADD_CLAUSE as last step of the history.
 	 *
 	 * @param p_clause
 	 *            the clause to save
 	 */
-	void addClause(Clause* p_clause);
+	void addClause(shared_ptr<Clause> p_clause);
 
 	/**
 	 * Adds an operation of type OP_ADD_LITERAL_TO_CLAUSE as last step of the history.
@@ -61,7 +53,7 @@ public:
 	 * @param p_literal
 	 *            the literal to save
 	 */
-	void addLiteral(Clause* p_clause, Literal p_literal);
+	void addLiteral(shared_ptr<Clause> p_clause, Literal p_literal);
 
 	/**
 	 * Replays the modifications stored in the history.
@@ -71,15 +63,9 @@ public:
 	 */
 	void replay(Formula& p_formula);
 
-protected:
-	/**
-	 * Removes and frees the steps of the history.
-	 */
-	void clear();
-
 private:
 	/** The steps of the history. */
-	std::stack<HistoryStep*> m_steps;
+	stack<unique_ptr<HistoryStep>> m_steps;
 };
 
 } // namespace sat::history

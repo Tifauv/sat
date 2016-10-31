@@ -29,6 +29,9 @@
 #include "ChronoListener.h"
 #include "LoggingListener.h"
 
+using namespace std;
+
+
 /* Exit codes */
 #define EXIT_SUCCESS        0
 #define EXIT_NO_ARGS       -1
@@ -42,8 +45,8 @@
  *            the command name as given to argv[0]
  */
 void usage(char* p_command) {
-	std::cout << "Usage: " << p_command << " <cnf_file>" << std::endl;
-	std::cout << "    <cnf_file>  a CNF problem" << std::endl;
+	cout << "Usage: " << p_command << " <cnf_file>" << endl;
+	cout << "    <cnf_file>  a CNF problem" << endl;
 }
 
 
@@ -68,7 +71,7 @@ int main(int p_argc, char* p_argv[]) {
 
 	// Initialize the logging system
 	if (log4c_init()) {
-		std::cerr << "Log4c initialization failed, aborting." << std::endl;
+		cerr << "Log4c initialization failed, aborting." << endl;
 		exit(EXIT_LOG4C_FAILURE);
 	}
 	
@@ -104,15 +107,15 @@ int main(int p_argc, char* p_argv[]) {
 		sat::solver::Valuation& valuation = solver.solve();
 		
 		/* Output the solution */
-		std::cout << "c Solution to cnf file " << cnfFilename << std::endl;
-		std::cout << "c " << stats  << std::endl;
-		std::cout << "c " << chrono << std::endl;
-		std::cout << valuation;
+		cout << "c Solution to cnf file " << cnfFilename << endl;
+		cout << "c " << stats  << endl;
+		cout << "c " << chrono << endl;
+		cout << valuation;
 	}
 
 	// Clean the logging system
 	if (log4c_fini())
-		std::cerr << "log4c cleanup failed." << std::endl;
+		cerr << "log4c cleanup failed." << endl;
 
 	return EXIT_SUCCESS;
 }

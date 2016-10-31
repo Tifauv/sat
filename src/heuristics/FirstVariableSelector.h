@@ -33,7 +33,7 @@ namespace selectors {
  */
 class FirstVariableSelector : public VariableSelector {
 public:
-	Variable* getVariable(Formula& p_formula) override;
+	shared_ptr<Variable> getVariable(Formula& p_formula) override;
 };
 
 } // namespace sat::solver::selectors

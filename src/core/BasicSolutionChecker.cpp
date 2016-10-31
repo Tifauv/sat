@@ -16,6 +16,7 @@
  */
 #include "BasicSolutionChecker.h"
 
+#include <memory>
 #include <iostream>
 #include <log4c.h>
 #include "Variable.h"
@@ -39,16 +40,6 @@ namespace checker {
  */
 BasicSolutionChecker::BasicSolutionChecker(Formula& p_formula) : 
 m_formula(p_formula) {
-	log4c_category_debug(log_dpll, "Basic SolutionChecker created.");
-}
-
-
-// DESTRUCTORS
-/**
- * Destructor.
- */
-BasicSolutionChecker::~BasicSolutionChecker() {
-	log4c_category_debug(log_dpll, "Basic SolutionChecker deleted.");
 }
 
 
@@ -62,19 +53,19 @@ BasicSolutionChecker::~BasicSolutionChecker() {
  * @return true if the solution satisfies the formula,
  *         false otherwise
  */
-bool BasicSolutionChecker::checkSolution(std::vector<RawLiteral>* p_solution) {
-	for (const auto& literal : *p_solution) {
+bool BasicSolutionChecker::checkSolution(vector<RawLiteral>& p_solution) {
+	for (const auto& literal : p_solution) {
 		if (!reduce(literal)) {
-			std::cout << "An unsatisfiable clause was obtained." << std::endl;
+			cout << "An unsatisfiable clause was obtained." << endl;
 			return false;
 		}
 	}
 	
 	if (!m_formula.hasClauses()) {
-		std::cout << "All clauses could be interpreted." << std::endl;
+		cout << "All clauses could be interpreted." << endl;
 		return true;
 	}
-	std::cout << "Some clauses could not be interpreted." << std::endl;
+	cout << "Some clauses could not be interpreted." << endl;
 	return false;
 }
 
@@ -92,19 +83,19 @@ bool BasicSolutionChecker::checkSolution(std::vector<RawLiteral>* p_solution) {
 bool BasicSolutionChecker::reduce(const RawLiteral& p_rawLiteral) {
 	// Rebuild a Literal from a RawLiteral
 	for (auto it = m_formula.beginVariable(); it != m_formula.endVariable(); ++it) {
-		Variable* variable = *it;
+		shared_ptr<Variable> variable = *it;
 		
 		if (variable->id() == p_rawLiteral.id()) {
 			Literal literal(variable, p_rawLiteral.sign());
 			log4c_category_info(log_dpll, "Reduction using literal %sx%u...", (literal.isNegative() ? "¬" : ""), literal.id());
 		
 			// Remove the clauses that contain the same sign as the given literal
-			for (Clause* clause = literal.occurence(); clause != nullptr; clause = literal.occurence())
+			for (shared_ptr<Clause> clause = literal.occurence(); clause != nullptr; clause = literal.occurence())
 				m_formula.removeClause(clause);
 		
 			// Remove the literal from the clauses that contain the oposite sign
 			bool satisfiable = true;
-			for (Clause* clause = literal.oppositeOccurence(); clause != nullptr; clause = literal.oppositeOccurence()) {
+			for (shared_ptr<Clause> clause = literal.oppositeOccurence(); clause != nullptr; clause = literal.oppositeOccurence()) {
 				// Remove the literal from the clause
 				m_formula.removeLiteralFromClause(clause, -literal);
 				

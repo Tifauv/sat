@@ -28,7 +28,6 @@
 
 namespace sat {
 
-
 // METHODS
 /**
  * Loads a SAT problem from a CNF file.
@@ -42,7 +41,7 @@ void CnfLoader::loadProblem(char* p_filename, Formula& p_formula) {
 	log4c_category_debug(log_cnf, "Loading problem from CNF file '%s'...", p_filename);
 	
 	// Ouverture du fichier
-	std::ifstream file(p_filename);
+	ifstream file(p_filename);
 	if (!file.is_open()) {
 		log4c_category_error(log_cnf, "Could not open file '%s'.", p_filename);
 		return;
@@ -50,11 +49,11 @@ void CnfLoader::loadProblem(char* p_filename, Formula& p_formula) {
 	log4c_category_debug(log_cnf, "File '%s' opened.", p_filename);
 	
 	// Initializations
-	std::string line;
+	string line;
 	unsigned int lineNo = 0;
 	unsigned int clauseId = 1;
 	
-	while (std::getline(file, line)) {
+	while (getline(file, line)) {
 		lineNo++;
 		log4c_category_debug(log_cnf, "Line #%02d: |%s|", lineNo, line.c_str());
 		
@@ -71,10 +70,8 @@ void CnfLoader::loadProblem(char* p_filename, Formula& p_formula) {
 			break;
 		
 		// Transformation string -> tab
-		std::vector<RawLiteral>* literals = parseClause(line);
-		p_formula.createClause(clauseId, *literals);
+		p_formula.createClause(clauseId, parseClause(line));
 		++clauseId;
-		delete literals;
 	}
 	log4c_category_info(log_cnf, "Problem loaded from CNF file '%s'.", p_filename);
 }
@@ -89,11 +86,11 @@ void CnfLoader::loadProblem(char* p_filename, Formula& p_formula) {
  * @return nullptr if p_filename is nullptr,
  *         the valuation loaded otherwise
  */
-std::vector<RawLiteral>* CnfLoader::loadSolution(char* p_filename) {
+unique_ptr<vector<RawLiteral>> CnfLoader::loadSolution(char* p_filename) {
 	log4c_category_debug(log_cnf, "Loading solution from SAT file '%s'...", p_filename);
 	
 	// Ouverture du fichier
-	std::ifstream file(p_filename);
+	ifstream file(p_filename);
 	if (!file.is_open()) {
 		log4c_category_error(log_cnf, "Could not open file '%s'.", p_filename);
 		return nullptr;
@@ -101,11 +98,11 @@ std::vector<RawLiteral>* CnfLoader::loadSolution(char* p_filename) {
 	log4c_category_debug(log_cnf, "File '%s' opened.", p_filename);
 	
 	// Initializations
-	std::vector<RawLiteral>* solution = nullptr;
-	std::string line;
+	unique_ptr<vector<RawLiteral>> solution = nullptr;
+	string line;
 	unsigned int lineNo = 0;
 	
-	while (std::getline(file, line)) {
+	while (getline(file, line)) {
 		lineNo++;
 		log4c_category_debug(log_cnf, "Line #%02d: |%s|", lineNo, line.c_str());
 		
@@ -133,12 +130,12 @@ std::vector<RawLiteral>* CnfLoader::loadSolution(char* p_filename) {
  * Parses a clause line from a cnf file.
  * 
  */
-std::vector<RawLiteral>* CnfLoader::parseClause(std::string p_line) {
+unique_ptr<vector<RawLiteral>> CnfLoader::parseClause(string p_line) {
 	// I/ Création du tableau
-	auto literals = new std::vector<RawLiteral>();
+	auto literals = unique_ptr<vector<RawLiteral>>(new vector<RawLiteral>());
 	
 	// III/ Initialisation du tableau
-	std::istringstream source(p_line);
+	istringstream source(p_line);
 	int token;
 	while ((source >> token) && (notNull(literals))) {
 		// If the '0' token is found, this is the end of the clause.
@@ -158,7 +155,6 @@ std::vector<RawLiteral>* CnfLoader::parseClause(std::string p_line) {
 				
 			case -1: // Le token et son contraire apparaîssent -> literals = nullptr
 				log4c_category_debug(log_cnf, "   - Literal %sx%u already parsed in that clause so it is always true.", (literal.isNegative() ? "¬" : ""), literal.id());
-				delete literals;
 				literals = nullptr;
 				break;
 				
@@ -184,7 +180,7 @@ std::vector<RawLiteral>* CnfLoader::parseClause(std::string p_line) {
  *          0 if p_literal does not appear in p_literals
  *          1 if p_literal appears in p_literals
  */
-int CnfLoader::existsLiteral(RawLiteral& p_literal, std::vector<RawLiteral>& p_literals) {
+int CnfLoader::existsLiteral(RawLiteral& p_literal, vector<RawLiteral>& p_literals) {
 	for (const auto& literal : p_literals) {
 		if ( p_literal.id() == literal.id() )
 			return p_literal.sign() * literal.sign();

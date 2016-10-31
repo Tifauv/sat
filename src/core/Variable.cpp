@@ -32,21 +32,11 @@ namespace sat {
  */
 Variable::Variable(Id p_id) :
 FormulaObject(p_id) {
-	log4c_category_debug(log_formula, "Variable x%u created.", p_id);
-}
-
-
-// DESTRUCTORS
-/**
- *
- */
-Variable::~Variable() {
-	log4c_category_debug(log_formula, "Variable x%u deleted.", id());
 }
 
 
 // METHODS
-void Variable::addOccurence(Clause* p_clause, int p_sign) {
+void Variable::addOccurence(shared_ptr<Clause> p_clause, int p_sign) {
 	// Parameters check
 	if (isNull(p_clause)) {
 		log4c_category_error(log_formula, "Attempted to add a NULL clause to variable x%u.", id());
@@ -96,7 +86,7 @@ unsigned int Variable::countOccurences() const {
 }
 
 
-Clause* Variable::occurence(int p_sign) {
+shared_ptr<Clause> Variable::occurence(int p_sign) {
 	if (p_sign == SIGN_POSITIVE) {
 		if (m_positiveOccurences.empty())
 			return nullptr;
@@ -109,23 +99,23 @@ Clause* Variable::occurence(int p_sign) {
 }
 
 
-std::vector<Clause*>::iterator Variable::beginOccurence(int p_sign) {
+vector<shared_ptr<Clause>>::iterator Variable::beginOccurence(int p_sign) {
 	if (p_sign == SIGN_POSITIVE)
 		return m_positiveOccurences.begin();
 	return m_negativeOccurences.begin();
 }
 
 
-std::vector<Clause*>::iterator Variable::endOccurence(int p_sign) {
+vector<shared_ptr<Clause>>::iterator Variable::endOccurence(int p_sign) {
 	if (p_sign == SIGN_POSITIVE)
 		return m_positiveOccurences.end();
 	return m_negativeOccurences.end();
 }
 
 
-void Variable::removePositiveOccurence(Clause* p_clause) {
+void Variable::removePositiveOccurence(shared_ptr<Clause> p_clause) {
 	m_positiveOccurences.erase(
-		std::remove(
+		remove(
 			m_positiveOccurences.begin(),
 			m_positiveOccurences.end(),
 			p_clause),
@@ -133,9 +123,9 @@ void Variable::removePositiveOccurence(Clause* p_clause) {
 }
 
 
-void Variable::removeNegativeOccurence(Clause* p_clause) {
+void Variable::removeNegativeOccurence(shared_ptr<Clause> p_clause) {
 	m_negativeOccurences.erase(
-		std::remove(
+		remove(
 			m_negativeOccurences.begin(),
 			m_negativeOccurences.end(),
 			p_clause),

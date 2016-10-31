@@ -17,12 +17,13 @@
 #ifndef CNF_LOADER_H
 #define CNF_LOADER_H
 
+#include <memory>
 #include <vector>
 #include "Formula.h"
 
+using namespace std;
 
 namespace sat {
-
 
 class CnfLoader {
 public:
@@ -46,7 +47,7 @@ public:
 	* @return nullptr if p_filename is nullptr,
 	*         the valuation loaded otherwise
 	*/
-	std::vector<RawLiteral>* loadSolution(char* p_filename);
+	unique_ptr<vector<RawLiteral>> loadSolution(char* p_filename);
 
 
 protected:
@@ -58,7 +59,7 @@ protected:
 	 * 
 	 * @return the list of raw literals
 	 */
-	std::vector<RawLiteral>* parseClause(std::string p_line);
+	unique_ptr<vector<RawLiteral>> parseClause(string p_line);
 
 
 	/**
@@ -73,7 +74,7 @@ protected:
 	 *          0 if p_literal does not appear in p_literals
 	 *          1 if p_literal appears in p_literals
 	 */
-	int existsLiteral(RawLiteral& p_literal, std::vector<RawLiteral>& p_literals);
+	int existsLiteral(RawLiteral& p_literal, vector<RawLiteral>& p_literals);
 };
 
 } // namespace sat

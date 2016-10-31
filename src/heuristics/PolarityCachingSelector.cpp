@@ -30,7 +30,7 @@ PolarityCachingSelector::PolarityCachingSelector(PolaritySelector& p_defaultSele
 
 
 // PolaritySelector interface
-Literal PolarityCachingSelector::getLiteral(Variable* p_variable) {
+Literal PolarityCachingSelector::getLiteral(shared_ptr<Variable> p_variable) {
 	// If a polarity has already been cached, return it
 	auto iter = m_preferredPolarity.find(p_variable->id());
 	if (iter != m_preferredPolarity.end())

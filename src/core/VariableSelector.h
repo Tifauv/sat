@@ -17,6 +17,9 @@
 #ifndef VARIABLE_SELECTOR_H
 #define VARIABLE_SELECTOR_H
 
+#include <memory>
+
+using namespace std;
 
 namespace sat {
 
@@ -32,7 +35,7 @@ public:
 	 * @return a pointer to the variable found,
 	 *         or nullptr if there is no variable in the formula
 	 */
-	virtual Variable* getVariable(Formula& p_formula) = 0;
+	virtual shared_ptr<Variable> getVariable(Formula& p_formula) = 0;
 };
 
 } // namespace sat::solver

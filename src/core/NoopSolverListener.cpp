@@ -66,7 +66,7 @@ void NoopSolverListener::onAssert(Literal&) {
  * Called when a conflict has been reached.
  * Does nothing.
  */
-void NoopSolverListener::onConflict(Clause*) {
+void NoopSolverListener::onConflict(shared_ptr<Clause>) {
 	// Do nothing
 }
 

@@ -17,6 +17,9 @@
 #ifndef POLARITY_SELECTOR_H
 #define POLARITY_SELECTOR_H
 
+#include <memory>
+
+using namespace std;
 
 namespace sat {
 
@@ -28,7 +31,7 @@ namespace solver {
 
 class PolaritySelector {
 public:
-	virtual Literal getLiteral(Variable* p_variable) = 0;
+	virtual Literal getLiteral(shared_ptr<Variable> p_variable) = 0;
 };
 
 } // namespace sat::solver

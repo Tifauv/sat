@@ -26,12 +26,12 @@ namespace selectors {
 
 
 // METHODS
-Variable* MostUsedVariableSelector::getVariable(Formula& p_formula) {
+shared_ptr<Variable> MostUsedVariableSelector::getVariable(Formula& p_formula) {
 	if (!p_formula.hasVariables())
 		return nullptr;
 
 	unsigned int maximumUse = 0;
-	Variable* selectedVar = nullptr;
+	shared_ptr<Variable> selectedVar = nullptr;
 	for (auto it = p_formula.beginVariable(); it != p_formula.endVariable(); ++it) {
 		if ((*it)->countOccurences() > maximumUse) {
 			selectedVar = *it;

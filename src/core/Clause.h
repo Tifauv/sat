@@ -20,6 +20,7 @@
 #include <vector>
 #include "FormulaObject.h"
 
+using namespace std;
 
 namespace sat {
 
@@ -39,12 +40,6 @@ public:
 	 *            the clause identifier.
 	 */
 	explicit Clause(Id p_id);
-
-
-	/**
-	 * Cleans the memory used by the clause.
-	 */
-	~Clause();
 
 
 	/**
@@ -98,7 +93,7 @@ public:
 	 *
 	 * @return a 'begin' iterator of the literals
 	 */
-	std::vector<Literal>::const_iterator beginLiteral() const;
+	vector<Literal>::const_iterator beginLiteral() const;
 
 
 	/**
@@ -106,12 +101,12 @@ public:
 	 *
 	 * @return an 'end' iterator of the literals
 	 */
-	std::vector<Literal>::const_iterator endLiteral()   const;
+	vector<Literal>::const_iterator endLiteral()   const;
 
 
 private:
 	/** The literals of the clause. */
-	std::vector<Literal> m_literals;
+	vector<Literal> m_literals;
 };
 
 } // namespace sat

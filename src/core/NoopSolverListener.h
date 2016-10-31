@@ -63,7 +63,7 @@ public:
 	 * Called when a conflict has been reached.
 	 * Does nothing.
 	 */
-	virtual void onConflict(Clause*) override;
+	virtual void onConflict(shared_ptr<Clause>) override;
 
 
 	/**

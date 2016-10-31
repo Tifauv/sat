@@ -31,7 +31,6 @@ using Id = unsigned int;
 class FormulaObject {
 public:
 	explicit FormulaObject(Id p_id);
-	virtual ~FormulaObject();
 
 	Id id() const;
 	bool isUnused() const;

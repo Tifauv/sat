@@ -38,7 +38,7 @@ public:
 	 * @param p_clause
 	 *            the recorded clause
 	 */
-	explicit RemoveClauseStep(Clause* p_clause);
+	explicit RemoveClauseStep(shared_ptr<Clause> p_clause);
 
 
 	/**

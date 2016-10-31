@@ -17,9 +17,10 @@
 #ifndef HISTORY_STEP_H
 #define HISTORY_STEP_H
 
-
+#include <memory>
 #include "Literal.h"
 
+using namespace std;
 
 namespace sat {
 
@@ -42,7 +43,7 @@ public:
 	 * @param p_clause
 	 *            the clause to record
 	 */
-	explicit HistoryStep(Clause* p_clause);
+	explicit HistoryStep(shared_ptr<Clause> p_clause);
 
 
 	/**
@@ -53,13 +54,7 @@ public:
 	 * @param p_literal
 	 *            the literal to record
 	 */
-	explicit HistoryStep(Clause* p_clause, Literal p_literal);
-
-
-	/**
-	 * Destructor.
-	 */
-	virtual ~HistoryStep();
+	explicit HistoryStep(shared_ptr<Clause> p_clause, Literal p_literal);
 
 
 	/**
@@ -67,7 +62,7 @@ public:
 	 * 
 	 * @return a pointer to the clause
 	 */
-	Clause* clause() const;
+	shared_ptr<Clause> clause() const;
 
 
 	/**
@@ -89,8 +84,8 @@ public:
 
 
 private:
-	Clause*   m_clause;
-	Literal   m_literal;
+	shared_ptr<Clause> m_clause;
+	Literal            m_literal;
 };
 
 } // namespace sat::history

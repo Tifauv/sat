@@ -20,6 +20,8 @@
 #include "NoopSolverListener.h"
 #include <ostream>
 
+using namespace std;
+
 
 namespace sat {
 namespace solver {
@@ -55,7 +57,7 @@ public:
 	/**
 	 * Increments the conflicts counter.
 	 */
-	void onConflict(Clause*) override;
+	void onConflict(shared_ptr<Clause>) override;
 
 	/**
 	 * Increments the backtracks counter.
@@ -65,7 +67,7 @@ public:
 	/**
 	 * Prints the current statistics to the given stream.
 	 */
-	friend std::ostream& operator<<(std::ostream& p_outStream, const StatisticsListener& p_stats);
+	friend ostream& operator<<(ostream& p_outStream, const StatisticsListener& p_stats);
 
 private:
 	/** The number of literal decisions made. */

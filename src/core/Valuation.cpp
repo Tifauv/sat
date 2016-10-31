@@ -33,16 +33,6 @@ namespace solver {
  */
 Valuation::Valuation() :
 m_unsatisfiable(false) {
-	log4c_category_debug(log_valuation, "New valuation created.");
-}
-
-
-// DESTRUCTORS
-/**
- * Deletes the valuation.
- */
-Valuation::~Valuation() {
-	log4c_category_debug(log_valuation, "Valuation deleted.");
 }
 
 
@@ -140,9 +130,9 @@ void Valuation::log() {
 	}
 
 	// Otherwise, print the elements
-	std::string line = "Valuation:";
+	string line = "Valuation:";
 	for (const auto& literal : m_literals)
-		line.append("  ").append(literal.isNegative() ? "¬" : "").append("x").append(std::to_string(literal.id()));
+		line.append("  ").append(literal.isNegative() ? "¬" : "").append("x").append(to_string(literal.id()));
 
 	log4c_category_info(log_valuation, line.data());
 }
@@ -151,18 +141,18 @@ void Valuation::log() {
 /**
  * Prints the valuation to the given stream.
  */
-std::ostream& operator<<(std::ostream& p_outStream, const Valuation& p_valuation) {
+ostream& operator<<(ostream& p_outStream, const Valuation& p_valuation) {
 	if (p_valuation.isUnsatisfiable()) {
-		p_outStream << "s UNSATISFIABLE" << std::endl;
+		p_outStream << "s UNSATISFIABLE" << endl;
 		return p_outStream;
 	}
 
 	// Otherwise, print the elements
-	p_outStream << "s SATISFIABLE" << std::endl;
+	p_outStream << "s SATISFIABLE" << endl;
 	p_outStream << "v";
 	for (const auto& literal : p_valuation.m_literals)
 		p_outStream << " " << (int)(literal.sign() * literal.id());
-	p_outStream << " 0" << std::endl;
+	p_outStream << " 0" << endl;
 	return p_outStream;
 }
 

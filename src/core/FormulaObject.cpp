@@ -31,15 +31,6 @@ FormulaObject::FormulaObject(Id p_id) :
 }
 
 
-// DESTRUCTORS
-/**
- *
- */
-FormulaObject::~FormulaObject() {
-	
-}
-
-
 // METHODS
 Id FormulaObject::id() const {
 	return m_id;

@@ -29,40 +29,6 @@
 namespace sat {
 
 
-// CONSTRUCTORS
-/**
- * Creates an empty formula.
- */
-Formula::Formula() {
-	log4c_category_debug(log_formula, "Formula created.");
-}
-
-
-// DESTRUCTORS
-/**
- * Cleans the memory used by the formula. 
- */
-Formula::~Formula() {
-	// Delete the clauses
-	for (auto it = m_clauses.begin(); it != m_clauses.end(); it = m_clauses.erase(it))
-		delete *it;
-
-	// Delete the unused clauses
-	for (auto it = m_unusedClauses.begin(); it != m_unusedClauses.end(); it = m_unusedClauses.erase(it))
-		delete *it;
-	
-	// Delete the variables
-	for (auto it = m_variables.begin(); it != m_variables.end(); it = m_variables.erase(it))
-		delete *it;
-	
-	// Delete the unused variables
-	for (auto it = m_unusedVariables.begin(); it != m_unusedVariables.end(); it = m_unusedVariables.erase(it))
-		delete *it;
-	
-	log4c_category_debug(log_formula, "Formula deleted.");
-}
-
-
 // METHODS
 /**
  * Creates a clause in the formula.
@@ -72,19 +38,17 @@ Formula::~Formula() {
  *            the identifier of the clause
  * @param p_literals
  *            the raw literals
- *
- * @return the new clause
  */
-Clause* Formula::createClause(Id p_clauseId, std::vector<RawLiteral>& p_literals) {
+void Formula::createClause(Id p_clauseId, unique_ptr<vector<RawLiteral>> p_literals) {
 	// Create the clause & add it to the list
-	Clause* clause = new Clause(p_clauseId);
+	shared_ptr<Clause> clause = make_shared<Clause>(p_clauseId);
 	m_clauses.insert(clause);
 	log4c_category_debug(log_formula, "Clause %u added.", p_clauseId);
 	
 	// Link the new clause with its literals
-	for (const auto& literal : p_literals) {
+	for (const auto& literal : *p_literals) {
 		// Find the variable for the literal
-		Variable* variable = findOrCreateVariable(literal.id());
+		shared_ptr<Variable> variable = findOrCreateVariable(literal.id());
 
 		// Link clause -> variable
 		clause->addLiteral(Literal(variable, literal.sign()));
@@ -92,8 +56,6 @@ Clause* Formula::createClause(Id p_clauseId, std::vector<RawLiteral>& p_literals
 		// Link variable -> clause
 		variable->addOccurence(clause, literal.sign());
 	}
-
-	return clause;
 }
 
 
@@ -106,12 +68,12 @@ Clause* Formula::createClause(Id p_clauseId, std::vector<RawLiteral>& p_literals
  *
  * @return the variable, either found or created
  */
-Variable* Formula::findOrCreateVariable(Id p_variableId) {
-	Variable* variable = nullptr;
+shared_ptr<Variable> Formula::findOrCreateVariable(Id p_variableId) {
+	shared_ptr<Variable> variable = nullptr;
 
 	// Search the variable
-	auto match_id([p_variableId](Variable* variable) { return variable->id() == p_variableId; } );
-	auto iterator = std::find_if(m_variables.cbegin(), m_variables.cend(), std::cref(match_id));
+	auto match_id([p_variableId](shared_ptr<Variable> variable) { return variable->id() == p_variableId; } );
+	auto iterator = find_if(m_variables.cbegin(), m_variables.cend(), cref(match_id));
 
 	// If the variable was found, select it
 	if (iterator != m_variables.cend()) {
@@ -120,7 +82,7 @@ Variable* Formula::findOrCreateVariable(Id p_variableId) {
 	}
 	// Otherwise, create & add it
 	else {
-		variable = new Variable(p_variableId);
+		variable = make_shared<Variable>(p_variableId);
 		m_variables.insert(variable);
 		log4c_category_debug(log_formula, "Variable x%u added.", variable->id());
 	}
@@ -137,12 +99,12 @@ Variable* Formula::findOrCreateVariable(Id p_variableId) {
  */
 Literal Formula::findUnitLiteral() const {
 	// Search an unary clause
-	auto isUnary([](Clause* clause) { return clause->isUnary(); } );
-	auto iterator = std::find_if(m_clauses.cbegin(), m_clauses.cend(), std::cref(isUnary));
+	auto isUnary([](shared_ptr<Clause> clause) { return clause->isUnary(); } );
+	auto iterator = find_if(m_clauses.cbegin(), m_clauses.cend(), cref(isUnary));
 
 	// If a clause has been found, retrieve its literal
 	if (iterator != m_clauses.cend()) {
-		Clause* clause = *iterator;
+		shared_ptr<Clause> clause = *iterator;
 		Literal unitLiteral = clause->firstLiteral();
 		log4c_category_debug(log_formula, "Unit literal %sx%u found in clause %u.", (unitLiteral.isNegative() ? "¬" : ""), unitLiteral. id(), clause->id());
 		return unitLiteral;
@@ -161,7 +123,7 @@ Literal Formula::findUnitLiteral() const {
  * @param p_literal
  *            the literal to remove
  */
-void Formula::unlinkVariable(Clause* p_clause, const Literal& p_literal) {
+void Formula::unlinkVariable(shared_ptr<Clause> p_clause, const Literal& p_literal) {
 	// Parameters check
 	if (isNull(p_clause)) {
 		log4c_category_error(log_formula, "Cannot remove a literal from a NULL clause.");
@@ -169,7 +131,7 @@ void Formula::unlinkVariable(Clause* p_clause, const Literal& p_literal) {
 	}
 
 	// Remove the clause from the variable occurences
-	Variable* variable = p_literal.var();
+	shared_ptr<Variable> variable = p_literal.var();
 	if (p_literal.isPositive())
 		variable->removePositiveOccurence(p_clause);
 	else
@@ -189,10 +151,10 @@ void Formula::unlinkVariable(Clause* p_clause, const Literal& p_literal) {
  * @param p_variable
  *            the variable to remove
  */
-void Formula::removeVariable(Variable* p_variable) {
+void Formula::removeVariable(shared_ptr<Variable> p_variable) {
 	p_variable->setUnused();
-	m_variables.erase(p_variable);
 	m_unusedVariables.insert(p_variable);
+	m_variables.erase(p_variable);
 	log4c_category_info(log_formula, "Variable x%u has been removed.", p_variable->id());
 }
 
@@ -203,9 +165,9 @@ void Formula::removeVariable(Variable* p_variable) {
  * @param p_variable
  *            the variable to add
  */
-void Formula::addVariable(Variable* p_variable) {
-	m_unusedVariables.erase(p_variable);
+void Formula::addVariable(shared_ptr<Variable> p_variable) {
 	m_variables.insert(p_variable);
+	m_unusedVariables.erase(p_variable);
 	p_variable->setUsed();
 	log4c_category_info(log_formula, "Variable x%u has been added.", p_variable->id());
 }
@@ -217,7 +179,7 @@ void Formula::addVariable(Variable* p_variable) {
  * @param p_clause
  *            the clause
  */
-void Formula::addClause(Clause* p_clause) {
+void Formula::addClause(shared_ptr<Clause> p_clause) {
 	// Parameters check
 	if (isNull(p_clause)) {
 		log4c_category_error(log_formula, "Cannot add a NULL clause.");
@@ -225,13 +187,13 @@ void Formula::addClause(Clause* p_clause) {
 	}
 
 	// Move the clause to the current list
-	m_unusedClauses.erase(p_clause);
 	m_clauses.insert(p_clause);
+	m_unusedClauses.erase(p_clause);
 	p_clause->setUsed();
 
 	// Ensure the linked variables are enabled
 	for (auto literalIterator = p_clause->beginLiteral(); literalIterator != p_clause->endLiteral(); ++literalIterator) {
-		Variable* variable = (*literalIterator).var();
+		shared_ptr<Variable> variable = (*literalIterator).var();
 		
 		// Move the variable to the current list if needed
 		if (variable->isUnused())
@@ -253,7 +215,7 @@ void Formula::addClause(Clause* p_clause) {
  * @param p_literal
  *            the literal to add
  */
-void Formula::addLiteralToClause(Clause* p_clause, Literal p_literal) {
+void Formula::addLiteralToClause(shared_ptr<Clause> p_clause, Literal p_literal) {
 	// Parameters check
 	if (isNull(p_clause)) {
 		log4c_category_error(log_formula, "Cannot add a literal to a NULL clause.");
@@ -272,7 +234,7 @@ void Formula::addLiteralToClause(Clause* p_clause, Literal p_literal) {
 /**
  * 
  */
-void Formula::removeClause(Clause* p_clause) {
+void Formula::removeClause(shared_ptr<Clause> p_clause) {
 	// Parameters check
 	if (isNull(p_clause)) {
 		log4c_category_error(log_formula, "Cannot remove a NULL clause.");
@@ -296,7 +258,7 @@ void Formula::removeClause(Clause* p_clause) {
 /**
  * 
  */
-void Formula::removeLiteralFromClause(Clause* p_clause, Literal p_literal) {
+void Formula::removeLiteralFromClause(shared_ptr<Clause> p_clause, Literal p_literal) {
 	// Parameters check
 	if (isNull(p_clause)) {
 		log4c_category_error(log_formula, "Cannot add a literal to a NULL clause.");
@@ -328,7 +290,7 @@ bool Formula::hasVariables() const {
 /**
  * 
  */
-std::unordered_set<Variable*>::iterator Formula::beginVariable() {
+unordered_set<shared_ptr<Variable>>::iterator Formula::beginVariable() {
 	return m_variables.begin();
 }
 
@@ -336,7 +298,7 @@ std::unordered_set<Variable*>::iterator Formula::beginVariable() {
 /**
  * 
  */
-std::unordered_set<Variable*>::iterator Formula::endVariable() {
+unordered_set<shared_ptr<Variable>>::iterator Formula::endVariable() {
 	return m_variables.end();
 }
 
@@ -352,14 +314,14 @@ void Formula::log() const {
 	log4c_category_debug(log_formula, "Clauses = {");
 	for (const auto& clause : m_clauses) {
 		// Clause id
-		std::string line = "   " + std::to_string(clause->id()) + ": ";
+		string line = "   " + to_string(clause->id()) + ": ";
 
 		// Clause's literals
 		int deb = 1;
 		for (auto literalIt = clause->beginLiteral(); literalIt != clause->endLiteral(); ++literalIt) {
 			const Literal literal = *literalIt;
 
-			line.append(deb != 1 ? " v " : "").append(literal.isNegative() ? "¬x" : "x").append(std::to_string(literal.id()));
+			line.append(deb != 1 ? " v " : "").append(literal.isNegative() ? "¬x" : "x").append(to_string(literal.id()));
 			if (deb == 1)
 				deb = 0;
 		}
@@ -373,20 +335,20 @@ void Formula::log() const {
 	log4c_category_debug(log_formula, "Variables = {");
 	for (const auto& variable : m_variables) {
 		// Variable id
-		std::string line = "   x" + std::to_string(variable->id()) + " \t+{";
+		string line = "   x" + to_string(variable->id()) + " \t+{";
 
 		// Positive occurences
 		for (auto occurenceIt = variable->beginOccurence(SIGN_POSITIVE); occurenceIt != variable->endOccurence(SIGN_POSITIVE); ++occurenceIt) {
-			Clause* clause = *occurenceIt;
-			line.append(" ").append(std::to_string(clause->id()));
+			shared_ptr<Clause> clause = *occurenceIt;
+			line.append(" ").append(to_string(clause->id()));
 		}
 
 		line.append(" } \t-{");
 
 		// Negative occurences
 		for (auto occurenceIt = variable->beginOccurence(SIGN_NEGATIVE); occurenceIt != variable->endOccurence(SIGN_NEGATIVE); ++occurenceIt) {
-			Clause* clause = *occurenceIt;
-			line.append(" ").append(std::to_string(clause->id()));
+			shared_ptr<Clause> clause = *occurenceIt;
+			line.append(" ").append(to_string(clause->id()));
 		}
 
 		log4c_category_debug(log_formula, line.append(" }").data());

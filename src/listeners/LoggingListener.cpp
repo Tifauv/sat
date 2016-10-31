@@ -46,7 +46,7 @@ void LoggingListener::onAssert(Literal& p_literal) {
 }
 
 
-void LoggingListener::onConflict(Clause* p_clause) {
+void LoggingListener::onConflict(shared_ptr<Clause> p_clause) {
 	log4c_category_info(log_dpll, "Clause #%u generated a conflict.", p_clause->id());
 }
 

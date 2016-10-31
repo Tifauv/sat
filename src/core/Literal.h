@@ -17,7 +17,10 @@
 #ifndef LITERAL_H
 #define LITERAL_H
 
+#include <memory>
 #include "Variable.h"
+
+using namespace std;
 
 namespace sat {
 
@@ -27,26 +30,25 @@ class Clause;
 class Literal {
 public:
 	Literal();
-	Literal(Variable* p_variable, int p_sign);
+	Literal(shared_ptr<Variable> p_variable, int p_sign);
 	Literal(const Literal& p_literal);
-	~Literal();
 
-	Variable* var()  const;
+	shared_ptr<Variable> var()  const;
 	Id        id()   const;
 	int       sign() const;
 
 	bool isPositive() const;
 	bool isNegative() const;
 
-	Clause* occurence();
-	Clause* oppositeOccurence();
+	shared_ptr<Clause> occurence();
+	shared_ptr<Clause> oppositeOccurence();
 
 	Literal operator-();
 	bool operator==(const Literal& p_literal);
 	bool operator!=(const Literal& p_literal);
 
 private:
-	Variable* m_variable;
+	shared_ptr<Variable> m_variable;
 	int m_sign;
 };
 

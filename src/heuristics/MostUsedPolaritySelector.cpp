@@ -26,7 +26,7 @@ namespace selectors {
 
 
 // METHODS
-Literal MostUsedPolaritySelector::getLiteral(Variable* p_variable) {
+Literal MostUsedPolaritySelector::getLiteral(shared_ptr<Variable> p_variable) {
 	if (p_variable == nullptr) {
 		return Literal(nullptr, SIGN_POSITIVE);
 	}

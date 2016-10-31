@@ -29,7 +29,6 @@ namespace solver {
 class VariablePolarityLiteralSelector : public LiteralSelector {
 public:
 	VariablePolarityLiteralSelector(VariableSelector& p_variableSelector, PolaritySelector& p_polaritySelector);
-	~VariablePolarityLiteralSelector();
 
 	Literal getLiteral(Formula& p_formula) override;
 

@@ -16,18 +16,12 @@
  */
 #include "ListenerDispatcher.h"
 
+using namespace std;
+
 
 namespace sat {
 namespace solver {
 namespace listeners {
-
-
-// CONSTRUCTORS
-/**
- * Initializes the counter to zero.
- */
-ListenerDispatcher::ListenerDispatcher() {
-}
 
 
 // METHODS
@@ -38,7 +32,7 @@ ListenerDispatcher::ListenerDispatcher() {
  *            the listener to add
  */
 void ListenerDispatcher::addListener(SolverListener& p_listener) {
-	m_listeners.push_back(std::ref(p_listener));
+	m_listeners.push_back(ref(p_listener));
 }
 
 
@@ -81,7 +75,7 @@ void ListenerDispatcher::onAssert(Literal& p_literal) {
 /**
  * Called when a conflict clause has been produced.
  */
-void ListenerDispatcher::onConflict(Clause* p_clause) {
+void ListenerDispatcher::onConflict(shared_ptr<Clause> p_clause) {
 	for (const auto& listener : m_listeners)
 		listener.get().onConflict(p_clause);
 }

@@ -20,6 +20,8 @@
 #include "Formula.h"
 #include "Variable.h"
 
+using namespace std;
+
 
 namespace sat {
 namespace solver {
@@ -27,12 +29,12 @@ namespace selectors {
 
 
 // METHODS
-Variable* LeastUsedVariableSelector::getVariable(Formula& p_formula) {
+shared_ptr<Variable> LeastUsedVariableSelector::getVariable(Formula& p_formula) {
 	if (!p_formula.hasVariables())
 		return nullptr;
 	
-	unsigned int minimumUse = std::numeric_limits<unsigned int>::max();
-	Variable* selectedVar = nullptr;
+	unsigned int minimumUse = numeric_limits<unsigned int>::max();
+	shared_ptr<Variable> selectedVar = nullptr;
 	for (auto it = p_formula.beginVariable(); it != p_formula.endVariable(); ++it) {
 		if ((*it)->countOccurences() < minimumUse) {
 			selectedVar = *it;

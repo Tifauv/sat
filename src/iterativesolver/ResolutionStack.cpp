@@ -32,23 +32,13 @@ ResolutionStack::ResolutionStack() {
 }
 
 
-// DESTRUCTORS
-/**
- * Deletes all the resolution levels from the stack.
- */
-ResolutionStack::~ResolutionStack() {
-	for (auto it = m_resolutionLevels.begin(); it != m_resolutionLevels.end(); it = m_resolutionLevels.erase(it))
-		delete *it;
-}
-
-
 // LEVEL MANAGEMENT
 /**
  * Creates a new resolution level in the stack.
  * This new level becomes the current one.
  */
 void ResolutionStack::nextLevel() {
-	m_resolutionLevels.push_back(new ResolutionStackLevel());
+	m_resolutionLevels.push_back(unique_ptr<ResolutionStackLevel>(new ResolutionStackLevel()));
 }
 
 
@@ -57,16 +47,14 @@ void ResolutionStack::nextLevel() {
  * The previous level becomes the current one (or none if the stack is empty).
  */
 void ResolutionStack::popLevel() {
-	ResolutionStackLevel* level = m_resolutionLevels.back();
 	m_resolutionLevels.pop_back();
-	delete level;
 }
 
 
 /**
  * Gives the current depth (number of levels) of the stack.
  */
-std::stack<ResolutionStackLevel*>::size_type ResolutionStack::currentLevel() const {
+stack<unique_ptr<ResolutionStackLevel>>::size_type ResolutionStack::currentLevel() const {
 	return m_resolutionLevels.size();
 }
 
@@ -101,10 +89,10 @@ void ResolutionStack::logCurrentLiterals() const {
 	if (!log4c_category_is_info_enabled(log_valuation))
 		return;
 
-	std::string line = "Current literals:";
+	string line = "Current literals:";
 	for (const auto& level : m_resolutionLevels)
 		for (const auto& literal : level->literals())
-			line.append("  ").append(literal.isNegative() ? "¬" : "").append("x").append(std::to_string(literal.id()));
+			line.append("  ").append(literal.isNegative() ? "¬" : "").append("x").append(to_string(literal.id()));
 
 	log4c_category_info(log_valuation, line.data());
 }
@@ -117,7 +105,7 @@ void ResolutionStack::logCurrentLiterals() const {
  * @param p_clause
  *            the clause that is removed from the formula
  */
-void ResolutionStack::addClause(Clause* p_clause) {
+void ResolutionStack::addClause(shared_ptr<Clause> p_clause) {
 	m_resolutionLevels.back()->saveRemovedClause(p_clause);
 }
 
@@ -130,7 +118,7 @@ void ResolutionStack::addClause(Clause* p_clause) {
  * @param p_literal
  *            the literal that is remove from that clause
  */
-void ResolutionStack::addLiteral(Clause* p_clause, Literal p_literal) {
+void ResolutionStack::addLiteral(shared_ptr<Clause> p_clause, Literal p_literal) {
 	m_resolutionLevels.back()->saveRemovedLiteralFromClause(p_clause, p_literal);
 }
 

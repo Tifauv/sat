@@ -17,8 +17,11 @@
 #ifndef ITERATIVE_DPLL_SOLVER_H
 #define ITERATIVE_DPLL_SOLVER_H
 
+#include <memory>
 #include "ListenableSolver.h"
 #include "ResolutionStack.h"
+
+using namespace std;
 
 
 namespace sat {
@@ -147,7 +150,7 @@ protected:
 	 *
 	 * @return the conflict clause
 	 */
-	Clause* getConflictClause() const;
+	shared_ptr<Clause> getConflictClause() const;
 
 	/**
 	 * Updates the conflict clause.
@@ -155,7 +158,7 @@ protected:
 	 * @param p_clause
 	 *            the new conflict clause
 	 */
-	void setConflictClause(Clause*);
+	void setConflictClause(shared_ptr<Clause>);
 
 	/**
 	 * Resets the conflict clause to nullptr.
@@ -194,7 +197,7 @@ private:
 	Valuation m_valuation;
 
 	/** A conflicting clause. */
-	Clause* m_conflictClause;
+	shared_ptr<Clause> m_conflictClause;
 
 	/** The algorithm's resolution stack. */
 	ResolutionStack m_resolution;

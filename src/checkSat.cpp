@@ -15,12 +15,15 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
  */
 #include <iostream>
+#include <memory>
 #include <vector>
 #include <log4c.h>
 
 #include "log.h"
 #include "CnfLoader.h"
 #include "BasicSolutionChecker.h"
+
+using namespace std;
 
 
 /**
@@ -30,9 +33,9 @@
  *            the command name as given to argv[0]
  */
 void usage(char* p_command) {
-	std::cout << "Usage: " << p_command << " <cnf_file> <sat_file>" << std::endl;
-	std::cout << "    <cnf_file>  a CNF problem" << std::endl;
-	std::cout << "    <sat_file>  a CNF solution" << std::endl;
+	cout << "Usage: " << p_command << " <cnf_file> <sat_file>" << endl;
+	cout << "    <cnf_file>  a CNF problem" << endl;
+	cout << "    <sat_file>  a CNF solution" << endl;
 }
 
 
@@ -57,7 +60,7 @@ int main(int p_argc, char* p_argv[]) {
 
 	// Initialize the logging system
 	if (log4c_init()) {
-		std::cout << "Log4c initialization failed, aborting." << std::endl;
+		cout << "Log4c initialization failed, aborting." << endl;
 		exit(-2);
 	}
 
@@ -74,25 +77,23 @@ int main(int p_argc, char* p_argv[]) {
 		formula.log();
 
 		// Load the SAT solution file
-		std::vector<sat::RawLiteral>* solution = loader.loadSolution(satFilename);
+		unique_ptr<vector<sat::RawLiteral>> solution = loader.loadSolution(satFilename);
 
 		// Check the solution
 		sat::checker::BasicSolutionChecker checker(formula);
-		if (checker.checkSolution(solution)) {
+		if (checker.checkSolution(*solution)) {
 			rc = 0;
-			std::cout << "The solution is valid." << std::endl;
+			cout << "The solution is valid." << endl;
 		}
 		else {
 			rc = 1;
-			std::cout << "The solution is not valid." << std::endl;
+			cout << "The solution is not valid." << endl;
 		}
-
-		delete solution;
 	}
 
 	// Clean the logging system
 	if (log4c_fini())
-		std::cerr << "log4c cleanup failed." << std::endl;
+		cerr << "log4c cleanup failed." << endl;
 
 	return rc;
 }

@@ -63,7 +63,7 @@ void StatisticsListener::onAssert(Literal&) {
 /**
  * Increments the conflicts counter.
  */
-void StatisticsListener::onConflict(Clause*) {
+void StatisticsListener::onConflict(shared_ptr<Clause>) {
 	m_conflicts++;
 }
 
@@ -79,7 +79,7 @@ void StatisticsListener::onBacktrack(Literal&) {
 /**
  * Prints the current statistics to the given stream.
  */
-std::ostream& operator<<(std::ostream& p_outStream, const StatisticsListener& p_stats) {
+ostream& operator<<(ostream& p_outStream, const StatisticsListener& p_stats) {
 	p_outStream << "Statistics [ " <<
 			p_stats.m_decisions    << " decisions  |  "    <<
 			p_stats.m_propagations << " propagations  |  " <<

@@ -21,7 +21,8 @@
 #include <ostream>
 #include <chrono>
 
-using Clock = std::chrono::high_resolution_clock;
+using namespace std;
+using Clock = chrono::high_resolution_clock;
 
 
 namespace sat {
@@ -48,7 +49,7 @@ public:
 	/**
 	 * Prints the current elapsed time to the given stream.
 	 */
-	friend std::ostream& operator<<(std::ostream& p_outStream, const ChronoListener& p_stats);
+	friend ostream& operator<<(ostream& p_outStream, const ChronoListener& p_stats);
 
 private:
 	/** The number of backtracks. */

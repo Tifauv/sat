@@ -21,6 +21,8 @@
 #include "PolaritySelector.h"
 #include "NoopSolverListener.h"
 
+using namespace std;
+
 class Variable;
 class Literal;
 
@@ -33,13 +35,13 @@ class PolarityCachingSelector : public PolaritySelector, public listeners::NoopS
 public:
 	PolarityCachingSelector(PolaritySelector& p_defaultSelector);
 
-	Literal getLiteral(Variable *p_variable) override;
+	Literal getLiteral(shared_ptr<Variable> p_variable) override;
 
 	void onAssert(Literal& p_literal) override;
 
 private:
 	/** The cache of polarities used. */
-	std::unordered_map<unsigned int, int> m_preferredPolarity;
+	unordered_map<unsigned int, int> m_preferredPolarity;
 
 	/** The default polarity selector. */
 	PolaritySelector& m_defaultSelector;

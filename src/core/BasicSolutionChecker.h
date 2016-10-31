@@ -20,6 +20,8 @@
 #include "SolutionChecker.h"
 #include "RawLiteral.h"
 
+using namespace std;
+
 namespace sat {
 
 class Formula;
@@ -42,12 +44,6 @@ public:
 
 
 	/**
-	 * Destructor.
-	 */
-	~BasicSolutionChecker();
-
-
-	/**
 	 * Check whether a given solution is a valid valuation of a formula.
 	 * 
 	 * @param p_solution
@@ -56,7 +52,7 @@ public:
 	 * @return true if the solution satisfies the formula,
 	 *         false otherwise
 	 */
-	bool checkSolution(std::vector<RawLiteral>* p_solution) override;
+	bool checkSolution(vector<RawLiteral>& p_solution) override;
 
 
 protected:

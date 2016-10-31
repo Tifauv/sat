@@ -30,7 +30,7 @@ namespace selectors {
 
 class MostUsedPolaritySelector : public PolaritySelector {
 public:
-	Literal getLiteral(Variable* p_variable) override;
+	Literal getLiteral(shared_ptr<Variable> p_variable) override;
 };
 
 } // namespace sat::solver::selectors

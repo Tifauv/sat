@@ -34,12 +34,6 @@ namespace listeners {
 class ListenerDispatcher : public SolverListener {
 public:
 	/**
-	 * Initializes the list of listeners.
-	 */
-	explicit ListenerDispatcher();
-
-
-	/**
 	 * Register a listener
 	 * 
 	 * @param p_listener
@@ -74,7 +68,7 @@ public:
 	/**
 	 * Called when a conflict has been reached.
 	 */
-	void onConflict(Clause*) override;
+	void onConflict(shared_ptr<Clause>) override;
 
 
 	/**
@@ -90,7 +84,7 @@ public:
 
 private:
 	/** The listeners. */
-	std::vector<std::reference_wrapper<SolverListener>> m_listeners;
+	vector<reference_wrapper<SolverListener>> m_listeners;
 
 };
 

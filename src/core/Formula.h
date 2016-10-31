@@ -17,9 +17,12 @@
 #ifndef FORMULA_H
 #define FORMULA_H
 
+#include <memory>
 #include <vector>
 #include <unordered_set>
 #include "RawLiteral.h"
+
+using namespace std;
 
 namespace sat {
 
@@ -30,38 +33,35 @@ class Variable;
 
 class Formula {
 public:
-	Formula();
-	~Formula();
-
-	Clause* createClause(Id p_clauseId, std::vector<RawLiteral>& p_literals);
+	void createClause(Id p_clauseId, unique_ptr<vector<RawLiteral>> p_literals);
 
 	Literal findUnitLiteral() const;
 
-	void addClause(Clause* p_clause);
-	void addLiteralToClause(Clause* p_clause, Literal p_literal);
-	void removeClause(Clause* p_clause);
-	void removeLiteralFromClause(Clause* p_clause, Literal p_literal);
+	void addClause(shared_ptr<Clause> p_clause);
+	void addLiteralToClause(shared_ptr<Clause> p_clause, Literal p_literal);
+	void removeClause(shared_ptr<Clause> p_clause);
+	void removeLiteralFromClause(shared_ptr<Clause> p_clause, Literal p_literal);
 
 	bool hasClauses() const;
 	bool hasVariables() const;
 
-	std::unordered_set<Variable*>::iterator beginVariable();
-	std::unordered_set<Variable*>::iterator endVariable();
-	void removeVariable(Variable* p_variable);
-	void addVariable(Variable* p_variable);
+	unordered_set<shared_ptr<Variable>>::iterator beginVariable();
+	unordered_set<shared_ptr<Variable>>::iterator endVariable();
+	void removeVariable(shared_ptr<Variable> p_variable);
+	void addVariable(shared_ptr<Variable> p_variable);
 
 	void log() const;
 
 protected:
-	Variable* findOrCreateVariable(Id p_variableId);
+	shared_ptr<Variable> findOrCreateVariable(Id p_variableId);
 
-	void unlinkVariable(Clause* p_clause, const Literal& p_literal);
+	void unlinkVariable(shared_ptr<Clause> p_clause, const Literal& p_literal);
 
 private:
-	std::unordered_set<Clause*> m_clauses;
-	std::unordered_set<Clause*> m_unusedClauses;
-	std::unordered_set<Variable*> m_variables;
-	std::unordered_set<Variable*> m_unusedVariables;
+	unordered_set<shared_ptr<Clause>> m_clauses;
+	unordered_set<shared_ptr<Clause>> m_unusedClauses;
+	unordered_set<shared_ptr<Variable>> m_variables;
+	unordered_set<shared_ptr<Variable>> m_unusedVariables;
 };
 
 } // namespace sat

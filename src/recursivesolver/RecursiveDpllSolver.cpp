@@ -43,16 +43,6 @@ namespace solver {
 RecursiveDpllSolver::RecursiveDpllSolver(Formula& p_formula, LiteralSelector& p_literalSelector) : 
 m_formula(p_formula),
 m_literalSelector(p_literalSelector) {
-	log4c_category_debug(log_dpll, "DPLL Solver created.");
-}
-
-
-// DESTRUCTORS
-/**
- * Destructor.
- */
-RecursiveDpllSolver::~RecursiveDpllSolver() {
-	log4c_category_debug(log_dpll, "DPLL Solver deleted.");
 }
 
 
@@ -263,7 +253,7 @@ void RecursiveDpllSolver::backtrack(Literal p_literal, History& p_history) {
  */
 void RecursiveDpllSolver::removeClausesWithLiteral(Literal& p_literal, History& p_history) {
 	log4c_category_info(log_dpll, "Removing clauses that contain the literal %sx%u...", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
-	for (Clause* clause = p_literal.occurence(); clause != nullptr; clause = p_literal.occurence()) {
+	for (shared_ptr<Clause> clause = p_literal.occurence(); clause != nullptr; clause = p_literal.occurence()) {
 		log4c_category_debug(log_dpll, "Saving clause %u in the history.", clause->id());
 		p_history.addClause(clause);
 		m_formula.removeClause(clause);
@@ -285,7 +275,7 @@ void RecursiveDpllSolver::removeClausesWithLiteral(Literal& p_literal, History& 
  */
 bool RecursiveDpllSolver::removeOppositeLiteralFromClauses(Literal& p_literal, History& p_history) {
 	log4c_category_info(log_dpll, "Removing literal %sx%u from the clauses.", (p_literal.isPositive() ? "¬" : ""), p_literal.id());
-	for (Clause* clause = p_literal.oppositeOccurence(); clause != nullptr; clause = p_literal.oppositeOccurence()) {
+	for (shared_ptr<Clause> clause = p_literal.oppositeOccurence(); clause != nullptr; clause = p_literal.oppositeOccurence()) {
 		log4c_category_debug(log_dpll, "Saving literal %sx%u of clause %u in the history.", (p_literal.isPositive() ? "¬" : ""), p_literal.id(), clause->id());
 		p_history.addLiteral(clause, -p_literal);
 		

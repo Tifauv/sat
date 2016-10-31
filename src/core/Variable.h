@@ -17,12 +17,14 @@
 #ifndef VARIABLE_H
 #define VARIABLE_H
 
+#include <memory>
 #include <vector>
 #include "FormulaObject.h"
 
 #define SIGN_POSITIVE  1
 #define SIGN_NEGATIVE -1
 
+using namespace std;
 
 namespace sat {
 
@@ -35,9 +37,8 @@ class Clause;
 class Variable : public FormulaObject {
 public:
 	explicit Variable(Id p_id);
-	~Variable();
 
-	void addOccurence(Clause* p_clauseId, int p_sign);
+	void addOccurence(shared_ptr<Clause> p_clauseId, int p_sign);
 
 	bool hasPositiveOccurence() const;
 	bool hasNegativeOccurence() const;
@@ -46,16 +47,16 @@ public:
 	unsigned int countNegativeOccurences() const;
 	unsigned int countOccurences() const;
 
-	Clause* occurence(int p_sign);
-	std::vector<Clause*>::iterator beginOccurence(int p_sign);
-	std::vector<Clause*>::iterator endOccurence(int p_sign);
+	shared_ptr<Clause> occurence(int p_sign);
+	vector<shared_ptr<Clause>>::iterator beginOccurence(int p_sign);
+	vector<shared_ptr<Clause>>::iterator endOccurence(int p_sign);
 
-	void removePositiveOccurence(Clause* p_clause);
-	void removeNegativeOccurence(Clause* p_clause);
+	void removePositiveOccurence(shared_ptr<Clause> p_clause);
+	void removeNegativeOccurence(shared_ptr<Clause> p_clause);
 
 private:
-	std::vector<Clause*> m_positiveOccurences;
-	std::vector<Clause*> m_negativeOccurences;
+	vector<shared_ptr<Clause>> m_positiveOccurences;
+	vector<shared_ptr<Clause>> m_negativeOccurences;
 };
 
 } // namespace sat

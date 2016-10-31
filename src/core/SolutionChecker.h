@@ -19,6 +19,8 @@
 
 #include <vector>
 
+using namespace std;
+
 
 namespace sat {
 
@@ -41,7 +43,7 @@ public:
 	 * @return true if the solution satisfies the formula,
 	 *         false otherwise
 	 */
-	virtual bool checkSolution(std::vector<RawLiteral>* p_solution) = 0;
+	virtual bool checkSolution(vector<RawLiteral>& p_solution) = 0;
 };
 
 } // namespace sat::checker

@@ -21,6 +21,7 @@
 #include <list>
 #include <ostream>
 
+using namespace std;
 
 namespace sat {
 namespace solver {
@@ -36,11 +37,6 @@ public:
 	 * Creates an empty satisfiable valuation.
 	 */
 	Valuation();
-
-	/**
-	 * Deletes the valuation.
-	 */
-	~Valuation();
 
 	/**
 	 * Tells whether this valuation is satisfiable.
@@ -91,7 +87,7 @@ public:
 	/**
 	 * Prints the valuation to the given stream.
 	 */
-	friend std::ostream& operator<<(std::ostream& p_outStream, const Valuation& p_valuation);
+	friend ostream& operator<<(ostream& p_outStream, const Valuation& p_valuation);
 
 
 private:
@@ -99,7 +95,7 @@ private:
 	bool m_unsatisfiable;
 	
 	/** The list of literals. */
-	std::list<Literal> m_literals;
+	list<Literal> m_literals;
 };
 
 } // namespace sat::solver

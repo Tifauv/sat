@@ -53,12 +53,6 @@ public:
 
 
 	/**
-	 * Destructor.
-	 */
-	~RecursiveDpllSolver();
-
-
-	/**
 	 * Gives the current valuation.
 	 * 
 	 * @return the current valuation

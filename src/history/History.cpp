@@ -30,29 +30,12 @@ namespace history {
 
 
 /**
- * Creates a new history.
- */
-History::History() {
-	log4c_category_debug(log_history, "New history created.");
-}
-
-
-/**
- * Frees the memory used by an history.
- */
-History::~History() {
-	clear();
-	log4c_category_debug(log_history, "History deleted.");
-}
-
-
-/**
  * Adds a step for a "remove clause" operation as last step of the history.
  *
  * @param p_clause
  *            the clause to save
  */
-void History::addClause(Clause* p_clause) {
+void History::addClause(shared_ptr<Clause> p_clause) {
 	// Parameters check
 	if (isNull(p_clause)) {
 		log4c_category_error(log_history, "The clause to add is NULL.");
@@ -60,7 +43,7 @@ void History::addClause(Clause* p_clause) {
 	}
 
 	// Add the new step
-	m_steps.push( new RemoveClauseStep(p_clause) );
+	m_steps.push( unique_ptr<RemoveClauseStep>(new RemoveClauseStep(p_clause)) );
 	log4c_category_info(log_history, "Clause %u added to the history.", p_clause->id());
 }
 
@@ -73,7 +56,7 @@ void History::addClause(Clause* p_clause) {
  * @param p_literal
  *            the literal to save
  */
-void History::addLiteral(Clause* p_clause, Literal p_literal) {
+void History::addLiteral(shared_ptr<Clause> p_clause, Literal p_literal) {
 	// Parameters check
 	if (isNull(p_clause)) {
 		log4c_category_error(log_history, "The clause to add is NULL.");
@@ -81,7 +64,7 @@ void History::addLiteral(Clause* p_clause, Literal p_literal) {
 	}
 
 	// Add the new step
-	m_steps.push( new RemoveLiteralFromClauseStep(p_clause, p_literal) );
+	m_steps.push( unique_ptr<RemoveLiteralFromClauseStep>(new RemoveLiteralFromClauseStep(p_clause, p_literal)) );
 	log4c_category_info(log_history, "Literal %sx%u of clause %u added to the history.", (p_literal.isNegative() ? "¬" : ""), p_literal.id(), p_clause->id());
 }
 
@@ -96,31 +79,12 @@ void History::replay(Formula& p_formula) {
 	// Replaying...
 	log4c_category_debug(log_history, "Replaying the history...");
 	while (!m_steps.empty()) {
-		HistoryStep* step = m_steps.top();
-
-		step->undo(p_formula);
-
-		// Delete the step
+		m_steps.top()->undo(p_formula);
 		m_steps.pop();
-		delete step;
 	}
 
 	// Result
 	log4c_category_info(log_history, "History replayed.");
-}
-
-
-/**
- * Removes and frees the last step of the history.
- */
-void History::clear() {
-	while (!m_steps.empty()) {
-		HistoryStep* step = m_steps.top();
-		// Delete the step
-		m_steps.pop();
-		delete step;
-	}
-	log4c_category_debug(log_history, "History cleared.");
 }
 
 } // namespace sat::history

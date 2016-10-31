@@ -28,7 +28,7 @@ Literal(nullptr, SIGN_POSITIVE) {
 }
 
 
-Literal::Literal(Variable* p_variable, int p_sign) :
+Literal::Literal(shared_ptr<Variable> p_variable, int p_sign) :
 m_variable(p_variable),
 m_sign(p_sign) {
 }
@@ -40,13 +40,8 @@ m_sign(p_literal.sign()) {
 }
 
 
-// DESTRUCTORS
-Literal::~Literal() {
-}
-
-
 // GETTERS
-Variable* Literal::var() const {
+shared_ptr<Variable> Literal::var() const {
 	return m_variable;
 }
 
@@ -72,12 +67,12 @@ bool Literal::isNegative() const {
 
 
 // METHODS
-Clause* Literal::occurence() {
+shared_ptr<Clause> Literal::occurence() {
 	return var()->occurence(m_sign);
 }
 
 
-Clause* Literal::oppositeOccurence() {
+shared_ptr<Clause> Literal::oppositeOccurence() {
 	return var()->occurence(-m_sign);
 }
 

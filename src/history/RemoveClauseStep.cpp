@@ -25,7 +25,7 @@ namespace history {
 
 
 // CONSTRUCTORS
-RemoveClauseStep::RemoveClauseStep(Clause* p_clause) :
+RemoveClauseStep::RemoveClauseStep(shared_ptr<Clause> p_clause) :
 HistoryStep(p_clause) {
 }
 
