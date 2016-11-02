@@ -16,8 +16,6 @@
  */
 #include "ListenerDispatcher.h"
 
-using namespace std;
-
 
 namespace sat {
 namespace solver {
@@ -75,7 +73,7 @@ void ListenerDispatcher::onAssert(Literal& p_literal) {
 /**
  * Called when a conflict clause has been produced.
  */
-void ListenerDispatcher::onConflict(shared_ptr<Clause> p_clause) {
+void ListenerDispatcher::onConflict(Clause& p_clause) {
 	for (const auto& listener : m_listeners)
 		listener.get().onConflict(p_clause);
 }

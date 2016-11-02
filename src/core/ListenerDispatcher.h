@@ -21,6 +21,7 @@
 #include <functional>
 #include "SolverListener.h"
 
+using namespace std;
 
 namespace sat {
 namespace solver {
@@ -68,7 +69,7 @@ public:
 	/**
 	 * Called when a conflict has been reached.
 	 */
-	void onConflict(shared_ptr<Clause>) override;
+	void onConflict(Clause&) override;
 
 
 	/**

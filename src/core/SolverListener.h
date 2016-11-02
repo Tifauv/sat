@@ -74,7 +74,7 @@ public:
 	 * @param p_conflictClause
 	 *            the clause that generated the conflict
 	 */
-	virtual void onConflict(shared_ptr<Clause> p_conflictClause) = 0;
+	virtual void onConflict(Clause& p_conflictClause) = 0;
 	
 
 	/**

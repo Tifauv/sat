@@ -309,7 +309,7 @@ void IterativeDpllSolver::resetConflictClause() {
  */
 void IterativeDpllSolver::applyConflict() {
 	// Notify the listeners
-	listeners().onConflict(getConflictClause());
+	listeners().onConflict(*getConflictClause());
 
 	// Clean the conflict clause
 	resetConflictClause();

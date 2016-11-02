@@ -57,7 +57,7 @@ public:
 	/**
 	 * Increments the conflicts counter.
 	 */
-	void onConflict(shared_ptr<Clause>) override;
+	void onConflict(Clause&) override;
 
 	/**
 	 * Increments the backtracks counter.

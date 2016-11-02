@@ -63,7 +63,7 @@ void StatisticsListener::onAssert(Literal&) {
 /**
  * Increments the conflicts counter.
  */
-void StatisticsListener::onConflict(shared_ptr<Clause>) {
+void StatisticsListener::onConflict(Clause&) {
 	m_conflicts++;
 }
 
