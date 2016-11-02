@@ -35,7 +35,7 @@ namespace history {
  * @param p_clause
  *            the clause to save
  */
-void History::addClause(shared_ptr<Clause> p_clause) {
+void History::addClause(const shared_ptr<Clause>& p_clause) {
 	// Parameters check
 	if (isNull(p_clause)) {
 		log4c_category_error(log_history, "The clause to add is NULL.");
@@ -56,7 +56,7 @@ void History::addClause(shared_ptr<Clause> p_clause) {
  * @param p_literal
  *            the literal to save
  */
-void History::addLiteral(shared_ptr<Clause> p_clause, Literal p_literal) {
+void History::addLiteral(const shared_ptr<Clause>& p_clause, Literal p_literal) {
 	// Parameters check
 	if (isNull(p_clause)) {
 		log4c_category_error(log_history, "The clause to add is NULL.");

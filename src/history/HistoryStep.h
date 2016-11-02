@@ -43,7 +43,7 @@ public:
 	 * @param p_clause
 	 *            the clause to record
 	 */
-	explicit HistoryStep(shared_ptr<Clause> p_clause);
+	explicit HistoryStep(const shared_ptr<Clause>& p_clause);
 
 
 	/**
@@ -54,7 +54,7 @@ public:
 	 * @param p_literal
 	 *            the literal to record
 	 */
-	explicit HistoryStep(shared_ptr<Clause> p_clause, Literal p_literal);
+	explicit HistoryStep(const shared_ptr<Clause>& p_clause, Literal p_literal);
 
 
 	/**
