@@ -33,29 +33,29 @@ class Variable;
 
 class Formula {
 public:
-	void createClause(Id p_clauseId, unique_ptr<vector<RawLiteral>> p_literals);
+	void createClause(Id p_clauseId, const unique_ptr<vector<RawLiteral>>& p_literals);
 
 	Literal findUnitLiteral() const;
 
-	void addClause(shared_ptr<Clause> p_clause);
-	void addLiteralToClause(shared_ptr<Clause> p_clause, Literal p_literal);
-	void removeClause(shared_ptr<Clause> p_clause);
-	void removeLiteralFromClause(shared_ptr<Clause> p_clause, Literal p_literal);
+	void addClause(const shared_ptr<Clause>& p_clause);
+	void addLiteralToClause(const shared_ptr<Clause>& p_clause, Literal p_literal);
+	void removeClause(const shared_ptr<Clause>& p_clause);
+	void removeLiteralFromClause(const shared_ptr<Clause>& p_clause, Literal p_literal);
 
 	bool hasClauses() const;
 	bool hasVariables() const;
 
 	unordered_set<shared_ptr<Variable>>::iterator beginVariable();
 	unordered_set<shared_ptr<Variable>>::iterator endVariable();
-	void removeVariable(shared_ptr<Variable> p_variable);
-	void addVariable(shared_ptr<Variable> p_variable);
+	void removeVariable(const shared_ptr<Variable>& p_variable);
+	void addVariable(const shared_ptr<Variable>& p_variable);
 
 	void log() const;
 
 protected:
 	shared_ptr<Variable> findOrCreateVariable(Id p_variableId);
 
-	void unlinkVariable(shared_ptr<Clause> p_clause, const Literal& p_literal);
+	void unlinkVariable(const shared_ptr<Clause>& p_clause, const Literal& p_literal);
 
 private:
 	unordered_set<shared_ptr<Clause>> m_clauses;

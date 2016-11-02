@@ -30,7 +30,7 @@ class Clause;
 class Literal {
 public:
 	Literal();
-	Literal(shared_ptr<Variable> p_variable, int p_sign);
+	Literal(const shared_ptr<Variable>& p_variable, int p_sign);
 	Literal(const Literal& p_literal);
 
 	shared_ptr<Variable> var()  const;

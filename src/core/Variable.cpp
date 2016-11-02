@@ -36,7 +36,7 @@ FormulaObject(p_id) {
 
 
 // METHODS
-void Variable::addOccurence(shared_ptr<Clause> p_clause, int p_sign) {
+void Variable::addOccurence(const shared_ptr<Clause>& p_clause, int p_sign) {
 	// Parameters check
 	if (isNull(p_clause)) {
 		log4c_category_error(log_formula, "Attempted to add a NULL clause to variable x%u.", id());
@@ -113,7 +113,7 @@ vector<shared_ptr<Clause>>::iterator Variable::endOccurence(int p_sign) {
 }
 
 
-void Variable::removePositiveOccurence(shared_ptr<Clause> p_clause) {
+void Variable::removePositiveOccurence(const shared_ptr<Clause>& p_clause) {
 	m_positiveOccurences.erase(
 		remove(
 			m_positiveOccurences.begin(),
@@ -123,7 +123,7 @@ void Variable::removePositiveOccurence(shared_ptr<Clause> p_clause) {
 }
 
 
-void Variable::removeNegativeOccurence(shared_ptr<Clause> p_clause) {
+void Variable::removeNegativeOccurence(const shared_ptr<Clause>& p_clause) {
 	m_negativeOccurences.erase(
 		remove(
 			m_negativeOccurences.begin(),

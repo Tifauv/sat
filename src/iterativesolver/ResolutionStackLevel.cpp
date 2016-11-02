@@ -66,7 +66,7 @@ const list<Literal> ResolutionStackLevel::literals() const {
  * @param p_clause
  *            the clause that was removed from the formula
  */
-void ResolutionStackLevel::saveRemovedClause(shared_ptr<Clause> p_clause) {
+void ResolutionStackLevel::saveRemovedClause(const shared_ptr<Clause>& p_clause) {
 	m_history.addClause(p_clause);
 }
 
@@ -79,7 +79,7 @@ void ResolutionStackLevel::saveRemovedClause(shared_ptr<Clause> p_clause) {
  * @param p_literal
  *            the literal removed from that clause
  */
-void ResolutionStackLevel::saveRemovedLiteralFromClause(shared_ptr<Clause> p_clause, Literal p_literal) {
+void ResolutionStackLevel::saveRemovedLiteralFromClause(const shared_ptr<Clause>& p_clause, Literal p_literal) {
 	m_history.addLiteral(p_clause, p_literal);
 }
 

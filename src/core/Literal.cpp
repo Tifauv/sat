@@ -28,7 +28,7 @@ Literal(nullptr, SIGN_POSITIVE) {
 }
 
 
-Literal::Literal(shared_ptr<Variable> p_variable, int p_sign) :
+Literal::Literal(const shared_ptr<Variable>& p_variable, int p_sign) :
 m_variable(p_variable),
 m_sign(p_sign) {
 }

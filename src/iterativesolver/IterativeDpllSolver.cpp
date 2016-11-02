@@ -224,7 +224,7 @@ void IterativeDpllSolver::reduceFormula(Literal p_literal) {
  */
 void IterativeDpllSolver::removeClausesWithLiteral(Literal& p_literal) {
 	log4c_category_info(log_dpll, "Removing clauses that contain the literal %sx%u...", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
-	for (shared_ptr<Clause> clause = p_literal.occurence(); clause != nullptr; clause = p_literal.occurence()) {
+	for (auto clause = p_literal.occurence(); clause != nullptr; clause = p_literal.occurence()) {
 		log4c_category_debug(log_dpll, "Saving clause %u in the history.", clause->id());
 		m_resolution.addClause(clause);
 
@@ -246,7 +246,7 @@ void IterativeDpllSolver::removeClausesWithLiteral(Literal& p_literal) {
  */
 void IterativeDpllSolver::removeOppositeLiteralFromClauses(Literal& p_literal) {
 	log4c_category_info(log_dpll, "Removing literal %sx%u from the clauses.", (p_literal.isPositive() ? "¬" : ""), p_literal.id());
-	for (shared_ptr<Clause> clause = p_literal.oppositeOccurence(); clause != nullptr; clause = p_literal.oppositeOccurence()) {
+	for (auto clause = p_literal.oppositeOccurence(); clause != nullptr; clause = p_literal.oppositeOccurence()) {
 		log4c_category_debug(log_dpll, "Saving literal %sx%u of clause %u in the history.", (p_literal.isPositive() ? "¬" : ""), p_literal.id(), clause->id());
 		m_resolution.addLiteral(clause, -p_literal);
 
@@ -289,7 +289,7 @@ shared_ptr<Clause> IterativeDpllSolver::getConflictClause() const {
  * @param p_clause
  *            the new conflict clause
  */
-void IterativeDpllSolver::setConflictClause(shared_ptr<Clause> p_clause) {
+void IterativeDpllSolver::setConflictClause(const shared_ptr<Clause>& p_clause) {
 	m_conflictClause = p_clause;
 }
 

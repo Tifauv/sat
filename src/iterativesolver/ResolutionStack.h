@@ -83,7 +83,7 @@ public:
 	 * @param p_clause
 	 *            the clause that is removed from the formula
 	 */
-	void addClause(shared_ptr<Clause> p_clause);
+	void addClause(const shared_ptr<Clause>& p_clause);
 
 	/**
 	 * Stores a 'literal removed from clause' operation to the current level's history.
@@ -93,7 +93,7 @@ public:
 	 * @param p_literal
 	 *            the literal that is remove from that clause
 	 */
-	void addLiteral(shared_ptr<Clause> p_clause, Literal p_literal);
+	void addLiteral(const shared_ptr<Clause>& p_clause, Literal p_literal);
 
 	/**
 	 * Replays the history stored in the current level.

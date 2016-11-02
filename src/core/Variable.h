@@ -38,7 +38,7 @@ class Variable : public FormulaObject {
 public:
 	explicit Variable(Id p_id);
 
-	void addOccurence(shared_ptr<Clause> p_clauseId, int p_sign);
+	void addOccurence(const shared_ptr<Clause>& p_clauseId, int p_sign);
 
 	bool hasPositiveOccurence() const;
 	bool hasNegativeOccurence() const;
@@ -51,8 +51,8 @@ public:
 	vector<shared_ptr<Clause>>::iterator beginOccurence(int p_sign);
 	vector<shared_ptr<Clause>>::iterator endOccurence(int p_sign);
 
-	void removePositiveOccurence(shared_ptr<Clause> p_clause);
-	void removeNegativeOccurence(shared_ptr<Clause> p_clause);
+	void removePositiveOccurence(const shared_ptr<Clause>& p_clause);
+	void removeNegativeOccurence(const shared_ptr<Clause>& p_clause);
 
 private:
 	vector<shared_ptr<Clause>> m_positiveOccurences;

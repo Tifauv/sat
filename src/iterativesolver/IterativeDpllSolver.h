@@ -158,7 +158,7 @@ protected:
 	 * @param p_clause
 	 *            the new conflict clause
 	 */
-	void setConflictClause(shared_ptr<Clause>);
+	void setConflictClause(const shared_ptr<Clause>&);
 
 	/**
 	 * Resets the conflict clause to nullptr.

@@ -88,8 +88,9 @@ int main(int p_argc, char* p_argv[]) {
 		/* Build the literal selection strategy */
 		sat::solver::selectors::MostUsedVariableSelector variableSelector;
 		sat::solver::selectors::MostUsedPolaritySelector polaritySelector;
-		sat::solver::selectors::PolarityCachingSelector cachingPolaritySelector(polaritySelector);
-		sat::solver::VariablePolarityLiteralSelector literalSelector(variableSelector, cachingPolaritySelector);
+		sat::solver::VariablePolarityLiteralSelector literalSelector(variableSelector, polaritySelector);
+		//sat::solver::selectors::PolarityCachingSelector cachingPolaritySelector(polaritySelector);
+		//sat::solver::VariablePolarityLiteralSelector literalSelector(variableSelector, cachingPolaritySelector);
 		
 		/* Build the solver */
 		sat::solver::IterativeDpllSolver solver(formula, literalSelector);
@@ -101,7 +102,7 @@ int main(int p_argc, char* p_argv[]) {
 		//solver.addListener(logging);
 		solver.addListener(stats);
 		solver.addListener(chrono);
-		solver.addListener(cachingPolaritySelector);
+		//solver.addListener(cachingPolaritySelector);
 		
 		/* Solve the problem */
 		sat::solver::Valuation& valuation = solver.solve();

@@ -35,7 +35,7 @@ m_polaritySelector(p_polaritySelector) {
 
 // METHODS
 Literal VariablePolarityLiteralSelector::getLiteral(Formula& p_formula) {
-	shared_ptr<Variable> variable = m_variableSelector.getVariable(p_formula);
+	auto variable = m_variableSelector.getVariable(p_formula);
 
 	// No variable found : return a literal pointing to no variable
 	if (variable == nullptr) {

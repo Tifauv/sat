@@ -65,7 +65,7 @@ public:
 	 * Save a removed clause in the history.
 	 * @param p_clause
 	 */
-	void saveRemovedClause(shared_ptr<Clause> p_clause);
+	void saveRemovedClause(const shared_ptr<Clause>& p_clause);
 
 	/**
 	 * Save a literal removed from a clause in the history.
@@ -75,7 +75,7 @@ public:
 	 * @param p_literal
 	 *            the literal removed from that clause
 	 */
-	void saveRemovedLiteralFromClause(shared_ptr<Clause> p_clause, Literal p_literal);
+	void saveRemovedLiteralFromClause(const shared_ptr<Clause>& p_clause, Literal p_literal);
 
 	/**
 	 * Replays the current history upon a given formula.

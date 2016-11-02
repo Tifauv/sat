@@ -105,7 +105,7 @@ void ResolutionStack::logCurrentLiterals() const {
  * @param p_clause
  *            the clause that is removed from the formula
  */
-void ResolutionStack::addClause(shared_ptr<Clause> p_clause) {
+void ResolutionStack::addClause(const shared_ptr<Clause>& p_clause) {
 	m_resolutionLevels.back()->saveRemovedClause(p_clause);
 }
 
@@ -118,7 +118,7 @@ void ResolutionStack::addClause(shared_ptr<Clause> p_clause) {
  * @param p_literal
  *            the literal that is remove from that clause
  */
-void ResolutionStack::addLiteral(shared_ptr<Clause> p_clause, Literal p_literal) {
+void ResolutionStack::addLiteral(const shared_ptr<Clause>& p_clause, Literal p_literal) {
 	m_resolutionLevels.back()->saveRemovedLiteralFromClause(p_clause, p_literal);
 }
 
