@@ -35,7 +35,7 @@ class PolarityCachingSelector : public PolaritySelector, public listeners::NoopS
 public:
 	PolarityCachingSelector(PolaritySelector& p_defaultSelector);
 
-	Literal getLiteral(shared_ptr<Variable> p_variable) override;
+	Literal getLiteral(const shared_ptr<Variable>& p_variable) override;
 
 	void onAssert(Literal& p_literal) override;
 

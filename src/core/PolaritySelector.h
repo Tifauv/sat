@@ -31,7 +31,7 @@ namespace solver {
 
 class PolaritySelector {
 public:
-	virtual Literal getLiteral(shared_ptr<Variable> p_variable) = 0;
+	virtual Literal getLiteral(const shared_ptr<Variable>& p_variable) = 0;
 };
 
 } // namespace sat::solver

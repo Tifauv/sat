@@ -32,6 +32,8 @@ namespace solver {
 class VariableSelector {
 public:
 	/**
+	 * Note: Switch to C++14 type option<Variable> when available
+	 * 
 	 * @return a pointer to the variable found,
 	 *         or nullptr if there is no variable in the formula
 	 */
