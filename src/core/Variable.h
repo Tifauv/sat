@@ -47,7 +47,7 @@ public:
 	unsigned int countNegativeOccurences() const;
 	unsigned int countOccurences() const;
 
-	shared_ptr<Clause> occurence(int p_sign);
+	shared_ptr<Clause> occurence(int p_sign) const;
 	vector<shared_ptr<Clause>>::iterator beginOccurence(int p_sign);
 	vector<shared_ptr<Clause>>::iterator endOccurence(int p_sign);
 

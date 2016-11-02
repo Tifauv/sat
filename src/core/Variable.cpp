@@ -86,7 +86,7 @@ unsigned int Variable::countOccurences() const {
 }
 
 
-shared_ptr<Clause> Variable::occurence(int p_sign) {
+shared_ptr<Clause> Variable::occurence(int p_sign) const {
 	if (p_sign == SIGN_POSITIVE) {
 		if (m_positiveOccurences.empty())
 			return nullptr;
