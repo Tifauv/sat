@@ -18,7 +18,6 @@
 
 #include <memory>
 #include <iostream>
-#include <log4c.h>
 #include "Variable.h"
 #include "Literal.h"
 #include "Clause.h"
@@ -87,7 +86,7 @@ bool BasicSolutionChecker::reduce(const RawLiteral& p_rawLiteral) {
 		
 		if (variable->id() == p_rawLiteral.id()) {
 			Literal literal(variable, p_rawLiteral.sign());
-			log4c_category_info(log_dpll, "Reduction using literal %sx%u...", (literal.isNegative() ? "¬" : ""), literal.id());
+			log_info(log_dpll, "Reduction using literal %sx%u...", (literal.isNegative() ? "¬" : ""), literal.id());
 		
 			// Remove the clauses that contain the same sign as the given literal
 			for (auto clause = literal.occurence(); clause != nullptr; clause = literal.occurence())
@@ -101,7 +100,7 @@ bool BasicSolutionChecker::reduce(const RawLiteral& p_rawLiteral) {
 				
 				// Check if the clause is still satisfiable
 				if (clause->isUnsatisfiable()) {
-					log4c_category_info(log_dpll, "The produced clause is unsatisfiable.");
+					log_info(log_dpll, "The produced clause is unsatisfiable.");
 					satisfiable = false;
 					break;
 				}

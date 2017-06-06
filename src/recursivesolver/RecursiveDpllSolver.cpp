@@ -16,7 +16,6 @@
  */
 #include "RecursiveDpllSolver.h"
 
-#include <log4c.h>
 #include <algorithm>
 #include "Clause.h"
 #include "Formula.h"
@@ -67,7 +66,7 @@ Valuation& RecursiveDpllSolver::solve() {
 	listeners().init();
 
 	// Solving
-	log4c_category_debug(log_dpll, "Starting the DPLL algorithm.");
+	log_debug(log_dpll, "Starting the DPLL algorithm.");
 	dpll();
 
 	listeners().cleanup();
@@ -80,7 +79,7 @@ Valuation& RecursiveDpllSolver::solve() {
  * Main loop of the Davis-Putnam algorithm.
  */
 void RecursiveDpllSolver::dpll() {
-	log4c_category_info(log_dpll, "Current state:");
+	log_info(log_dpll, "Current state:");
 	m_formula.log();
 	m_valuation.log();
 
@@ -88,7 +87,7 @@ void RecursiveDpllSolver::dpll() {
 	 * Stop case: if there is no clause left, we are done.
 	 */
 	if (!m_formula.hasClauses()) {
-		log4c_category_info(log_dpll, "No more clauses.");
+		log_info(log_dpll, "No more clauses.");
 		return;
 	}
 
@@ -96,7 +95,7 @@ void RecursiveDpllSolver::dpll() {
 	 * Stop case: if there is no variable left, we are done.
 	 */
 	if (!m_formula.hasVariables()) {
-		log4c_category_info(log_dpll, "No more variables.");
+		log_info(log_dpll, "No more variables.");
 		return;
 	}
 
@@ -109,7 +108,7 @@ void RecursiveDpllSolver::dpll() {
 	/*
 	 * First reduction with the chosen literal.
 	 */
-	log4c_category_info(log_dpll, "First reduction attempt...");
+	log_info(log_dpll, "First reduction attempt...");
 	History history;
 	bool satisfiable = propagate(chosen_literal, history);
 
@@ -119,7 +118,7 @@ void RecursiveDpllSolver::dpll() {
 	if (satisfiable) {
 		// Add the chosen literal to the current valuation
 		m_valuation.push(chosen_literal);
-		log4c_category_info(log_dpll, "Added %sx%u to the valuation.", (chosen_literal.isNegative() ? "¬" : ""), chosen_literal.id());
+		log_info(log_dpll, "Added %sx%u to the valuation.", (chosen_literal.isNegative() ? "¬" : ""), chosen_literal.id());
 
 		// Loop again
 		dpll();
@@ -132,15 +131,15 @@ void RecursiveDpllSolver::dpll() {
 	/*
 	 * The valuation is not satisfiable: we try with the opposite literal.
 	 */
-	log4c_category_info(log_dpll, "The current valuation is unsatisfiable.");
-	log4c_category_debug(log_dpll, "Rebuilding the formula before second attempt...");
+	log_info(log_dpll, "The current valuation is unsatisfiable.");
+	log_debug(log_dpll, "Rebuilding the formula before second attempt...");
 	history.replay(m_formula);
 	m_formula.log();
 	m_valuation.setSatisfiable();
 	m_valuation.log();
 
 	// Seconde réduction et test du résultat
-	log4c_category_info(log_dpll, "Second reduction attempt...");
+	log_info(log_dpll, "Second reduction attempt...");
 	satisfiable = propagate(-chosen_literal, history);
 
 	/*
@@ -149,7 +148,7 @@ void RecursiveDpllSolver::dpll() {
 	if (satisfiable) {
 		// Add the chosen literal to the current valuation
 		m_valuation.push(-chosen_literal);
-		log4c_category_info(log_dpll, "Added %sx%u to the valuation.", (chosen_literal.isPositive() ? "¬" : ""), chosen_literal.id());
+		log_info(log_dpll, "Added %sx%u to the valuation.", (chosen_literal.isPositive() ? "¬" : ""), chosen_literal.id());
 
 		// Loop again
 		dpll();
@@ -202,7 +201,7 @@ Literal RecursiveDpllSolver::decide() {
  *         false if it is unsatisfiable
  */
 bool RecursiveDpllSolver::propagate(Literal p_literal, History& p_history) {
-	log4c_category_info(log_dpll, "Propagating literal %sx%u...", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
+	log_info(log_dpll, "Propagating literal %sx%u...", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
 
 	// Remove the clauses that contain the same sign as the given literal
 	removeClausesWithLiteral(p_literal, p_history);
@@ -229,7 +228,7 @@ bool RecursiveDpllSolver::propagate(Literal p_literal, History& p_history) {
  *            the history to replay
  */
 void RecursiveDpllSolver::backtrack(Literal p_literal, History& p_history) {
-	log4c_category_debug(log_dpll, "Restoring state before backtracking...");
+	log_debug(log_dpll, "Restoring state before backtracking...");
 
 	// Reconstruction du graphe
 	p_history.replay(m_formula);
@@ -237,7 +236,7 @@ void RecursiveDpllSolver::backtrack(Literal p_literal, History& p_history) {
 	// Notify the listeners
 	listeners().onBacktrack(p_literal);
 
-	log4c_category_debug(log_dpll, "Restored state:");
+	log_debug(log_dpll, "Restored state:");
 	m_formula.log();
 	m_valuation.log();
 }
@@ -252,9 +251,9 @@ void RecursiveDpllSolver::backtrack(Literal p_literal, History& p_history) {
  *            the history to save the operations
  */
 void RecursiveDpllSolver::removeClausesWithLiteral(Literal& p_literal, History& p_history) {
-	log4c_category_info(log_dpll, "Removing clauses that contain the literal %sx%u...", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
+	log_info(log_dpll, "Removing clauses that contain the literal %sx%u...", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
 	for (auto clause = p_literal.occurence(); clause != nullptr; clause = p_literal.occurence()) {
-		log4c_category_debug(log_dpll, "Saving clause %u in the history.", clause->id());
+		log_debug(log_dpll, "Saving clause %u in the history.", clause->id());
 		p_history.addClause(clause);
 		m_formula.removeClause(clause);
 	}
@@ -274,9 +273,9 @@ void RecursiveDpllSolver::removeClausesWithLiteral(Literal& p_literal, History& 
  *         false if an unsatisfiable clause was produced.
  */
 bool RecursiveDpllSolver::removeOppositeLiteralFromClauses(Literal& p_literal, History& p_history) {
-	log4c_category_info(log_dpll, "Removing literal %sx%u from the clauses.", (p_literal.isPositive() ? "¬" : ""), p_literal.id());
+	log_info(log_dpll, "Removing literal %sx%u from the clauses.", (p_literal.isPositive() ? "¬" : ""), p_literal.id());
 	for (auto clause = p_literal.oppositeOccurence(); clause != nullptr; clause = p_literal.oppositeOccurence()) {
-		log4c_category_debug(log_dpll, "Saving literal %sx%u of clause %u in the history.", (p_literal.isPositive() ? "¬" : ""), p_literal.id(), clause->id());
+		log_debug(log_dpll, "Saving literal %sx%u of clause %u in the history.", (p_literal.isPositive() ? "¬" : ""), p_literal.id(), clause->id());
 		p_history.addLiteral(clause, -p_literal);
 		
 		// Remove the literal from the clause
@@ -284,7 +283,7 @@ bool RecursiveDpllSolver::removeOppositeLiteralFromClauses(Literal& p_literal, H
 
 		// Check if the clause is still satisfiable
 		if (clause->isUnsatisfiable()) {
-			log4c_category_info(log_dpll, "The produced clause is unsatisfiable.");
+			log_info(log_dpll, "The produced clause is unsatisfiable.");
 			return false;
 		}
 	}

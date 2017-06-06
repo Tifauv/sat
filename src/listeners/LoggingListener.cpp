@@ -16,9 +16,9 @@
  */
 #include "LoggingListener.h"
 
-#include "log4c.h"
 #include "log.h"
 #include "Literal.h"
+#include "Clause.h"
 
 
 namespace sat {
@@ -27,37 +27,37 @@ namespace listeners {
 
 // INTERFACE METHODS
 void LoggingListener::init() {
-	log4c_category_info(log_dpll, "Solver initialized.");
+	log_info(log_dpll, "Solver initialized.");
 }
 
 
 void LoggingListener::onDecide(Literal& p_literal) {
-	log4c_category_info(log_dpll, "Decided to use literal %sx%u.", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
+	log_info(log_dpll, "Decided to use literal %sx%u.", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
 }
 
 
 void LoggingListener::onPropagate(Literal& p_literal) {
-	log4c_category_info(log_dpll, "Propagated literal %sx%u.", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
+	log_info(log_dpll, "Propagated literal %sx%u.", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
 }
 
 
 void LoggingListener::onAssert(Literal& p_literal) {
-	log4c_category_info(log_dpll, "Asserted literal %sx%u.", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
+	log_info(log_dpll, "Asserted literal %sx%u.", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
 }
 
 
 void LoggingListener::onConflict(Clause& p_clause) {
-	log4c_category_info(log_dpll, "Clause #%u generated a conflict.", p_clause->id());
+	log_info(log_dpll, "Clause #%u generated a conflict.", p_clause.id());
 }
 
 
 void LoggingListener::onBacktrack(Literal& p_literal) {
-	log4c_category_info(log_dpll, "Backtracked literal %sx%u.", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
+	log_info(log_dpll, "Backtracked literal %sx%u.", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
 }
 
 
 void LoggingListener::cleanup() {
-	log4c_category_info(log_dpll, "Solver cleaned.");
+	log_info(log_dpll, "Solver cleaned.");
 }
 
 } // namespace sat::solver::listeners

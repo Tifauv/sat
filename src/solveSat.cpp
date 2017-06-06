@@ -15,7 +15,6 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
  */
 #include <iostream>
-#include <log4c.h>
 
 #include "log.h"
 #include "CnfLoader.h"
@@ -33,9 +32,9 @@ using namespace std;
 
 
 /* Exit codes */
-#define EXIT_SUCCESS        0
-#define EXIT_NO_ARGS       -1
-#define EXIT_LOG4C_FAILURE -2
+#define EXIT_SUCCESS      0
+#define EXIT_NO_ARGS     -1
+#define EXIT_LOG_FAILURE -2
 
 
 /**
@@ -58,7 +57,7 @@ void usage(char* p_command) {
  * @param p_argv
  *            the array of command-line arguments
  * 
- * @return -2 if the log4c initialization fails,
+ * @return -2 if the log initialization fails,
  *         -1 if no argument was given,
  *          0 otherwise
  */
@@ -70,9 +69,9 @@ int main(int p_argc, char* p_argv[]) {
 	}
 
 	// Initialize the logging system
-	if (log4c_init()) {
-		cerr << "Log4c initialization failed, aborting." << endl;
-		exit(EXIT_LOG4C_FAILURE);
+	if (log_setup()) {
+		cerr << "Log initialization failed, aborting." << endl;
+		exit(EXIT_LOG_FAILURE);
 	}
 	
 	{
@@ -115,8 +114,8 @@ int main(int p_argc, char* p_argv[]) {
 	}
 
 	// Clean the logging system
-	if (log4c_fini())
-		cerr << "log4c cleanup failed." << endl;
+	if (log_cleanup())
+		cerr << "Log cleanup failed." << endl;
 
 	return EXIT_SUCCESS;
 }

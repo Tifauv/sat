@@ -23,23 +23,46 @@
 #define LOG_CATEGORY_HISTORY    "sat.history"
 #define LOG_CATEGORY_VALUATION  "sat.valuation"
 
-#define log_cnf       log4c_category_get(LOG_CATEGORY_LOADER_CNF)
-#define log_dpll      log4c_category_get(LOG_CATEGORY_DPLL)
-#define log_formula   log4c_category_get(LOG_CATEGORY_FORMULA)
-#define log_history   log4c_category_get(LOG_CATEGORY_HISTORY)
-#define log_valuation log4c_category_get(LOG_CATEGORY_VALUATION)
 
 #ifdef WITHOUT_LOG4C
 
-#define log4c_init() false
-#define log4c_fini() false
+#define log_cnf
+#define log_dpll
+#define log_formula
+#define log_history
+#define log_valuation
 
-#define log4c_category_debug(c, ...)
-#define log4c_category_info(c, ...)
-#define log4c_category_warn(c, ...)
-#define log4c_category_error(c, ...)
-#define log4c_category_is_debug_enabled(c) false
-#define log4c_category_is_info_enabled(c)  false
+#define log_setup()              false
+#define log_cleanup()            false
+
+#define log_debug(c, ...)
+#define log_info(c, ...)
+#define log_warn(c, ...)
+#define log_error(c, ...)
+
+#define log_is_debug_enabled(c)  false
+#define log_is_info_enabled(c)   false
+
+#else // WITHOUT_LOG4C
+
+#include <log4c.h>
+
+#define log_cnf                  log4c_category_get(LOG_CATEGORY_LOADER_CNF)
+#define log_dpll                 log4c_category_get(LOG_CATEGORY_DPLL)
+#define log_formula              log4c_category_get(LOG_CATEGORY_FORMULA)
+#define log_history              log4c_category_get(LOG_CATEGORY_HISTORY)
+#define log_valuation            log4c_category_get(LOG_CATEGORY_VALUATION)
+
+#define log_setup()              log4c_init()
+#define log_cleanup()            log4c_fini()
+
+#define log_debug(c, ...)        log4c_category_debug(c, __VA_ARGS__)
+#define log_info(c, ...)         log4c_category_info(c, __VA_ARGS__)
+#define log_warn(c, ...)         log4c_category_warn(c, __VA_ARGS__)
+#define log_error(c, ...)        log4c_category_error(c, __VA_ARGS__)
+
+#define log_is_debug_enabled(c)  log4c_category_is_debug_enabled(c)
+#define log_is_info_enabled(c)   log4c_category_is_info_enabled(c)
 
 #endif // WITHOUT_LOG4C
 

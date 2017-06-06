@@ -21,7 +21,6 @@
 #include <sstream>
 #include <string>
 #include <list>
-#include <log4c.h>
 #include "utils.h"
 #include "log.h"
 
@@ -38,15 +37,15 @@ namespace sat {
  *            the formula to initialize
  */
 void CnfLoader::loadProblem(char* p_filename, Formula& p_formula) {
-	log4c_category_debug(log_cnf, "Loading problem from CNF file '%s'...", p_filename);
+	log_debug(log_cnf, "Loading problem from CNF file '%s'...", p_filename);
 	
 	// Ouverture du fichier
 	ifstream file(p_filename);
 	if (!file.is_open()) {
-		log4c_category_error(log_cnf, "Could not open file '%s'.", p_filename);
+		log_error(log_cnf, "Could not open file '%s'.", p_filename);
 		return;
 	}
-	log4c_category_debug(log_cnf, "File '%s' opened.", p_filename);
+	log_debug(log_cnf, "File '%s' opened.", p_filename);
 	
 	// Initializations
 	string line;
@@ -55,7 +54,7 @@ void CnfLoader::loadProblem(char* p_filename, Formula& p_formula) {
 	
 	while (getline(file, line)) {
 		lineNo++;
-		log4c_category_debug(log_cnf, "Line #%02d: |%s|", lineNo, line.c_str());
+		log_debug(log_cnf, "Line #%02d: |%s|", lineNo, line.c_str());
 		
 		// Ignore comment lines
 		if (line[0] == 'c')
@@ -73,7 +72,7 @@ void CnfLoader::loadProblem(char* p_filename, Formula& p_formula) {
 		p_formula.createClause(clauseId, parseClause(line));
 		++clauseId;
 	}
-	log4c_category_info(log_cnf, "Problem loaded from CNF file '%s'.", p_filename);
+	log_info(log_cnf, "Problem loaded from CNF file '%s'.", p_filename);
 }
 
 
@@ -87,15 +86,15 @@ void CnfLoader::loadProblem(char* p_filename, Formula& p_formula) {
  *         the valuation loaded otherwise
  */
 unique_ptr<vector<RawLiteral>> CnfLoader::loadSolution(char* p_filename) {
-	log4c_category_debug(log_cnf, "Loading solution from SAT file '%s'...", p_filename);
+	log_debug(log_cnf, "Loading solution from SAT file '%s'...", p_filename);
 	
 	// Ouverture du fichier
 	ifstream file(p_filename);
 	if (!file.is_open()) {
-		log4c_category_error(log_cnf, "Could not open file '%s'.", p_filename);
+		log_error(log_cnf, "Could not open file '%s'.", p_filename);
 		return nullptr;
 	}
-	log4c_category_debug(log_cnf, "File '%s' opened.", p_filename);
+	log_debug(log_cnf, "File '%s' opened.", p_filename);
 	
 	// Initializations
 	unique_ptr<vector<RawLiteral>> solution = nullptr;
@@ -104,7 +103,7 @@ unique_ptr<vector<RawLiteral>> CnfLoader::loadSolution(char* p_filename) {
 	
 	while (getline(file, line)) {
 		lineNo++;
-		log4c_category_debug(log_cnf, "Line #%02d: |%s|", lineNo, line.c_str());
+		log_debug(log_cnf, "Line #%02d: |%s|", lineNo, line.c_str());
 		
 		// Ignore comment lines
 		if (line[0] == 'c')
@@ -120,7 +119,7 @@ unique_ptr<vector<RawLiteral>> CnfLoader::loadSolution(char* p_filename) {
 			break;
 		}
 	}
-	log4c_category_info(log_cnf, "Solution loaded from SAT file '%s'.", p_filename);
+	log_info(log_cnf, "Solution loaded from SAT file '%s'.", p_filename);
 	
 	return solution;
 }
@@ -150,17 +149,17 @@ unique_ptr<vector<RawLiteral>> CnfLoader::parseClause(string p_line) {
 		// On teste si l'entier n'apparaît pas déjà dans la variable
 		switch (existsLiteral(literal, *literals)) {
 			case 1: // Le token apparaît 2 fois avec le même "signe" -> pas ajouté cette fois
-				log4c_category_debug(log_cnf, "  - Literal %sx%u already parsed in that clause, skipped.", (literal.isNegative() ? "¬" : ""), literal.id());
+				log_debug(log_cnf, "  - Literal %sx%u already parsed in that clause, skipped.", (literal.isNegative() ? "¬" : ""), literal.id());
 				break;
 				
 			case -1: // Le token et son contraire apparaîssent -> literals = nullptr
-				log4c_category_debug(log_cnf, "   - Literal %sx%u already parsed in that clause so it is always true.", (literal.isNegative() ? "¬" : ""), literal.id());
+				log_debug(log_cnf, "   - Literal %sx%u already parsed in that clause so it is always true.", (literal.isNegative() ? "¬" : ""), literal.id());
 				literals = nullptr;
 				break;
 				
 			default:
 				literals->push_back(literal);
-				log4c_category_debug(log_cnf, "  - Literal %sx%u parsed.", (literal.isNegative() ? "¬" : ""), literal.id());
+				log_debug(log_cnf, "  - Literal %sx%u parsed.", (literal.isNegative() ? "¬" : ""), literal.id());
 		}
 	}
 	

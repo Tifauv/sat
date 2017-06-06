@@ -17,7 +17,6 @@
 #include <iostream>
 #include <memory>
 #include <vector>
-#include <log4c.h>
 
 #include "log.h"
 #include "CnfLoader.h"
@@ -47,7 +46,7 @@ void usage(char* p_command) {
  * @param p_argv
  *            the array of command-line arguments
  * 
- * @return -2 if the log4c initialization fails,
+ * @return -2 if the log initialization fails,
  *         -1 if no argument was given,
  *          0 otherwise
  */
@@ -59,8 +58,8 @@ int main(int p_argc, char* p_argv[]) {
 	}
 
 	// Initialize the logging system
-	if (log4c_init()) {
-		cout << "Log4c initialization failed, aborting." << endl;
+	if (log_setup()) {
+		cout << "Log initialization failed, aborting." << endl;
 		exit(-2);
 	}
 
@@ -92,8 +91,8 @@ int main(int p_argc, char* p_argv[]) {
 	}
 
 	// Clean the logging system
-	if (log4c_fini())
-		cerr << "log4c cleanup failed." << endl;
+	if (log_cleanup())
+		cerr << "Log cleanup failed." << endl;
 
 	return rc;
 }

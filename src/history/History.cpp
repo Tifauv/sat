@@ -16,7 +16,6 @@
  */
 #include "History.h"
 
-#include <log4c.h>
 #include "RemoveClauseStep.h"
 #include "RemoveLiteralFromClauseStep.h"
 #include "Formula.h"
@@ -38,13 +37,13 @@ namespace history {
 void History::addClause(const shared_ptr<Clause>& p_clause) {
 	// Parameters check
 	if (isNull(p_clause)) {
-		log4c_category_error(log_history, "The clause to add is NULL.");
+		log_error(log_history, "The clause to add is NULL.");
 		return;
 	}
 
 	// Add the new step
 	m_steps.push( unique_ptr<RemoveClauseStep>(new RemoveClauseStep(p_clause)) );
-	log4c_category_info(log_history, "Clause %u added to the history.", p_clause->id());
+	log_info(log_history, "Clause %u added to the history.", p_clause->id());
 }
 
 
@@ -59,13 +58,13 @@ void History::addClause(const shared_ptr<Clause>& p_clause) {
 void History::addLiteral(const shared_ptr<Clause>& p_clause, Literal p_literal) {
 	// Parameters check
 	if (isNull(p_clause)) {
-		log4c_category_error(log_history, "The clause to add is NULL.");
+		log_error(log_history, "The clause to add is NULL.");
 		return;
 	}
 
 	// Add the new step
 	m_steps.push( unique_ptr<RemoveLiteralFromClauseStep>(new RemoveLiteralFromClauseStep(p_clause, p_literal)) );
-	log4c_category_info(log_history, "Literal %sx%u of clause %u added to the history.", (p_literal.isNegative() ? "¬" : ""), p_literal.id(), p_clause->id());
+	log_info(log_history, "Literal %sx%u of clause %u added to the history.", (p_literal.isNegative() ? "¬" : ""), p_literal.id(), p_clause->id());
 }
 
 
@@ -77,14 +76,14 @@ void History::addLiteral(const shared_ptr<Clause>& p_clause, Literal p_literal) 
  */
 void History::replay(Formula& p_formula) {
 	// Replaying...
-	log4c_category_debug(log_history, "Replaying the history...");
+	log_debug(log_history, "Replaying the history...");
 	while (!m_steps.empty()) {
 		m_steps.top()->undo(p_formula);
 		m_steps.pop();
 	}
 
 	// Result
-	log4c_category_info(log_history, "History replayed.");
+	log_info(log_history, "History replayed.");
 }
 
 } // namespace sat::history

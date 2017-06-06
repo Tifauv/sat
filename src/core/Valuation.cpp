@@ -18,7 +18,6 @@
 
 #include <assert.h>
 #include <iostream>
-#include <log4c.h>
 #include "utils.h"
 #include "log.h"
 
@@ -59,7 +58,7 @@ bool Valuation::isUnsatisfiable() const {
  */
 void Valuation::setSatisfiable() {
 	m_unsatisfiable = false;
-	log4c_category_debug(log_valuation, "The valuation is set satisfiable.");
+	log_debug(log_valuation, "The valuation is set satisfiable.");
 }
 
 
@@ -68,7 +67,7 @@ void Valuation::setSatisfiable() {
  */
 void Valuation::setUnsatisfiable() {
 	m_unsatisfiable = true;
-	log4c_category_debug(log_valuation, "The valuation is set unsatisfiable.");
+	log_debug(log_valuation, "The valuation is set unsatisfiable.");
 }
 
 
@@ -81,12 +80,12 @@ void Valuation::setUnsatisfiable() {
  */
 void Valuation::push(Literal p_literal) {
 	m_literals.push_back(p_literal);
-	log4c_category_info(log_valuation, "Literal %sx%u added to the valuation.", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
+	log_info(log_valuation, "Literal %sx%u added to the valuation.", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
 	
 	// Reset the satisfiability status
 	if (isUnsatisfiable()) {
 		setSatisfiable();
-		log4c_category_info(log_valuation, "The valuation was unsatisfiable, and has now been set satisfiable.");
+		log_info(log_valuation, "The valuation was unsatisfiable, and has now been set satisfiable.");
 	}
 }
 
@@ -113,7 +112,7 @@ void Valuation::pop() {
 
 	Literal literal = m_literals.back();
 	m_literals.pop_back();
-	log4c_category_info(log_valuation, "Literal %sx%u removed from the valuation.", (literal.isNegative() ? "¬" : ""), literal.id());
+	log_info(log_valuation, "Literal %sx%u removed from the valuation.", (literal.isNegative() ? "¬" : ""), literal.id());
 }
 
 
@@ -121,11 +120,11 @@ void Valuation::pop() {
  * Logs the valuation.
  */
 void Valuation::log() {
-	if (!log4c_category_is_info_enabled(log_valuation))
+	if (!log_is_info_enabled(log_valuation))
 		return;
 
 	if (isUnsatisfiable()) {
-		log4c_category_info(log_valuation, "The valuation is unsatisfiable.");
+		log_info(log_valuation, "The valuation is unsatisfiable.");
 		return;
 	}
 
@@ -134,7 +133,7 @@ void Valuation::log() {
 	for (const auto& literal : m_literals)
 		line.append("  ").append(literal.isNegative() ? "¬" : "").append("x").append(to_string(literal.id()));
 
-	log4c_category_info(log_valuation, line.data());
+	log_info(log_valuation, line.data());
 }
 
 

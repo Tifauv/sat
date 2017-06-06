@@ -22,16 +22,17 @@ set( SAT_LISTENERS_SRCS
 	ChronoListener.cpp
 )
 set( SAT_LISTENERS_HEADERS
-	LoggingListener.h
 	StatisticsListener.h
 	ChronoListener.h
 )
 # Add the LoggingListener if compiled with -DWITH_LOGGING
 if( WITH_LOGGING )
 	set( SAT_LISTENERS_SRCS
+		${SAT_LISTENERS_SRCS}
 		LoggingListener.cpp
 	)
 	set( SAT_LISTENERS_HEADERS
+			${SAT_LISTENERS_HEADERS}
 		LoggingListener.h
 	)
 endif( WITH_LOGGING )

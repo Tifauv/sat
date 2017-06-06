@@ -17,7 +17,6 @@
 #include "Clause.h"
 
 #include <algorithm>
-#include <log4c.h>
 #include "Literal.h"
 #include "utils.h"
 #include "log.h"
@@ -47,7 +46,7 @@ FormulaObject(p_id) {
  */
 void Clause::addLiteral(const Literal& p_literal) {
 	m_literals.push_back(p_literal);
-	log4c_category_debug(log_formula, "Literal %sx%u added to clause %u.", (p_literal.isNegative() ? "¬" : ""), p_literal.id(), id());
+	log_debug(log_formula, "Literal %sx%u added to clause %u.", (p_literal.isNegative() ? "¬" : ""), p_literal.id(), id());
 }
 
 
@@ -59,7 +58,7 @@ void Clause::addLiteral(const Literal& p_literal) {
  */
 void Clause::removeLiteral(const Literal& p_literal) {
 	m_literals.erase(remove(m_literals.begin(), m_literals.end(), p_literal), m_literals.end());
-	log4c_category_debug(log_formula, "Literal %sx%u removed from clause %u.", (p_literal.isNegative() ? "¬" : ""), p_literal.id(), id());
+	log_debug(log_formula, "Literal %sx%u removed from clause %u.", (p_literal.isNegative() ? "¬" : ""), p_literal.id(), id());
 }
 
 

@@ -18,7 +18,6 @@
 
 
 #include <assert.h>
-#include <log4c.h>
 #include "log.h"
 
 namespace sat {
@@ -33,7 +32,7 @@ namespace solver {
  */
 void ResolutionStackLevel::pushLiteral(Literal p_literal) {
 	m_literals.push_back(p_literal);
-	log4c_category_info(log_history, "Literal %sx%u added to the current resolution level.", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
+	log_info(log_history, "Literal %sx%u added to the current resolution level.", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
 }
 
 

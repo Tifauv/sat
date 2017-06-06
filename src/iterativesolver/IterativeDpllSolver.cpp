@@ -16,7 +16,6 @@
  */
 #include "IterativeDpllSolver.h"
 
-#include "log4c.h"
 #include "log.h"
 #include "Literal.h"
 #include "Clause.h"
@@ -223,13 +222,13 @@ void IterativeDpllSolver::reduceFormula(Literal p_literal) {
  *            the literal to propagate
  */
 void IterativeDpllSolver::removeClausesWithLiteral(Literal& p_literal) {
-	log4c_category_info(log_dpll, "Removing clauses that contain the literal %sx%u...", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
+	log_info(log_dpll, "Removing clauses that contain the literal %sx%u...", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
 	for (auto clause = p_literal.occurence(); clause != nullptr; clause = p_literal.occurence()) {
-		log4c_category_debug(log_dpll, "Saving clause %u in the history.", clause->id());
+		log_debug(log_dpll, "Saving clause %u in the history.", clause->id());
 		m_resolution.addClause(clause);
 
 		m_formula.removeClause(clause);
-		log4c_category_info(log_dpll, "Clause %u removed.", clause->id());
+		log_info(log_dpll, "Clause %u removed.", clause->id());
 	}
 }
 
@@ -245,9 +244,9 @@ void IterativeDpllSolver::removeClausesWithLiteral(Literal& p_literal) {
  *         false if an unsatisfiable clause was produced.
  */
 void IterativeDpllSolver::removeOppositeLiteralFromClauses(Literal& p_literal) {
-	log4c_category_info(log_dpll, "Removing literal %sx%u from the clauses.", (p_literal.isPositive() ? "¬" : ""), p_literal.id());
+	log_info(log_dpll, "Removing literal %sx%u from the clauses.", (p_literal.isPositive() ? "¬" : ""), p_literal.id());
 	for (auto clause = p_literal.oppositeOccurence(); clause != nullptr; clause = p_literal.oppositeOccurence()) {
-		log4c_category_debug(log_dpll, "Saving literal %sx%u of clause %u in the history.", (p_literal.isPositive() ? "¬" : ""), p_literal.id(), clause->id());
+		log_debug(log_dpll, "Saving literal %sx%u of clause %u in the history.", (p_literal.isPositive() ? "¬" : ""), p_literal.id(), clause->id());
 		m_resolution.addLiteral(clause, -p_literal);
 
 		// Remove the literal from the clause
@@ -255,7 +254,7 @@ void IterativeDpllSolver::removeOppositeLiteralFromClauses(Literal& p_literal) {
 
 		// Check if the clause is still satisfiable
 		if (clause->isUnsatisfiable()) {
-			log4c_category_info(log_dpll, "The produced clause is unsatisfiable.");
+			log_info(log_dpll, "The produced clause is unsatisfiable.");
 			setConflictClause(clause);
 		}
 	}

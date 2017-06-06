@@ -17,7 +17,6 @@
 #include "ResolutionStack.h"
 
 #include <string>
-#include <log4c.h>
 #include "log.h"
 
 namespace sat {
@@ -86,7 +85,7 @@ Literal ResolutionStack::lastDecisionLiteral() const {
  * Logs the stack.
  */
 void ResolutionStack::logCurrentLiterals() const {
-	if (!log4c_category_is_info_enabled(log_valuation))
+	if (!log_is_info_enabled(log_valuation))
 		return;
 
 	string line = "Current literals:";
@@ -94,7 +93,7 @@ void ResolutionStack::logCurrentLiterals() const {
 		for (const auto& literal : level->literals())
 			line.append("  ").append(literal.isNegative() ? "¬" : "").append("x").append(to_string(literal.id()));
 
-	log4c_category_info(log_valuation, line.data());
+	log_info(log_valuation, line.data());
 }
 
 
