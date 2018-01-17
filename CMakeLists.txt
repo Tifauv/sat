@@ -37,16 +37,18 @@ option( WITH_LOGGING "Enable the LoggingListener (adds a dependency on Log4c)" o
 # Declare common CFLAGS
 if( USE_CLANG )
 	set( CMAKE_CXX_FLAGS                "-Wall" )
-	set( CMAKE_CXX_FLAGS_DEBUG          "-O1 -g -fsanitize=address -fno-omit-frame-pointer" )
+	set( CMAKE_CXX_FLAGS_DEBUG          "-O1 -g -fsanitize=address -fsanitize=undefined -fno-omit-frame-pointer" )
 	set( CMAKE_CXX_FLAGS_MINSIZEREL     "-Os" )
 	set( CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g" )
 	set( CMAKE_CXX_FLAGS_RELEASE        "-O3" )
+	set( CMAKE_LINKER_FLAGS_DEBUG       "${CMAKE_LINKER_FLAGS_DEBUG} -fsanitize=address -fsanitize=undefined -fno-omit-frame-pointer" )
 else( USE_CLANG )
 	set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic" )
-	set( CMAKE_CXX_FLAGS_DEBUG          "-O0 -ggdb -fsanitize=address" )
+	set( CMAKE_CXX_FLAGS_DEBUG          "-O0 -ggdb -fsanitize=address -fsanitize=undefined -fno-omit-frame-pointer" )
 	set( CMAKE_CXX_FLAGS_MINSIZEREL     "-Os -march=native" )
 	set( CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -march=native -g" )
 	set( CMAKE_CXX_FLAGS_RELEASE        "-O2 -march=native" )
+	set( CMAKE_LINKER_FLAGS_DEBUG       "${CMAKE_LINKER_FLAGS_DEBUG} -fsanitize=address -fsanitize=undefined -fno-omit-frame-pointer" )
 endif( USE_CLANG )
 
 # Declare log4c as a mandatory dependency if logging is explicitely enabled
