@@ -19,7 +19,7 @@ cd ${builddir}
 export CXX=$(which clang++)
 
 # Generate the Makefiles
-cmake $@ -DUSE_CLANG=on -D_CMAKE_TOOLCHAIN_PREFIX=llvm- ${srcdir}
+cmake $@ -DUSE_CLANG=on -D_CMAKE_TOOLCHAIN_PREFIX=llvm- -DCMAKE_BUILD_TYPE=Debug ${srcdir}
 
 # Build
-make -j5
+make -j1
