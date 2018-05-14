@@ -33,8 +33,7 @@ using namespace std;
 
 /* Exit codes */
 #define EXIT_SUCCESS      0
-#define EXIT_NO_ARGS     -1
-#define EXIT_LOG_FAILURE -2
+#define EXIT_LOG_FAILURE -1
 
 
 /**
@@ -57,15 +56,14 @@ void usage(char* p_command) {
  * @param p_argv
  *            the array of command-line arguments
  * 
- * @return -2 if the log initialization fails,
- *         -1 if no argument was given,
+ * @return -1 if the log initialization fails,
  *          0 otherwise
  */
 int main(int p_argc, char* p_argv[]) {
 	// No argument: display usage and exit
 	if (p_argc != 2) {
 		usage(p_argv[0]);
-		exit(EXIT_NO_ARGS);
+		exit(EXIT_SUCCESS);
 	}
 
 	// Initialize the logging system
