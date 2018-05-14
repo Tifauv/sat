@@ -131,9 +131,6 @@ protected:
 	 *
 	 * @param p_literal
 	 *            the selected literal
-	 *
-	 * @return true if all the clauses could be reduced without producing an unsatisfiable one;
-	 *         false if an unsatisfiable clause was produced.
 	 */
 	void removeOppositeLiteralFromClauses(Literal& p_literal);
 

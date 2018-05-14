@@ -240,8 +240,7 @@ void IterativeDpllSolver::removeClausesWithLiteral(Literal& p_literal) {
  * @param p_literal
  *            the selected literal
  *
- * @return true if all the clauses could be reduced without producing an unsatisfiable one;
- *         false if an unsatisfiable clause was produced.
+ * @see setConflictClause() if an empty (unsatisfiable) clause is produced
  */
 void IterativeDpllSolver::removeOppositeLiteralFromClauses(Literal& p_literal) {
 	log_info(log_dpll, "Removing literal %sx%u from the clauses.", (p_literal.isPositive() ? "¬" : ""), p_literal.id());
