@@ -58,6 +58,11 @@ public:
 
 
 	/**
+	 * Virtual destructor.
+	 */
+	virtual ~HistoryStep() {};
+
+	/**
 	 * Give the clause recorded in this step.
 	 * 
 	 * @return a pointer to the clause
