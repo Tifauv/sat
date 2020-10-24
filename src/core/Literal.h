@@ -44,6 +44,7 @@ public:
 	shared_ptr<Clause> oppositeOccurence();
 
 	Literal operator-();
+	Literal& operator=(const Literal&) = default;
 	bool operator==(const Literal& p_literal);
 	bool operator!=(const Literal& p_literal);
 
