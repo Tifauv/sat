@@ -88,9 +88,10 @@ protected:
 	 * The history is used for backtracking.
 	 * 
 	 * @param p_literal
-	 *            the literal used to reduce the formula
+	 *            the literal propagated through the formula
 	 * @param p_history
 	 *            the backtracking history
+	 *
 	 * 
 	 * @return true if the reduction is satisfiable
 	 *         false if it is unsatisfiable

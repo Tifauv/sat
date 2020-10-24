@@ -63,7 +63,9 @@ public:
 
 	/**
 	 * Save a removed clause in the history.
-	 * @param p_clause
+	 * 
+	* @param p_clause
+	*            the clause that was removed from the formula
 	 */
 	void saveRemovedClause(const shared_ptr<Clause>& p_clause);
 

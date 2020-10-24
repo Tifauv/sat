@@ -62,7 +62,7 @@ public:
 	 * Appends a literal.
 	 * 
 	 * @param p_literal
-	 *            the literal
+	 *            the literal to add
 	 */
 	void push(Literal p_literal);
 
