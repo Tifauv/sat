@@ -33,7 +33,7 @@ namespace selectors {
 
 class PolarityCachingSelector : public PolaritySelector, public listeners::NoopSolverListener {
 public:
-	PolarityCachingSelector(PolaritySelector& p_defaultSelector);
+	explicit PolarityCachingSelector(PolaritySelector& p_defaultSelector);
 
 	Literal getLiteral(const shared_ptr<Variable>& p_variable) override;
 
