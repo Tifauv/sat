@@ -34,6 +34,8 @@ namespace listeners {
  */
 class StatisticsListener : public NoopSolverListener {
 public:
+	StatisticsListener();
+	
 	/**
 	 * Resets the counters to zero.
 	 */

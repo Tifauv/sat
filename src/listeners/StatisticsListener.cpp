@@ -23,6 +23,15 @@ namespace sat {
 namespace solver {
 namespace listeners {
 
+// CONSTRUCTORS
+StatisticsListener::StatisticsListener() :
+m_decisions(0),
+m_propagations(0),
+m_assertions(0),
+m_conflicts(0),
+m_backtracks(0) { }
+
+
 // INTERFACE METHODS
 /**
  * Resets the counters to zero.
