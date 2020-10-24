@@ -16,6 +16,7 @@
  */
 #include "CnfLoader.h"
 
+#include <algorithm>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -180,10 +181,14 @@ unique_ptr<vector<RawLiteral>> CnfLoader::parseClause(string p_line) {
  *          1 if p_literal appears in p_literals
  */
 int CnfLoader::existsLiteral(RawLiteral& p_literal, vector<RawLiteral>& p_literals) {
-	for (const auto& literal : p_literals) {
-		if ( p_literal.id() == literal.id() )
-			return p_literal.sign() * literal.sign();
+	auto foundLiteral = find_if(p_literals.begin(), p_literals.end(), [p_literal](RawLiteral x){return x.id() == p_literal.id();});
+	
+	// Literal found
+	if (foundLiteral != p_literals.end()) {
+		return p_literal.sign() * (*foundLiteral).sign();
 	}
+
+	// Not found
 	return 0;
 }
 
