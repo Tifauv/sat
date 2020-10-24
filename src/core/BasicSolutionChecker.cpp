@@ -16,6 +16,7 @@
  */
 #include "BasicSolutionChecker.h"
 
+#include <algorithm>
 #include <memory>
 #include <iostream>
 #include "Variable.h"
@@ -53,11 +54,9 @@ m_formula(p_formula) {
  *         false otherwise
  */
 bool BasicSolutionChecker::checkSolution(vector<RawLiteral>& p_solution) {
-	for (const auto& literal : p_solution) {
-		if (!reduce(literal)) {
-			cout << "An unsatisfiable clause was obtained." << endl;
-			return false;
-		}
+	if (!all_of(p_solution.begin(), p_solution.end(), [this](RawLiteral l){return reduce(l);})) {
+		cout << "An unsatisfiable clause was obtained." << endl;
+		return false;
 	}
 	
 	if (!m_formula.hasClauses()) {
