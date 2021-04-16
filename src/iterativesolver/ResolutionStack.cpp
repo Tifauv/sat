@@ -91,7 +91,7 @@ void ResolutionStack::logCurrentLiterals() const {
 	string line = "Current literals:";
 	for (const auto& level : m_resolutionLevels)
 		for (const auto& literal : level->literals())
-			line.append("  ").append(literal.isNegative() ? "¬" : "").append("x").append(to_string(literal.id()));
+			line.append("  ").append(literal.isNegative() ? "¬" : "").append("x").append(std::to_string(literal.id()));
 
 	log_info(log_valuation, line.data());
 }

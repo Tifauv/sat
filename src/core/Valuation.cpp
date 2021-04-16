@@ -18,6 +18,7 @@
 
 #include <assert.h>
 #include <iostream>
+#include <string>
 #include "utils.h"
 #include "log.h"
 
@@ -131,7 +132,7 @@ void Valuation::log() {
 	// Otherwise, print the elements
 	string line = "Valuation:";
 	for (const auto& literal : m_literals)
-		line.append("  ").append(literal.isNegative() ? "¬" : "").append("x").append(to_string(literal.id()));
+		line.append("  ").append(literal.isNegative() ? "¬" : "").append("x").append(std::to_string(literal.id()));
 
 	log_info(log_valuation, line.data());
 }

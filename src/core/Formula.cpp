@@ -18,6 +18,7 @@
 
 #include <algorithm>
 #include <functional>
+#include <string>
 #include "Clause.h"
 #include "Variable.h"
 #include "Literal.h"
@@ -313,14 +314,14 @@ void Formula::log() const {
 	log_debug(log_formula, "Clauses = {");
 	for (const auto& clause : m_clauses) {
 		// Clause id
-		string line = "   " + to_string(clause->id()) + ": ";
+		auto line = "   " + std::to_string(clause->id()) + ": ";
 
 		// Clause's literals
 		int deb = 1;
 		for (auto literalIt = clause->beginLiteral(); literalIt != clause->endLiteral(); ++literalIt) {
 			const Literal literal = *literalIt;
 
-			line.append(deb != 1 ? " v " : "").append(literal.isNegative() ? "¬x" : "x").append(to_string(literal.id()));
+			line.append(deb != 1 ? " v " : "").append(literal.isNegative() ? "¬x" : "x").append(std::to_string(literal.id()));
 			if (deb == 1)
 				deb = 0;
 		}
@@ -334,17 +335,17 @@ void Formula::log() const {
 	log_debug(log_formula, "Variables = {");
 	for (const auto& variable : m_variables) {
 		// Variable id
-		string line = "   x" + to_string(variable->id()) + " \t+{";
+		auto line = "   x" + std::to_string(variable->id()) + " \t+{";
 
 		// Positive occurences
 		for (auto clause = variable->beginOccurence(SIGN_POSITIVE); clause != variable->endOccurence(SIGN_POSITIVE); ++clause)
-			line.append(" ").append(to_string((*clause)->id()));
+			line.append(" ").append(std::to_string((*clause)->id()));
 
 		line.append(" } \t-{");
 
 		// Negative occurences
 		for (auto clause = variable->beginOccurence(SIGN_NEGATIVE); clause != variable->endOccurence(SIGN_NEGATIVE); ++clause)
-			line.append(" ").append(to_string((*clause)->id()));
+			line.append(" ").append(std::to_string((*clause)->id()));
 
 		log_debug(log_formula, line.append(" }").data());
 	}
