@@ -31,7 +31,7 @@ class Literal {
 public:
 	Literal();
 	Literal(const shared_ptr<Variable>& p_variable, int p_sign);
-	Literal(const Literal& p_literal);
+	Literal(const Literal&) = default;
 
 	shared_ptr<Variable> var()  const;
 	Id        id()   const;

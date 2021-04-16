@@ -34,12 +34,6 @@ m_sign(p_sign) {
 }
 
 
-Literal::Literal(const Literal& p_literal) :
-m_variable(p_literal.var()),
-m_sign(p_literal.sign()) {
-}
-
-
 // GETTERS
 shared_ptr<Variable> Literal::var() const {
 	return m_variable;
