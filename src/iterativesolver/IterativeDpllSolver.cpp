@@ -235,7 +235,7 @@ void IterativeDpllSolver::removeClausesWithLiteral(Literal& p_literal) {
 
 /**
  * Removes the opposite of the given literal from the clauses.
- * If an empty clause is found, it is unsatisfiable and
+ * If an empty clause is found, it is unsatisfiable and that clause is set as the conflict source.
  *
  * @param p_literal
  *            the selected literal

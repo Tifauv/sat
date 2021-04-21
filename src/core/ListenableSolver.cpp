@@ -25,7 +25,7 @@ namespace solver {
  * Register a listener.
  *
  * @param p_listener
- *            the listener to register
+ *            the listener to add
  */
 void ListenableSolver::addListener(SolverListener& p_listener) {
 	m_listeners.addListener(p_listener);
