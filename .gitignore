@@ -6,6 +6,7 @@ build-clang
 tags
 
 # IDEs
+.kateproject
 .kateproject.d
 *.kdev4
 CMakeLists.txt.user
