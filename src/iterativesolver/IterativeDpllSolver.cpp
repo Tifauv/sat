@@ -125,7 +125,7 @@ void IterativeDpllSolver::dpll() {
 
 // ITERATION CONTROL
 bool IterativeDpllSolver::atTopLevel() const {
-	return m_resolution.currentLevel() == 0;
+	return m_resolution.currentLevel() <= 1;
 }
 
 
@@ -144,15 +144,14 @@ void IterativeDpllSolver::fullUnitPropagate() {
 
 	do {
 		satisfiable = applyUnitPropagate();
-	} while (satisfiable && !isConflicting());
+	} while (satisfiable);
 }
 
 
 /**
  * Searches a unit literal and propagates it.
  *
- * @return true if a unit literal is found and propagated,
- *         false otherwise
+ * @return {@code true} iif a unit literal is found and propagated
  */
 bool IterativeDpllSolver::applyUnitPropagate() {
 	// Search a unit literal
@@ -166,7 +165,7 @@ bool IterativeDpllSolver::applyUnitPropagate() {
 	listeners().onPropagate(literal);
 
 	assertLiteral(literal);
-	return true;
+	return !isConflicting();
 }
 
 
@@ -255,6 +254,7 @@ void IterativeDpllSolver::removeOppositeLiteralFromClauses(Literal& p_literal) {
 		if (clause->isUnsatisfiable()) {
 			log_info(log_dpll, "The produced clause is unsatisfiable.");
 			setConflictClause(clause);
+			break;
 		}
 	}
 }

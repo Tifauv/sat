@@ -37,6 +37,7 @@ ResolutionStack::ResolutionStack() {
  * This new level becomes the current one.
  */
 void ResolutionStack::nextLevel() {
+	log_debug(log_history, "Adding a new level to the resolution stack (current stack size=%lu)", m_resolutionLevels.size());
 	m_resolutionLevels.push_back(unique_ptr<ResolutionStackLevel>(new ResolutionStackLevel()));
 }
 
@@ -46,6 +47,7 @@ void ResolutionStack::nextLevel() {
  * The previous level becomes the current one (or none if the stack is empty).
  */
 void ResolutionStack::popLevel() {
+	log_debug(log_history, "Removing the current level from the resolution stack (current stack size=%lu)", m_resolutionLevels.size());
 	m_resolutionLevels.pop_back();
 }
 
@@ -105,6 +107,7 @@ void ResolutionStack::logCurrentLiterals() const {
  *            the clause that is removed from the formula
  */
 void ResolutionStack::addClause(const shared_ptr<Clause>& p_clause) {
+	log_debug(log_history, "Adding a clause to resolution stack's current level (stack size=%lu)", m_resolutionLevels.size());
 	m_resolutionLevels.back()->saveRemovedClause(p_clause);
 }
 
@@ -118,6 +121,7 @@ void ResolutionStack::addClause(const shared_ptr<Clause>& p_clause) {
  *            the literal that is remove from that clause
  */
 void ResolutionStack::addLiteral(const shared_ptr<Clause>& p_clause, Literal p_literal) {
+	log_debug(log_history, "Adding a literal to resolution stack's current level (stack size=%lu)", m_resolutionLevels.size());
 	m_resolutionLevels.back()->saveRemovedLiteralFromClause(p_clause, p_literal);
 }
 
