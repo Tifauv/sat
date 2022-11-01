@@ -16,7 +16,7 @@ fi
 cd ${builddir}
 
 # Generate the Makefiles
-cmake -DCMAKE_BUILD_TYPE=Debug ${srcdir}
+cmake -DCMAKE_BUILD_TYPE=Debug -DWITH_LOGGING=on ${srcdir}
 
 # Build
 make -j1
