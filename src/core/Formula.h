@@ -20,12 +20,14 @@
 #include <memory>
 #include <vector>
 #include <unordered_set>
+#include "ClauseBuilder.h"
 #include "RawLiteral.h"
 
 using namespace std;
 
 namespace sat {
 
+class ClauseBuilder;
 class Clause;
 class Literal;
 class Variable;
@@ -33,6 +35,9 @@ class Variable;
 
 class Formula {
 public:
+	Formula();
+
+	ClauseBuilder& newClause(Id p_clauseId);
 	void createClause(Id p_clauseId, const unique_ptr<vector<RawLiteral>>& p_literals);
 
 	Literal findUnitLiteral() const;
@@ -62,6 +67,8 @@ private:
 	unordered_set<shared_ptr<Clause>> m_unusedClauses;
 	unordered_set<shared_ptr<Variable>> m_variables;
 	unordered_set<shared_ptr<Variable>> m_unusedVariables;
+
+	ClauseBuilder m_builder;
 };
 
 } // namespace sat

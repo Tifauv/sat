@@ -20,6 +20,7 @@ set( SAT_CORE_SRCS
 	Variable.cpp
 	Literal.cpp
 	RawLiteral.cpp
+	ClauseBuilder.cpp
 	Clause.cpp
 	Formula.cpp
 	Valuation.cpp
@@ -37,6 +38,7 @@ set( SAT_CORE_HEADERS
 	Variable.h
 	Literal.h
 	RawLiteral.h
+	ClauseBuilder.h
 	Clause.h
 	Formula.h
 	Valuation.h

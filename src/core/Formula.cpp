@@ -19,6 +19,7 @@
 #include <algorithm>
 #include <functional>
 #include <string>
+#include "ClauseBuilder.h"
 #include "Clause.h"
 #include "Variable.h"
 #include "Literal.h"
@@ -28,8 +29,24 @@
 
 namespace sat {
 
+// CONSTRUCTORS
+Formula::Formula() :
+m_builder(*this) {}
+
 
 // METHODS
+/**
+ * Initializes a builder object.
+ *
+ * @param p_clauseId
+ *            the identifier of the clause
+ */
+ClauseBuilder& Formula::newClause(Id p_clauseId) {
+	m_builder.reset(p_clauseId);
+	return m_builder;
+}
+
+
 /**
  * Creates a clause in the formula.
  * The needed variables are created if needed.
