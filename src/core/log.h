@@ -22,6 +22,7 @@
 #define LOG_CATEGORY_FORMULA    "sat.formula"
 #define LOG_CATEGORY_HISTORY    "sat.history"
 #define LOG_CATEGORY_VALUATION  "sat.valuation"
+#define LOG_SUDOKU              "sudoku"
 
 
 #ifdef WITHOUT_LOG4C
@@ -31,6 +32,7 @@
 #define log_formula
 #define log_history
 #define log_valuation
+#define log_sudoku
 
 #define log_setup()              false
 #define log_cleanup()            false
@@ -52,6 +54,7 @@
 #define log_formula              log4c_category_get(LOG_CATEGORY_FORMULA)
 #define log_history              log4c_category_get(LOG_CATEGORY_HISTORY)
 #define log_valuation            log4c_category_get(LOG_CATEGORY_VALUATION)
+#define log_sudoku               log4c_category_get(LOG_SUDOKU)
 
 #define log_setup()              log4c_init()
 #define log_cleanup()            log4c_fini()

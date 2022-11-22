@@ -1,4 +1,4 @@
-#  Copyright 2015 Olivier Serve
+#  Copyright 2022 Olivier Serve
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -18,29 +18,23 @@
 set( CMAKE_CXX_STANDARD 11 )
 set( CMAKE_CXX_STANDARD_REQUIRED on )
 
-# Build libraries
-add_subdirectory( core )
-add_subdirectory( history )
-add_subdirectory( recursivesolver )
-add_subdirectory( iterativesolver )
-add_subdirectory( heuristics )
-add_subdirectory( listeners )
-add_subdirectory( sudoku )
-
 # Include the libraries include directories
 include_directories( ${SAT_CORE_INCLUDE} )
 include_directories( ${SAT_HISTORY_INCLUDE} )
-#include_directories( ${SAT_RECURSIVE_SOLVER_INCLUDE} )
 include_directories( ${SAT_ITERATIVE_SOLVER_INCLUDE} )
 include_directories( ${SAT_HEURISTICS_INCLUDE} )
 include_directories( ${SAT_LISTENERS_INCLUDE} )
 
-# Build solveSat
-add_executable( solveSat solveSat.cpp )
-target_compile_options( solveSat PRIVATE )
-target_link_libraries(  solveSat LINK_PUBLIC SatCore SatIterativeSolver SatHeuristics SatListeners ${LIBS} )
+# The sources of solveSudoku
+set( SUDOKU_SRCS
+	SudokuLoader.cpp
+	solveSudoku.cpp
+)
+set( SUDOKU_HEADERS
+	SudokuLoader.h
+)
 
-# Build checkSat
-add_executable( checkSat checkSat.cpp )
-target_compile_options( checkSat PRIVATE )
-target_link_libraries(  checkSat LINK_PUBLIC SatCore ${LIBS} )
+# Build solveSudoku
+add_executable( solveSudoku ${SUDOKU_SRCS} )
+target_compile_options( solveSudoku PRIVATE )
+target_link_libraries(  solveSudoku LINK_PUBLIC SatCore SatIterativeSolver SatHeuristics SatListeners ${LIBS} )

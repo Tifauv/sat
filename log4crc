@@ -21,8 +21,9 @@
 
 	<!-- specific categories =================================== -->
 	<category name="sat.loader.cnf"  priority="warn" appender="stderr"/>
-	<category name="sat.formula"     priority="warn" appender="stderr"/>
+	<category name="sat.formula"     priority="debug" appender="stderr"/>
 	<category name="sat.valuation"   priority="debug" appender="stderr"/>
 	<category name="sat.history"     priority="debug" appender="stderr"/>
 	<category name="sat.solver.dpll" priority="debug" appender="stderr"/>
+	<category name="sudoku"          priority="debug" appender="stderr"/>
 </log4c>
