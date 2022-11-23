@@ -102,7 +102,7 @@ int main(int p_argc, char* p_argv[]) {
 		//solver.addListener(cachingPolaritySelector);
 		
 		/* Solve the problem */
-		sat::solver::Valuation& valuation = solver.solve();
+		const sat::solver::Valuation& valuation = solver.solve();
 		
 		/* Output the solution */
 		cout << "c Solution to cnf file " << cnfFilename << endl;
