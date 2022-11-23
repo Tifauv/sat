@@ -59,6 +59,11 @@ public:
 	void setUnsatisfiable();
 
 	/**
+	 * Gives a reference to the inner list of literals.
+	 */
+	list<Literal>& getLiterals();
+
+	/**
 	 * Appends a literal.
 	 * 
 	 * @param p_literal

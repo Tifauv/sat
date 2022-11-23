@@ -72,6 +72,14 @@ void Valuation::setUnsatisfiable() {
 }
 
 
+/**
+ * Gives a reference to the inner list of literals.
+ */
+list<Literal>& Valuation::getLiterals() {
+	return m_literals;
+}
+
+
 // METHODS
 /**
  * Appends a literal.
