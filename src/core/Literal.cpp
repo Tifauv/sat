@@ -77,13 +77,31 @@ Literal Literal::operator-() {
 }
 
 
-bool Literal::operator==(const Literal& p_literal) {
+bool Literal::operator==(const Literal& p_literal) const {
 	return id() == p_literal.id();
 }
 
 
-bool Literal::operator!=(const Literal& p_literal) {
+bool Literal::operator!=(const Literal& p_literal) const {
 	return id() != p_literal.id();
+}
+
+
+bool Literal::operator<(const Literal& p_literal) const {
+	return id() < p_literal.id();
+}
+
+
+bool Literal::operator<=(const Literal& p_literal) const {
+	return id() <= p_literal.id();
+}
+
+bool Literal::operator>(const Literal& p_literal) const {
+	return id() > p_literal.id();
+}
+
+bool Literal::operator>=(const Literal& p_literal) const {
+	return id() >= p_literal.id();
 }
 
 } // namespace sat

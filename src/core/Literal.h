@@ -45,8 +45,12 @@ public:
 
 	Literal operator-();
 	Literal& operator=(const Literal&) = default;
-	bool operator==(const Literal& p_literal);
-	bool operator!=(const Literal& p_literal);
+	bool operator==(const Literal& p_literal) const;
+	bool operator!=(const Literal& p_literal) const;
+	bool operator<(const Literal& p_literal) const;
+	bool operator<=(const Literal& p_literal) const;
+	bool operator>(const Literal& p_literal) const;
+	bool operator>=(const Literal& p_literal) const;
 
 private:
 	shared_ptr<Variable> m_variable;
