@@ -15,7 +15,9 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
  */
 #include <iostream>
-
+#include <algorithm>
+#include <list>
+#include <ranges>
 #include "log.h"
 #include "SudokuLoader.h"
 #include "IterativeDpllSolver.h"
@@ -57,32 +59,32 @@ void usage(char* p_command) {
 	cout << "                   |   3 2 1   5     4 |" << endl;
 	cout << "                 must be entered like the following file (order is not important):" << endl;
 	cout << "                   111" << endl;
-	cout << "                   614" << endl;
-	cout << "                   318" << endl;
-	cout << "                   521" << endl;
-	cout << "                   226" << endl;
-	cout << "                   334" << endl;
-	cout << "                   535" << endl;
-	cout << "                   638" << endl;
-	cout << "                   139" << endl;
-	cout << "                   844" << endl;
 	cout << "                   146" << endl;
-	cout << "                   747" << endl;
-	cout << "                   251" << endl;
-	cout << "                   755" << endl;
-	cout << "                   859" << endl;
-	cout << "                   763" << endl;
-	cout << "                   966" << endl;
-	cout << "                   771" << endl;
-	cout << "                   572" << endl;
-	cout << "                   275" << endl;
-	cout << "                   881" << endl;
-	cout << "                   589" << endl;
-	cout << "                   392" << endl;
-	cout << "                   293" << endl;
-	cout << "                   194" << endl;
-	cout << "                   596" << endl;
-	cout << "                   499" << endl;
+	cout << "                   183" << endl;
+	cout << "                   215" << endl;
+	cout << "                   262" << endl;
+	cout << "                   343" << endl;
+	cout << "                   355" << endl;
+	cout << "                   386" << endl;
+	cout << "                   391" << endl;
+	cout << "                   448" << endl;
+	cout << "                   461" << endl;
+	cout << "                   477" << endl;
+	cout << "                   512" << endl;
+	cout << "                   557" << endl;
+	cout << "                   598" << endl;
+	cout << "                   637" << endl;
+	cout << "                   669" << endl;
+	cout << "                   717" << endl;
+	cout << "                   725" << endl;
+	cout << "                   752" << endl;
+	cout << "                   818" << endl;
+	cout << "                   895" << endl;
+	cout << "                   923" << endl;
+	cout << "                   932" << endl;
+	cout << "                   941" << endl;
+	cout << "                   965" << endl;
+	cout << "                   994" << endl;
 }
 
 
@@ -144,12 +146,27 @@ int main(int p_argc, char* p_argv[]) {
 		if (valuation.isUnsatisfiable()) {
 			cout << "Il n'y a pas de solution à cette grille" << endl;
 		}
+		else {
+			auto literals = valuation.getLiterals();
+			// Only retain positive literals from the valuation
+			auto solution = literals | std::ranges::views::filter([](sat::Literal l) {
+				return l.isPositive();
+			});
+			// Convert to vector so we can sort the result...
+			auto sortedSolution = std::vector(std::ranges::begin(solution), std::ranges::end(solution));
+			std::ranges::sort(sortedSolution);
 
-
-		cout << "c Solution to sudoku problem " << gridFilename << endl;
-		cout << "c " << stats  << endl;
-		cout << "c " << chrono << endl;
-		cout << valuation;
+			// Show the solution
+			cout << "Solution trouvée :" << endl;
+			for (unsigned int line=0; line<9; line++) {
+				cout << "  | ";
+				for (unsigned int column=0; column<9; column++)
+					cout << sortedSolution.at(line*9 + column).id() - (line+1)*100 - (column+1)*10 << " ";
+				cout << "|" << endl;
+			}
+		}
+		cout << stats  << endl;
+		cout << chrono << endl;
 	}
 
 	// Clean the logging system

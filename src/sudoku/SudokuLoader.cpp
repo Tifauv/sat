@@ -95,8 +95,8 @@ void SudokuLoader::generateLineConstraints(sat::Formula& p_formula, unsigned int
 	for (unsigned int startCol=1; startCol<=SIZE; startCol++)
 		for (unsigned int targetCol=startCol+1; targetCol<=SIZE; targetCol++)
 			p_formula.newClause(m_clauseId++)
-				.withNegativeLiteral(p_value*100 + p_line*10 + startCol)
-				.withNegativeLiteral(p_value*100 + p_line*10 + targetCol)
+				.withNegativeLiteral(p_line*100 +  startCol*10 + p_value)
+				.withNegativeLiteral(p_line*100 + targetCol*10 + p_value)
 				.build();
 }
 
@@ -106,8 +106,8 @@ void SudokuLoader::generateColumnConstraints(sat::Formula& p_formula, unsigned i
 	for (unsigned int startLine=1; startLine<=SIZE; startLine++)
 		for (unsigned int targetLine=startLine+1; targetLine<=SIZE; targetLine++)
 			p_formula.newClause(m_clauseId++)
-				.withNegativeLiteral(p_value*100 + startLine*10 + p_column)
-				.withNegativeLiteral(p_value*100 + targetLine*10 + p_column)
+				.withNegativeLiteral( startLine*100 + p_column*10 + p_value)
+				.withNegativeLiteral(targetLine*100 + p_column*10 + p_value)
 				.build();
 }
 
@@ -132,8 +132,8 @@ void SudokuLoader::generateSquareConstraints(sat::Formula& p_formula, unsigned i
 					unsigned int targetColumn = targetColumnInSquare + squareColumnOffset;
 
 					p_formula.newClause(m_clauseId++)
-						.withNegativeLiteral(p_value*100 +  valueLine*10 +  valueColumn)
-						.withNegativeLiteral(p_value*100 + targetLine*10 + targetColumn)
+						.withNegativeLiteral( valueLine*100 +  valueColumn*10 + p_value)
+						.withNegativeLiteral(targetLine*100 + targetColumn*10 + p_value)
 						.build();
 				}
 			}
@@ -147,8 +147,8 @@ void SudokuLoader::generateValuesPerCell(sat::Formula& p_formula) {
 		for (unsigned int column=1; column<=SIZE; column++) {
 			auto clause = unique_ptr<vector<sat::RawLiteral>>(new vector<sat::RawLiteral>());
 			for (unsigned int value=1; value<=SIZE; value++)
-				// Add literal (value, line, column)
-				clause->push_back(sat::RawLiteral(value*100 + line*10 + column));
+				// Add literal (line, column,  value)
+				clause->push_back(sat::RawLiteral(line*100 + column*10 + value));
 			p_formula.createClause(m_clauseId++, clause);
 		}
 }
@@ -160,8 +160,8 @@ void SudokuLoader::generateUniqueValuePerCell(sat::Formula& p_formula) {
 			for (unsigned int line=1; line<=SIZE; line++)
 				for (unsigned int column=1; column<=SIZE; column++)
 					p_formula.newClause(m_clauseId++)
-						.withNegativeLiteral(value*100 + line*10 + column)
-						.withNegativeLiteral(targetValue*100 + line*10 + column)
+						.withNegativeLiteral(line*100 + column*10 +       value)
+						.withNegativeLiteral(line*100 + column*10 + targetValue)
 						.build();
 }
 
