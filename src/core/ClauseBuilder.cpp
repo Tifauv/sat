@@ -31,6 +31,7 @@ namespace sat {
  */
 ClauseBuilder::ClauseBuilder(Formula& p_formula) :
 m_formula(p_formula),
+m_clauseId(1),
 m_literals(nullptr) {
 }
 

@@ -35,7 +35,7 @@ public:
 	/**
 	 * Creates an empty satisfiable valuation.
 	 */
-	ClauseBuilder(Formula& p_formula);
+	explicit ClauseBuilder(Formula& p_formula);
 
 	/**
 	 * Prepares the builder for a new clause.
