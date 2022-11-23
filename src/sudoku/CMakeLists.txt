@@ -14,10 +14,6 @@
 #  along with this program; if not, write to the Free Software
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
 
-# Require C++11 standard by default
-set( CMAKE_CXX_STANDARD 11 )
-set( CMAKE_CXX_STANDARD_REQUIRED on )
-
 # Include the libraries include directories
 include_directories( ${SAT_CORE_INCLUDE} )
 include_directories( ${SAT_HISTORY_INCLUDE} )

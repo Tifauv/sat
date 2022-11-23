@@ -14,8 +14,8 @@
 #  along with this program; if not, write to the Free Software
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
 
-# Require C++11 standard by default
-set( CMAKE_CXX_STANDARD 11 )
+# Require C++20 standard by default
+set( CMAKE_CXX_STANDARD 20 )
 set( CMAKE_CXX_STANDARD_REQUIRED on )
 
 # Build libraries
