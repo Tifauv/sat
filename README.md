@@ -6,7 +6,7 @@ Compiling
 
 ### Requirements
 
-- gcc or clang supporting C++11
+- gcc or clang supporting C++20
 - CMake 3.1
 - log4c (optional)
 
