@@ -31,7 +31,7 @@ namespace solver {
  *            the literal
  */
 void ResolutionStackLevel::pushLiteral(Literal p_literal) {
-	m_literals.push_back(p_literal);
+	m_literals.emplace_back(p_literal);
 	log_info(log_history, "Literal %sx%u added to the current resolution level.", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
 }
 

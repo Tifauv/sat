@@ -159,7 +159,7 @@ std::unique_ptr<std::vector<RawLiteral>> CnfLoader::parseClause(std::string p_li
 				break;
 				
 			default:
-				literals->push_back(literal);
+				literals->emplace_back(literal);
 				log_debug(log_cnf, "  - Literal %sx%u parsed.", (literal.isNegative() ? "¬" : ""), literal.id());
 		}
 	}

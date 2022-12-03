@@ -65,7 +65,7 @@ ClauseBuilder& ClauseBuilder::reset(unsigned int p_clauseId) {
  * Adds a positive literal to the clause.
  */
 ClauseBuilder& ClauseBuilder::withPositiveLiteral(unsigned int p_variable) {
-	 m_literals->push_back(sat::RawLiteral(p_variable));
+	 m_literals->emplace_back(sat::RawLiteral(p_variable));
 	return *this;
 }
 
@@ -73,7 +73,7 @@ ClauseBuilder& ClauseBuilder::withPositiveLiteral(unsigned int p_variable) {
  * Adds a negative literal to the clause.
  */
 ClauseBuilder& ClauseBuilder::withNegativeLiteral(unsigned int p_variable) {
-	 m_literals->push_back(-sat::RawLiteral(p_variable));
+	 m_literals->emplace_back(-sat::RawLiteral(p_variable));
 	return *this;
 }
 
