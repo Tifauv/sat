@@ -17,6 +17,7 @@
 #include "IterativeDpllSolver.h"
 
 #include "log.h"
+#include "utils.h"
 #include "Literal.h"
 #include "Clause.h"
 #include "Formula.h"
@@ -158,7 +159,7 @@ bool IterativeDpllSolver::applyUnitPropagate() {
 	Literal literal = m_formula.findUnitLiteral();
 
 	// Exit if there is no unit literal
-	if (literal.var() == nullptr)
+	if (isNull(literal.var()))
 		return false;
 
 	// Notify listeners
@@ -222,7 +223,7 @@ void IterativeDpllSolver::reduceFormula(Literal p_literal) {
  */
 void IterativeDpllSolver::removeClausesWithLiteral(Literal& p_literal) {
 	log_info(log_dpll, "Removing clauses that contain the literal %sx%u...", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
-	for (auto clause = p_literal.occurence(); clause != nullptr; clause = p_literal.occurence()) {
+	for (auto clause = p_literal.occurence(); notNull(clause); clause = p_literal.occurence()) {
 		log_debug(log_dpll, "Saving clause %u in the history.", clause->id());
 		m_resolution.addClause(clause);
 
@@ -243,7 +244,7 @@ void IterativeDpllSolver::removeClausesWithLiteral(Literal& p_literal) {
  */
 void IterativeDpllSolver::removeOppositeLiteralFromClauses(Literal& p_literal) {
 	log_info(log_dpll, "Removing literal %sx%u from the clauses.", (p_literal.isPositive() ? "¬" : ""), p_literal.id());
-	for (auto clause = p_literal.oppositeOccurence(); clause != nullptr; clause = p_literal.oppositeOccurence()) {
+	for (auto clause = p_literal.oppositeOccurence(); notNull(clause); clause = p_literal.oppositeOccurence()) {
 		log_debug(log_dpll, "Saving literal %sx%u of clause %u in the history.", (p_literal.isPositive() ? "¬" : ""), p_literal.id(), clause->id());
 		m_resolution.addLiteral(clause, -p_literal);
 
@@ -267,7 +268,7 @@ void IterativeDpllSolver::removeOppositeLiteralFromClauses(Literal& p_literal) {
  * @return true if a conclict clause has been reached
  */
 bool IterativeDpllSolver::isConflicting() const {
-	return m_conflictClause != nullptr;
+	return notNull(m_conflictClause);
 }
 
 

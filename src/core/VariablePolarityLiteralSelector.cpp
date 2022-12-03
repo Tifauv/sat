@@ -19,6 +19,7 @@
 #include "Variable.h"
 #include "Literal.h"
 #include "log.h"
+#include "utils.h"
 
 
 namespace sat {
@@ -37,7 +38,7 @@ Literal VariablePolarityLiteralSelector::getLiteral(Formula& p_formula) {
 	auto variable = m_variableSelector.getVariable(p_formula);
 
 	// No variable found : return a literal pointing to no variable
-	if (variable == nullptr) {
+	if (isNull(variable)) {
 		log_error(log_dpll, "There is no more literal in the formula.");
 		return Literal();
 	}

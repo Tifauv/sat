@@ -88,12 +88,12 @@ bool BasicSolutionChecker::reduce(const RawLiteral& p_rawLiteral) {
 			log_info(log_dpll, "Reduction using literal %sx%u...", (literal.isNegative() ? "¬" : ""), literal.id());
 		
 			// Remove the clauses that contain the same sign as the given literal
-			for (auto clause = literal.occurence(); clause != nullptr; clause = literal.occurence())
+			for (auto clause = literal.occurence(); notNull(clause); clause = literal.occurence())
 				m_formula.removeClause(clause);
 		
 			// Remove the literal from the clauses that contain the oposite sign
 			bool satisfiable = true;
-			for (auto clause = literal.oppositeOccurence(); clause != nullptr; clause = literal.oppositeOccurence()) {
+			for (auto clause = literal.oppositeOccurence(); notNull(clause); clause = literal.oppositeOccurence()) {
 				// Remove the literal from the clause
 				m_formula.removeLiteralFromClause(clause, -literal);
 				

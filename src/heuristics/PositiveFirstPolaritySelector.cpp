@@ -18,6 +18,7 @@
 
 #include "Variable.h"
 #include "Literal.h"
+#include "utils.h"
 
 
 namespace sat {
@@ -27,7 +28,7 @@ namespace selectors {
 
 // METHODS
 Literal PositiveFirstPolaritySelector::getLiteral(const std::shared_ptr<Variable>& p_variable) {
-	if (p_variable == nullptr) {
+	if (isNull(p_variable)) {
 		return Literal();
 	}
 	
