@@ -18,6 +18,7 @@
 #define SUDOKU_LOADER_H
 
 #include <memory>
+#include <optional>
 #include <vector>
 #include "Formula.h"
 
@@ -82,31 +83,10 @@ protected:
 	 */
 	void generateUniqueValuePerCell(sat::Formula& p_formula);
 
-
 	/**
-	 * Parses a clause line from a cnf file as a list of raw literals.
-	 *
-	 * @param p_line
-	 *            the line to parse
-	 *
-	 * @return the list of raw literals
+	 * Parses a literal from the problem file.
 	 */
-	unique_ptr<vector<sat::RawLiteral>> parseClause(string p_line);
-
-
-	/**
-	 * Searches a literal in a list of literals.
-	 *
-	 * @param p_literal
-	 *            the literal to search
-	 * @param p_literals
-	 *            the list of literals
-	 *
-	 * @return -1 if -p_literal appears in p_literals
-	 *          0 if p_literal does not appear in p_literals
-	 *          1 if p_literal appears in p_literals
-	 */
-	int existsLiteral(sat::RawLiteral& p_literal, vector<sat::RawLiteral>& p_literals);
+	optional<int> parseInt(string p_line);
 
 
 private:

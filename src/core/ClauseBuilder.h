@@ -38,6 +38,14 @@ public:
 	explicit ClauseBuilder(Formula& p_formula);
 
 	/**
+	 * @brief Copy-constructor for ClauseBuilder
+	 *
+	 * @param p_builder
+	 *            the builder to copy
+	 */
+	ClauseBuilder(ClauseBuilder& p_builder);
+
+	/**
 	 * Prepares the builder for a new clause.
 	 *
 	 * @param p_clauseId

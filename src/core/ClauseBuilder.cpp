@@ -32,8 +32,19 @@ namespace sat {
 ClauseBuilder::ClauseBuilder(Formula& p_formula) :
 m_formula(p_formula),
 m_clauseId(1),
-m_literals(nullptr) {
-}
+m_literals(nullptr) {}
+
+
+/**
+ * Copy-constructor for ClauseBuilder
+ *
+ * @param p_builder
+ *            the builder to copy
+ */
+ClauseBuilder::ClauseBuilder(ClauseBuilder& p_builder) :
+m_formula(p_builder.m_formula),
+m_clauseId(p_builder.m_clauseId),
+m_literals(new vector<RawLiteral>(*p_builder.m_literals)) {}
 
 
 // METHODS

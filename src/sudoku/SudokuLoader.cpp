@@ -22,6 +22,7 @@
 #include <sstream>
 #include <string>
 #include <list>
+#include <cmath>
 #include "utils.h"
 #include "log.h"
 
@@ -53,8 +54,11 @@ void SudokuLoader::loadProblem(char* p_filename, sat::Formula& p_formula) {
 
 	string line;
 	while (getline(file, line)) {
-		// Transformation string -> tab
-		p_formula.createClause(m_clauseId++, parseClause(line));
+		auto literal = parseInt(line);
+		if (literal.has_value())
+			p_formula.newClause(m_clauseId++)
+			        .withPositiveLiteral(literal.value())
+			        .build();
 	}
 	log_info(log_sudoku, "Sudoku problem loaded from file '%s'.", p_filename);
 }
@@ -145,11 +149,10 @@ void SudokuLoader::generateSquareConstraints(sat::Formula& p_formula, unsigned i
 void SudokuLoader::generateValuesPerCell(sat::Formula& p_formula) {
 	for (unsigned int line=1; line<=SIZE; line++)
 		for (unsigned int column=1; column<=SIZE; column++) {
-			auto clause = unique_ptr<vector<sat::RawLiteral>>(new vector<sat::RawLiteral>());
+			auto clause = p_formula.newClause(m_clauseId++);
 			for (unsigned int value=1; value<=SIZE; value++)
-				// Add literal (line, column,  value)
-				clause->push_back(sat::RawLiteral(line*100 + column*10 + value));
-			p_formula.createClause(m_clauseId++, clause);
+				clause.withPositiveLiteral(line*100 + column*10 + value);
+			clause.build();
 		}
 }
 
@@ -165,70 +168,15 @@ void SudokuLoader::generateUniqueValuePerCell(sat::Formula& p_formula) {
 						.build();
 }
 
-/**
- * Parses a clause line from a cnf file.
- *
- */
-unique_ptr<vector<sat::RawLiteral>> SudokuLoader::parseClause(string p_line) {
-	// I/ Création du tableau
-	auto literals = unique_ptr<vector<sat::RawLiteral>>(new vector<sat::RawLiteral>());
 
-	// III/ Initialisation du tableau
+optional<int> SudokuLoader::parseInt(string p_line) {
 	istringstream source(p_line);
 	int token;
-	while ((source >> token) && (notNull(literals))) {
-		// If the '0' token is found, this is the end of the clause.
-		// NOTE this is not conformant to the CNF format specification because some other
-		// clause might follow. But current test files do not use that feature.
-		if (token == 0)
-			break;
-
-		// Parse current token
-		sat::RawLiteral literal(token);
-
-		// On teste si l'entier n'apparaît pas déjà dans la variable
-		switch (existsLiteral(literal, *literals)) {
-			case 1: // Le token apparaît 2 fois avec le même "signe" -> pas ajouté cette fois
-				log_debug(log_sudoku, "  - Literal %sx%u already parsed in that clause, skipped.", (literal.isNegative() ? "¬" : ""), literal.id());
-				break;
-
-			case -1: // Le token et son contraire apparaîssent -> literals = nullptr
-				log_debug(log_sudoku, "   - Literal %sx%u already parsed in that clause so it is always true.", (literal.isNegative() ? "¬" : ""), literal.id());
-				literals = nullptr;
-				break;
-
-			default:
-				literals->push_back(literal);
-				log_debug(log_sudoku, "  - Literal %sx%u parsed.", (literal.isNegative() ? "¬" : ""), literal.id());
-		}
+	if (source >> token) {
+		log_debug(log_sudoku, "  - Literal %sx%u parsed.", (token < 0 ? "¬" : ""), abs(token));
+		return token;
 	}
-
-	return literals;
-}
-
-
-/**
- * Searches a literal in a list of literals.
- *
- * @param p_literal
- *            the literal to search
- * @param p_literals
- *            the list of literals
- *
- * @return -1 if -p_literal appears in p_literals
- *          0 if p_literal does not appear in p_literals
- *          1 if p_literal appears in p_literals
- */
-int SudokuLoader::existsLiteral(sat::RawLiteral& p_literal, vector<sat::RawLiteral>& p_literals) {
-	auto foundLiteral = find_if(p_literals.begin(), p_literals.end(), [p_literal](sat::RawLiteral x){return x.id() == p_literal.id();});
-
-	// Literal found
-	if (foundLiteral != p_literals.end()) {
-		return p_literal.sign() * (*foundLiteral).sign();
-	}
-
-	// Not found
-	return 0;
+	return {};
 }
 
 } // namespace sudoku
