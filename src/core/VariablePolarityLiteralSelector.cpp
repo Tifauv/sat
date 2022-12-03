@@ -39,7 +39,7 @@ Literal VariablePolarityLiteralSelector::getLiteral(Formula& p_formula) {
 	// No variable found : return a literal pointing to no variable
 	if (variable == nullptr) {
 		log_error(log_dpll, "There is no more literal in the formula.");
-		return Literal(nullptr, SIGN_POSITIVE);
+		return Literal();
 	}
 
 	// Variable found : select the polarity of the literal

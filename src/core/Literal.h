@@ -30,7 +30,7 @@ class Clause;
 class Literal {
 public:
 	Literal();
-	Literal(const shared_ptr<Variable>& p_variable, int p_sign);
+	Literal(const weak_ptr<Variable>& p_variable, int p_sign);
 	Literal(const Literal&) = default;
 
 	shared_ptr<Variable> var()  const;
@@ -53,7 +53,7 @@ public:
 	bool operator>=(const Literal& p_literal) const;
 
 private:
-	shared_ptr<Variable> m_variable;
+	weak_ptr<Variable> m_variable;
 	int m_sign;
 };
 

@@ -28,7 +28,7 @@ namespace selectors {
 // METHODS
 Literal LeastUsedPolaritySelector::getLiteral(const shared_ptr<Variable>& p_variable) {
 	if (p_variable == nullptr) {
-		return Literal(nullptr, SIGN_POSITIVE);
+		return Literal();
 	}
 
 	int sign = SIGN_POSITIVE;

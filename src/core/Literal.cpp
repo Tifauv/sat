@@ -24,24 +24,23 @@ namespace sat {
 
 // CONSTRUCTORS
 Literal::Literal() :
-Literal(nullptr, SIGN_POSITIVE) {
-}
+m_variable(),
+m_sign(SIGN_POSITIVE) {}
 
 
-Literal::Literal(const shared_ptr<Variable>& p_variable, int p_sign) :
+Literal::Literal(const weak_ptr<Variable>& p_variable, int p_sign) :
 m_variable(p_variable),
-m_sign(p_sign) {
-}
+m_sign(p_sign) {}
 
 
 // GETTERS
 shared_ptr<Variable> Literal::var() const {
-	return m_variable;
+	return m_variable.lock();
 }
 
 
 Id Literal::id() const {
-	return m_variable->id();
+	return var()->id();
 }
 
 

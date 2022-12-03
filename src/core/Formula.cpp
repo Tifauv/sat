@@ -128,7 +128,7 @@ Literal Formula::findUnitLiteral() const {
 	}
 
 	// No unary clause found
-	return Literal(nullptr, SIGN_POSITIVE);
+	return Literal();
 }
 
 
@@ -214,7 +214,7 @@ void Formula::addClause(const shared_ptr<Clause>& p_clause) {
 		
 		// Move the variable to the current list if needed
 		if (variable->isUnused())
-			addVariable(variable);
+			addVariable(std::move(variable));
 		
 		// Relink the variable with the clause
 		variable->addOccurence(p_clause, (*literalIterator).sign());
