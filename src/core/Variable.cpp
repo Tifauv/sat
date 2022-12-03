@@ -44,12 +44,12 @@ void Variable::addOccurence(const shared_ptr<Clause>& p_clause, int p_sign) {
 	
 	switch (p_sign) {
 		case SIGN_POSITIVE:
-			m_positiveOccurences.push_back(p_clause);
+			m_positiveOccurences.emplace_back(p_clause);
 			log_debug(log_formula, "Clause %u added to positive occurences of variable x%u.", p_clause->id(), id());
 			break;
 		
 		case SIGN_NEGATIVE:
-			m_negativeOccurences.push_back(p_clause);
+			m_negativeOccurences.emplace_back(p_clause);
 			log_debug(log_formula, "Clause %u added to negative occurences of variable x%u.", p_clause->id(), id());
 			break;
 		
@@ -113,22 +113,12 @@ vector<shared_ptr<Clause>>::iterator Variable::endOccurence(int p_sign) {
 
 
 void Variable::removePositiveOccurence(const shared_ptr<Clause>& p_clause) {
-	m_positiveOccurences.erase(
-		remove(
-			m_positiveOccurences.begin(),
-			m_positiveOccurences.end(),
-			p_clause),
-		m_positiveOccurences.end());
+	std::erase(m_positiveOccurences, p_clause);
 }
 
 
 void Variable::removeNegativeOccurence(const shared_ptr<Clause>& p_clause) {
-	m_negativeOccurences.erase(
-		remove(
-			m_negativeOccurences.begin(),
-			m_negativeOccurences.end(),
-			p_clause),
-		m_negativeOccurences.end());
+	std::erase(m_negativeOccurences, p_clause);
 }
 
 } // namespace sat

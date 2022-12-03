@@ -45,7 +45,7 @@ FormulaObject(p_id) {
  *            the literal to add
  */
 void Clause::addLiteral(const Literal& p_literal) {
-	m_literals.push_back(p_literal);
+	m_literals.emplace_back(p_literal);
 	log_debug(log_formula, "Literal %sx%u added to clause %u.", (p_literal.isNegative() ? "¬" : ""), p_literal.id(), id());
 }
 
@@ -57,7 +57,7 @@ void Clause::addLiteral(const Literal& p_literal) {
  *            a reference to the literal to remove.
  */
 void Clause::removeLiteral(const Literal& p_literal) {
-	m_literals.erase(remove(m_literals.begin(), m_literals.end(), p_literal), m_literals.end());
+	std::erase(m_literals, p_literal);
 	log_debug(log_formula, "Literal %sx%u removed from clause %u.", (p_literal.isNegative() ? "¬" : ""), p_literal.id(), id());
 }
 
@@ -101,7 +101,7 @@ Literal Clause::firstLiteral() const {
  *
  * @return a 'begin' iterator of the literals
  */
-vector<Literal>::const_iterator Clause::beginLiteral() const {
+std::vector<Literal>::const_iterator Clause::beginLiteral() const {
 	return m_literals.cbegin();
 }
 
@@ -111,7 +111,7 @@ vector<Literal>::const_iterator Clause::beginLiteral() const {
  *
  * @return an 'end' iterator of the literals
  */
-vector<Literal>::const_iterator Clause::endLiteral() const {
+std::vector<Literal>::const_iterator Clause::endLiteral() const {
 	return m_literals.cend();
 }
 

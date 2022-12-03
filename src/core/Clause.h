@@ -20,7 +20,6 @@
 #include <vector>
 #include "FormulaObject.h"
 
-using namespace std;
 
 namespace sat {
 
@@ -93,7 +92,7 @@ public:
 	 *
 	 * @return a 'begin' iterator of the literals
 	 */
-	vector<Literal>::const_iterator beginLiteral() const;
+	std::vector<Literal>::const_iterator beginLiteral() const;
 
 
 	/**
@@ -101,12 +100,12 @@ public:
 	 *
 	 * @return an 'end' iterator of the literals
 	 */
-	vector<Literal>::const_iterator endLiteral()   const;
+	std::vector<Literal>::const_iterator endLiteral()   const;
 
 
 private:
 	/** The literals of the clause. */
-	vector<Literal> m_literals;
+	std::vector<Literal> m_literals;
 };
 
 } // namespace sat

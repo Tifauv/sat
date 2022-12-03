@@ -88,7 +88,7 @@ list<Literal>& Valuation::getLiterals() {
  *            the literal to add
  */
 void Valuation::push(Literal p_literal) {
-	m_literals.push_back(p_literal);
+	m_literals.emplace_back(p_literal);
 	log_info(log_valuation, "Literal %sx%u added to the valuation.", (p_literal.isNegative() ? "¬" : ""), p_literal.id());
 	
 	// Reset the satisfiability status

@@ -30,7 +30,7 @@ namespace listeners {
  *            the listener to add
  */
 void ListenerDispatcher::addListener(SolverListener& p_listener) {
-	m_listeners.push_back(ref(p_listener));
+	m_listeners.emplace_back(ref(p_listener));
 }
 
 
