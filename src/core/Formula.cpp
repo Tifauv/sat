@@ -59,8 +59,6 @@ ClauseBuilder& Formula::newClause(Id p_clauseId) {
 void Formula::createClause(Id p_clauseId, const unique_ptr<vector<RawLiteral>>& p_literals) {
 	// Create the clause & add it to the list
 	auto clause = make_shared<Clause>(p_clauseId);
-	m_clauses.insert(clause);
-	log_debug(log_formula, "Clause %u added.", p_clauseId);
 	
 	// Link the new clause with its literals
 	for (const auto& literal : *p_literals) {
@@ -73,6 +71,10 @@ void Formula::createClause(Id p_clauseId, const unique_ptr<vector<RawLiteral>>& 
 		// Link variable -> clause
 		variable->addOccurence(clause, literal.sign());
 	}
+
+	// Move the clause to the container (to transfer ownership)
+	m_clauses.insert(std::move(clause));
+	log_debug(log_formula, "Clause %u added.", p_clauseId);
 }
 
 
