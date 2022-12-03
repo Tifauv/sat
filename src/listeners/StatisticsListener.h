@@ -20,8 +20,6 @@
 #include "NoopSolverListener.h"
 #include <ostream>
 
-using namespace std;
-
 
 namespace sat {
 namespace solver {
@@ -69,7 +67,7 @@ public:
 	/**
 	 * Prints the current statistics to the given stream.
 	 */
-	friend ostream& operator<<(ostream& p_outStream, const StatisticsListener& p_stats);
+	friend std::ostream& operator<<(std::ostream& p_outStream, const StatisticsListener& p_stats);
 
 private:
 	/** The number of literal decisions made. */

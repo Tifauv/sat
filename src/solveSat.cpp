@@ -28,8 +28,6 @@
 #include "ChronoListener.h"
 #include "LoggingListener.h"
 
-using namespace std;
-
 
 /* Exit codes */
 #define EXIT_SUCCESS      0
@@ -43,8 +41,8 @@ using namespace std;
  *            the command name as given to argv[0]
  */
 void usage(char* p_command) {
-	cout << "Usage: " << p_command << " <cnf_file>" << endl;
-	cout << "    <cnf_file>  a CNF problem" << endl;
+	std::cout << "Usage: " << p_command << " <cnf_file>" << std::endl;
+	std::cout << "    <cnf_file>  a CNF problem" << std::endl;
 }
 
 
@@ -68,13 +66,13 @@ int main(int p_argc, char* p_argv[]) {
 
 	// Initialize the logging system
 	if (log_setup()) {
-		cerr << "Log initialization failed, aborting." << endl;
+		std::cerr << "Log initialization failed, aborting." << std::endl;
 		exit(EXIT_LOG_FAILURE);
 	}
 	
 	{
 		// File to load
-		char* cnfFilename = p_argv[1];
+		auto cnfFilename = p_argv[1];
 
 		// Load the formula
 		sat::Formula formula;
@@ -102,18 +100,18 @@ int main(int p_argc, char* p_argv[]) {
 		//solver.addListener(cachingPolaritySelector);
 		
 		/* Solve the problem */
-		const sat::solver::Valuation& valuation = solver.solve();
+		auto valuation = solver.solve();
 		
 		/* Output the solution */
-		cout << "c Solution to cnf file " << cnfFilename << endl;
-		cout << "c " << stats  << endl;
-		cout << "c " << chrono << endl;
-		cout << valuation;
+		std::cout << "c Solution to cnf file " << cnfFilename << std::endl;
+		std::cout << "c " << stats  << std::endl;
+		std::cout << "c " << chrono << std::endl;
+		std::cout << valuation;
 	}
 
 	// Clean the logging system
 	if (log_cleanup())
-		cerr << "Log cleanup failed." << endl;
+		std::cerr << "Log cleanup failed." << std::endl;
 
 	return EXIT_SUCCESS;
 }

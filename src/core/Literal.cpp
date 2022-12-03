@@ -28,13 +28,13 @@ m_variable(),
 m_sign(SIGN_POSITIVE) {}
 
 
-Literal::Literal(const weak_ptr<Variable>& p_variable, int p_sign) :
+Literal::Literal(const std::weak_ptr<Variable>& p_variable, int p_sign) :
 m_variable(p_variable),
 m_sign(p_sign) {}
 
 
 // GETTERS
-shared_ptr<Variable> Literal::var() const {
+std::shared_ptr<Variable> Literal::var() const {
 	return m_variable.lock();
 }
 
@@ -60,12 +60,12 @@ bool Literal::isNegative() const {
 
 
 // METHODS
-shared_ptr<Clause> Literal::occurence() {
+std::shared_ptr<Clause> Literal::occurence() {
 	return var()->occurence(m_sign);
 }
 
 
-shared_ptr<Clause> Literal::oppositeOccurence() {
+std::shared_ptr<Clause> Literal::oppositeOccurence() {
 	return var()->occurence(-m_sign);
 }
 

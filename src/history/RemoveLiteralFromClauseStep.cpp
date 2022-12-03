@@ -28,7 +28,7 @@ namespace history {
 
 
 // CONSTRUCTORS
-RemoveLiteralFromClauseStep::RemoveLiteralFromClauseStep(const shared_ptr<Clause>& p_clause, Literal p_literal) :
+RemoveLiteralFromClauseStep::RemoveLiteralFromClauseStep(const std::shared_ptr<Clause>& p_clause, Literal p_literal) :
 HistoryStep(p_clause, p_literal) {
 }
 

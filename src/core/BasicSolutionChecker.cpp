@@ -53,17 +53,17 @@ m_formula(p_formula) {
  * @return true if the solution satisfies the formula,
  *         false otherwise
  */
-bool BasicSolutionChecker::checkSolution(vector<RawLiteral>& p_solution) {
+bool BasicSolutionChecker::checkSolution(std::vector<RawLiteral>& p_solution) {
 	if (!all_of(p_solution.begin(), p_solution.end(), [this](RawLiteral l){return reduce(l);})) {
-		cout << "An unsatisfiable clause was obtained." << endl;
+		std::cout << "An unsatisfiable clause was obtained." << std::endl;
 		return false;
 	}
 	
 	if (!m_formula.hasClauses()) {
-		cout << "All clauses could be interpreted." << endl;
+		std::cout << "All clauses could be interpreted." << std::endl;
 		return true;
 	}
-	cout << "Some clauses could not be interpreted." << endl;
+	std::cout << "Some clauses could not be interpreted." << std::endl;
 	return false;
 }
 
@@ -81,7 +81,7 @@ bool BasicSolutionChecker::checkSolution(vector<RawLiteral>& p_solution) {
 bool BasicSolutionChecker::reduce(const RawLiteral& p_rawLiteral) {
 	// Rebuild a Literal from a RawLiteral
 	for (auto it = m_formula.beginVariable(); it != m_formula.endVariable(); ++it) {
-		shared_ptr<Variable> variable = *it;
+		std::shared_ptr<Variable> variable = *it;
 		
 		if (variable->id() == p_rawLiteral.id()) {
 			Literal literal(variable, p_rawLiteral.sign());

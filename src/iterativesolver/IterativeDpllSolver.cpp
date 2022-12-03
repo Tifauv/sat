@@ -276,7 +276,7 @@ bool IterativeDpllSolver::isConflicting() const {
  *
  * @return the conflict clause
  */
-shared_ptr<Clause> IterativeDpllSolver::getConflictClause() const {
+std::shared_ptr<Clause> IterativeDpllSolver::getConflictClause() const {
 	return m_conflictClause;
 }
 
@@ -287,7 +287,7 @@ shared_ptr<Clause> IterativeDpllSolver::getConflictClause() const {
  * @param p_clause
  *            the new conflict clause
  */
-void IterativeDpllSolver::setConflictClause(const shared_ptr<Clause>& p_clause) {
+void IterativeDpllSolver::setConflictClause(const std::shared_ptr<Clause>& p_clause) {
 	m_conflictClause = p_clause;
 }
 

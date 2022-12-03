@@ -22,8 +22,6 @@
 #include "CnfLoader.h"
 #include "BasicSolutionChecker.h"
 
-using namespace std;
-
 
 /**
  * Displays the usage message.
@@ -32,9 +30,9 @@ using namespace std;
  *            the command name as given to argv[0]
  */
 void usage(char* p_command) {
-	cout << "Usage: " << p_command << " <cnf_file> <sat_file>" << endl;
-	cout << "    <cnf_file>  a CNF problem" << endl;
-	cout << "    <sat_file>  a CNF solution" << endl;
+	std::cout << "Usage: " << p_command << " <cnf_file> <sat_file>" << std::endl;
+	std::cout << "    <cnf_file>  a CNF problem" << std::endl;
+	std::cout << "    <sat_file>  a CNF solution" << std::endl;
 }
 
 
@@ -59,15 +57,15 @@ int main(int p_argc, char* p_argv[]) {
 
 	// Initialize the logging system
 	if (log_setup()) {
-		cout << "Log initialization failed, aborting." << endl;
+		std::cout << "Log initialization failed, aborting." << std::endl;
 		exit(-2);
 	}
 
 	int rc = 0;
 	{
 		// Files to load
-		char* cnfFilename = p_argv[1];
-		char* satFilename = p_argv[2];
+		auto cnfFilename = p_argv[1];
+		auto satFilename = p_argv[2];
 		
 		// Load the formula
 		sat::Formula formula;
@@ -76,24 +74,23 @@ int main(int p_argc, char* p_argv[]) {
 		formula.log();
 
 		// Load the SAT solution file
-		unique_ptr<vector<sat::RawLiteral>> solution = loader.loadSolution(satFilename);
+		std::unique_ptr<std::vector<sat::RawLiteral>> solution = loader.loadSolution(satFilename);
 
 		// Check the solution
 		sat::checker::BasicSolutionChecker checker(formula);
 		if (checker.checkSolution(*solution)) {
 			rc = 0;
-			cout << "The solution is valid." << endl;
+			std::cout << "The solution is valid." << std::endl;
 		}
 		else {
 			rc = 1;
-			cout << "The solution is not valid." << endl;
+			std::cout << "The solution is not valid." << std::endl;
 		}
 	}
 
 	// Clean the logging system
 	if (log_cleanup())
-		cerr << "Log cleanup failed." << endl;
+		std::cerr << "Log cleanup failed." << std::endl;
 
 	return rc;
 }
-

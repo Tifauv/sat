@@ -20,7 +20,6 @@
 #include "SolutionChecker.h"
 #include "RawLiteral.h"
 
-using namespace std;
 
 namespace sat {
 
@@ -52,7 +51,7 @@ public:
 	 * @return true if the solution satisfies the formula,
 	 *         false otherwise
 	 */
-	bool checkSolution(vector<RawLiteral>& p_solution) override;
+	bool checkSolution(std::vector<RawLiteral>& p_solution) override;
 
 
 protected:

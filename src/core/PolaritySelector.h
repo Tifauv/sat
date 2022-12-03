@@ -19,7 +19,6 @@
 
 #include <memory>
 
-using namespace std;
 
 namespace sat {
 
@@ -31,7 +30,7 @@ namespace solver {
 
 class PolaritySelector {
 public:
-	virtual Literal getLiteral(const shared_ptr<Variable>& p_variable) = 0;
+	virtual Literal getLiteral(const std::shared_ptr<Variable>& p_variable) = 0;
 };
 
 } // namespace sat::solver

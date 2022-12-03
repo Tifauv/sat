@@ -19,7 +19,6 @@
 
 #include <memory>
 
-using namespace std;
 
 namespace sat {
 
@@ -37,7 +36,7 @@ public:
 	 * @return a pointer to the variable found,
 	 *         or nullptr if there is no variable in the formula
 	 */
-	virtual shared_ptr<Variable> getVariable(Formula& p_formula) = 0;
+	virtual std::shared_ptr<Variable> getVariable(Formula& p_formula) = 0;
 };
 
 } // namespace sat::solver

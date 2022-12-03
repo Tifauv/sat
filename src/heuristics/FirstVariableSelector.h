@@ -19,11 +19,13 @@
 
 #include "VariableSelector.h"
 
-class Formula;
-class Variable;
 
 
 namespace sat {
+
+class Formula;
+class Variable;
+
 namespace solver {
 namespace selectors {
 
@@ -33,7 +35,7 @@ namespace selectors {
  */
 class FirstVariableSelector : public VariableSelector {
 public:
-	shared_ptr<Variable> getVariable(Formula& p_formula) override;
+	std::shared_ptr<Variable> getVariable(Formula& p_formula) override;
 };
 
 } // namespace sat::solver::selectors

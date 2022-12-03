@@ -75,7 +75,7 @@ void Valuation::setUnsatisfiable() {
 /**
  * Gives a reference to the inner list of literals.
  */
-list<Literal>& Valuation::getLiterals() {
+std::list<Literal>& Valuation::getLiterals() {
 	return m_literals;
 }
 
@@ -138,7 +138,7 @@ void Valuation::log() {
 	}
 
 	// Otherwise, print the elements
-	string line = "Valuation:";
+	std::string line = "Valuation:";
 	for (const auto& literal : m_literals)
 		line.append("  ").append(literal.isNegative() ? "¬" : "").append("x").append(std::to_string(literal.id()));
 
@@ -149,18 +149,18 @@ void Valuation::log() {
 /**
  * Prints the valuation to the given stream.
  */
-ostream& operator<<(ostream& p_outStream, const Valuation& p_valuation) {
+std::ostream& operator<<(std::ostream& p_outStream, const Valuation& p_valuation) {
 	if (p_valuation.isUnsatisfiable()) {
-		p_outStream << "s UNSATISFIABLE" << endl;
+		p_outStream << "s UNSATISFIABLE" << std::endl;
 		return p_outStream;
 	}
 
 	// Otherwise, print the elements
-	p_outStream << "s SATISFIABLE" << endl;
+	p_outStream << "s SATISFIABLE" << std::endl;
 	p_outStream << "v";
 	for (const auto& literal : p_valuation.m_literals)
 		p_outStream << " " << (int)(literal.sign() * literal.id());
-	p_outStream << " 0" << endl;
+	p_outStream << " 0" << std::endl;
 	return p_outStream;
 }
 

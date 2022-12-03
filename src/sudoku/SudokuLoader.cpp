@@ -45,14 +45,14 @@ void SudokuLoader::loadProblem(char* p_filename, sat::Formula& p_formula) {
 	generateSudokuConstraints(p_formula);
 
 	// Ouverture du fichier
-	ifstream file(p_filename);
+	std::ifstream file(p_filename);
 	if (!file.is_open()) {
 		log_error(log_sudoku, "Could not open file '%s'.", p_filename);
 		return;
 	}
 	log_debug(log_sudoku, "File '%s' opened.", p_filename);
 
-	string line;
+	std::string line;
 	while (getline(file, line)) {
 		auto literal = parseInt(line);
 		if (literal.has_value())
@@ -169,8 +169,8 @@ void SudokuLoader::generateUniqueValuePerCell(sat::Formula& p_formula) {
 }
 
 
-optional<int> SudokuLoader::parseInt(string p_line) {
-	istringstream source(p_line);
+std::optional<int> SudokuLoader::parseInt(std::string p_line) {
+	std::istringstream source(p_line);
 	int token;
 	if (source >> token) {
 		log_debug(log_sudoku, "  - Literal %sx%u parsed.", (token < 0 ? "¬" : ""), abs(token));

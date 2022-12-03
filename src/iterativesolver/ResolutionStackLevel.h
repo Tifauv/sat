@@ -22,7 +22,6 @@
 #include <string>
 #include "History.h"
 
-using namespace std;
 
 namespace sat {
 
@@ -59,7 +58,7 @@ public:
 	 *
 	 * @return the current list of literals
 	 */
-	const list<Literal> literals() const;
+	const std::list<Literal> literals() const;
 
 	/**
 	 * Save a removed clause in the history.
@@ -67,7 +66,7 @@ public:
 	* @param p_clause
 	*            the clause that was removed from the formula
 	 */
-	void saveRemovedClause(const shared_ptr<Clause>& p_clause);
+	void saveRemovedClause(const std::shared_ptr<Clause>& p_clause);
 
 	/**
 	 * Save a literal removed from a clause in the history.
@@ -77,7 +76,7 @@ public:
 	 * @param p_literal
 	 *            the literal removed from that clause
 	 */
-	void saveRemovedLiteralFromClause(const shared_ptr<Clause>& p_clause, Literal p_literal);
+	void saveRemovedLiteralFromClause(const std::shared_ptr<Clause>& p_clause, Literal p_literal);
 
 	/**
 	 * Replays the current history upon a given formula.
@@ -89,7 +88,7 @@ public:
 
 private:
 	/** The ordered list of asserted literals. */
-	list<Literal> m_literals;
+	std::list<Literal> m_literals;
 
 	/** The history of operations done on the formula during this level. */
 	History m_history;

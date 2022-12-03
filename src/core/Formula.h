@@ -23,7 +23,6 @@
 #include "ClauseBuilder.h"
 #include "RawLiteral.h"
 
-using namespace std;
 
 namespace sat {
 
@@ -38,35 +37,35 @@ public:
 	Formula();
 
 	ClauseBuilder& newClause(Id p_clauseId);
-	void createClause(Id p_clauseId, const unique_ptr<vector<RawLiteral>>& p_literals);
+	void createClause(Id p_clauseId, const std::unique_ptr<std::vector<RawLiteral>>& p_literals);
 
 	Literal findUnitLiteral() const;
 
-	void addClause(const shared_ptr<Clause>& p_clause);
-	void addLiteralToClause(const shared_ptr<Clause>& p_clause, Literal p_literal);
-	void removeClause(const shared_ptr<Clause>& p_clause);
-	void removeLiteralFromClause(const shared_ptr<Clause>& p_clause, Literal p_literal);
+	void addClause(const std::shared_ptr<Clause>& p_clause);
+	void addLiteralToClause(const std::shared_ptr<Clause>& p_clause, Literal p_literal);
+	void removeClause(const std::shared_ptr<Clause>& p_clause);
+	void removeLiteralFromClause(const std::shared_ptr<Clause>& p_clause, Literal p_literal);
 
 	bool hasClauses() const;
 	bool hasVariables() const;
 
-	unordered_set<shared_ptr<Variable>>::iterator beginVariable();
-	unordered_set<shared_ptr<Variable>>::iterator endVariable();
-	void removeVariable(const shared_ptr<Variable>& p_variable);
-	void addVariable(const shared_ptr<Variable>& p_variable);
+	std::unordered_set<std::shared_ptr<Variable>>::iterator beginVariable();
+	std::unordered_set<std::shared_ptr<Variable>>::iterator endVariable();
+	void removeVariable(const std::shared_ptr<Variable>& p_variable);
+	void addVariable(const std::shared_ptr<Variable>& p_variable);
 
 	void log() const;
 
 protected:
-	shared_ptr<Variable> findOrCreateVariable(Id p_variableId);
+	std::shared_ptr<Variable> findOrCreateVariable(Id p_variableId);
 
-	void unlinkVariable(const shared_ptr<Clause>& p_clause, const Literal& p_literal);
+	void unlinkVariable(const std::shared_ptr<Clause>& p_clause, const Literal& p_literal);
 
 private:
-	unordered_set<shared_ptr<Clause>> m_clauses;
-	unordered_set<shared_ptr<Clause>> m_unusedClauses;
-	unordered_set<shared_ptr<Variable>> m_variables;
-	unordered_set<shared_ptr<Variable>> m_unusedVariables;
+	std::unordered_set<std::shared_ptr<Clause>> m_clauses;
+	std::unordered_set<std::shared_ptr<Clause>> m_unusedClauses;
+	std::unordered_set<std::shared_ptr<Variable>> m_variables;
+	std::unordered_set<std::shared_ptr<Variable>> m_unusedVariables;
 
 	ClauseBuilder m_builder;
 };

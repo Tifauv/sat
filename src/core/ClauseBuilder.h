@@ -21,7 +21,6 @@
 #include <vector>
 # include "RawLiteral.h"
 
-using namespace std;
 
 namespace sat {
 
@@ -76,7 +75,7 @@ private:
 	Id m_clauseId;
 
 	/** The list of literals. */
-	unique_ptr<vector<sat::RawLiteral>> m_literals;
+	std::unique_ptr<std::vector<sat::RawLiteral>> m_literals;
 };
 
 } // namespace sat

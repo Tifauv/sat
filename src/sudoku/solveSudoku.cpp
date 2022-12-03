@@ -29,8 +29,6 @@
 #include "StatisticsListener.h"
 #include "ChronoListener.h"
 
-using namespace std;
-
 
 /* Exit codes */
 #define EXIT_SUCCESS      0
@@ -44,47 +42,47 @@ using namespace std;
  *            the command name as given to argv[0]
  */
 void usage(char* p_command) {
-	cout << "Usage: " << p_command << " <grid_file>" << endl;
-	cout << "    <grid_file>  A sudoku grid file is a text file that lists all the known values." << endl;
-	cout << "                 Each value is on its own line, formated as a triplet <value, line, column>." << endl;
-	cout << "                 For example, the following grid :" << endl;
-	cout << "                   | 1     6       3   |" << endl;
-	cout << "                   | 5         2       |" << endl;
-	cout << "                   |       3 5     6 1 |" << endl;
-	cout << "                   |       8   1 7     |" << endl;
-	cout << "                   | 2       7       8 |" << endl;
-	cout << "                   |     7     9       |" << endl;
-	cout << "                   | 7 5     2         |" << endl;
-	cout << "                   | 8               5 |" << endl;
-	cout << "                   |   3 2 1   5     4 |" << endl;
-	cout << "                 must be entered like the following file (order is not important):" << endl;
-	cout << "                   111" << endl;
-	cout << "                   146" << endl;
-	cout << "                   183" << endl;
-	cout << "                   215" << endl;
-	cout << "                   262" << endl;
-	cout << "                   343" << endl;
-	cout << "                   355" << endl;
-	cout << "                   386" << endl;
-	cout << "                   391" << endl;
-	cout << "                   448" << endl;
-	cout << "                   461" << endl;
-	cout << "                   477" << endl;
-	cout << "                   512" << endl;
-	cout << "                   557" << endl;
-	cout << "                   598" << endl;
-	cout << "                   637" << endl;
-	cout << "                   669" << endl;
-	cout << "                   717" << endl;
-	cout << "                   725" << endl;
-	cout << "                   752" << endl;
-	cout << "                   818" << endl;
-	cout << "                   895" << endl;
-	cout << "                   923" << endl;
-	cout << "                   932" << endl;
-	cout << "                   941" << endl;
-	cout << "                   965" << endl;
-	cout << "                   994" << endl;
+	std::cout << "Usage: " << p_command << " <grid_file>" << std::endl;
+	std::cout << "    <grid_file>  A sudoku grid file is a text file that lists all the known values." << std::endl;
+	std::cout << "                 Each value is on its own line, formated as a triplet <value, line, column>." << std::endl;
+	std::cout << "                 For example, the following grid :" << std::endl;
+	std::cout << "                   | 1     6       3   |" << std::endl;
+	std::cout << "                   | 5         2       |" << std::endl;
+	std::cout << "                   |       3 5     6 1 |" << std::endl;
+	std::cout << "                   |       8   1 7     |" << std::endl;
+	std::cout << "                   | 2       7       8 |" << std::endl;
+	std::cout << "                   |     7     9       |" << std::endl;
+	std::cout << "                   | 7 5     2         |" << std::endl;
+	std::cout << "                   | 8               5 |" << std::endl;
+	std::cout << "                   |   3 2 1   5     4 |" << std::endl;
+	std::cout << "                 must be entered like the following file (order is not important):" << std::endl;
+	std::cout << "                   111" << std::endl;
+	std::cout << "                   146" << std::endl;
+	std::cout << "                   183" << std::endl;
+	std::cout << "                   215" << std::endl;
+	std::cout << "                   262" << std::endl;
+	std::cout << "                   343" << std::endl;
+	std::cout << "                   355" << std::endl;
+	std::cout << "                   386" << std::endl;
+	std::cout << "                   391" << std::endl;
+	std::cout << "                   448" << std::endl;
+	std::cout << "                   461" << std::endl;
+	std::cout << "                   477" << std::endl;
+	std::cout << "                   512" << std::endl;
+	std::cout << "                   557" << std::endl;
+	std::cout << "                   598" << std::endl;
+	std::cout << "                   637" << std::endl;
+	std::cout << "                   669" << std::endl;
+	std::cout << "                   717" << std::endl;
+	std::cout << "                   725" << std::endl;
+	std::cout << "                   752" << std::endl;
+	std::cout << "                   818" << std::endl;
+	std::cout << "                   895" << std::endl;
+	std::cout << "                   923" << std::endl;
+	std::cout << "                   932" << std::endl;
+	std::cout << "                   941" << std::endl;
+	std::cout << "                   965" << std::endl;
+	std::cout << "                   994" << std::endl;
 }
 
 
@@ -108,13 +106,13 @@ int main(int p_argc, char* p_argv[]) {
 
 	// Initialize the logging system
 	if (log_setup()) {
-		cerr << "Log initialization failed, aborting." << endl;
+		std::cerr << "Log initialization failed, aborting." << std::endl;
 		exit(EXIT_LOG_FAILURE);
 	}
 
 	{
 		// File to load
-		char* gridFilename = p_argv[1];
+		auto gridFilename = p_argv[1];
 
 		// Load the formula
 		sat::Formula formula;
@@ -144,7 +142,7 @@ int main(int p_argc, char* p_argv[]) {
 
 		/* Output the solution */
 		if (valuation.isUnsatisfiable()) {
-			cout << "Il n'y a pas de solution à cette grille" << endl;
+			std::cout << "Il n'y a pas de solution à cette grille" << std::endl;
 		}
 		else {
 			auto literals = valuation.getLiterals();
@@ -157,21 +155,21 @@ int main(int p_argc, char* p_argv[]) {
 			std::ranges::sort(sortedSolution);
 
 			// Show the solution
-			cout << "Solution trouvée :" << endl;
+			std::cout << "Solution trouvée :" << std::endl;
 			for (unsigned int line=0; line<9; line++) {
-				cout << "  | ";
+				std::cout << "  | ";
 				for (unsigned int column=0; column<9; column++)
-					cout << sortedSolution.at(line*9 + column).id() - (line+1)*100 - (column+1)*10 << " ";
-				cout << "|" << endl;
+					std::cout << sortedSolution.at(line*9 + column).id() - (line+1)*100 - (column+1)*10 << " ";
+				std::cout << "|" << std::endl;
 			}
 		}
-		cout << stats  << endl;
-		cout << chrono << endl;
+		std::cout << stats  << std::endl;
+		std::cout << chrono << std::endl;
 	}
 
 	// Clean the logging system
 	if (log_cleanup())
-		cerr << "Log cleanup failed." << endl;
+		std::cerr << "Log cleanup failed." << std::endl;
 
 	return EXIT_SUCCESS;
 }

@@ -22,7 +22,6 @@
 #include <vector>
 #include "Formula.h"
 
-using namespace std;
 
 namespace sudoku {
 
@@ -86,7 +85,7 @@ protected:
 	/**
 	 * Parses a literal from the problem file.
 	 */
-	optional<int> parseInt(string p_line);
+	std::optional<int> parseInt(std::string p_line);
 
 
 private:

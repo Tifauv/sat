@@ -41,7 +41,7 @@ public:
 	 * @param p_literal
 	 *            the recorded literal
 	 */
-	RemoveLiteralFromClauseStep(const shared_ptr<Clause>& p_clause, Literal p_literal);
+	RemoveLiteralFromClauseStep(const std::shared_ptr<Clause>& p_clause, Literal p_literal);
 	
 	
 	/**

@@ -44,7 +44,7 @@ m_literals(nullptr) {}
 ClauseBuilder::ClauseBuilder(ClauseBuilder& p_builder) :
 m_formula(p_builder.m_formula),
 m_clauseId(p_builder.m_clauseId),
-m_literals(new vector<RawLiteral>(*p_builder.m_literals)) {}
+m_literals(new std::vector<RawLiteral>(*p_builder.m_literals)) {}
 
 
 // METHODS
@@ -56,7 +56,7 @@ m_literals(new vector<RawLiteral>(*p_builder.m_literals)) {}
  */
 ClauseBuilder& ClauseBuilder::reset(unsigned int p_clauseId) {
 	m_clauseId = p_clauseId;
-	m_literals = unique_ptr<vector<RawLiteral>>(new vector<RawLiteral>());
+	m_literals = std::unique_ptr<std::vector<RawLiteral>>(new std::vector<RawLiteral>());
 	return *this;
 }
 

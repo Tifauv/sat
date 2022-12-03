@@ -56,9 +56,9 @@ ClauseBuilder& Formula::newClause(Id p_clauseId) {
  * @param p_literals
  *            the raw literals
  */
-void Formula::createClause(Id p_clauseId, const unique_ptr<vector<RawLiteral>>& p_literals) {
+void Formula::createClause(Id p_clauseId, const std::unique_ptr<std::vector<RawLiteral>>& p_literals) {
 	// Create the clause & add it to the list
-	auto clause = make_shared<Clause>(p_clauseId);
+	auto clause = std::make_shared<Clause>(p_clauseId);
 	
 	// Link the new clause with its literals
 	for (const auto& literal : *p_literals) {
@@ -87,12 +87,14 @@ void Formula::createClause(Id p_clauseId, const unique_ptr<vector<RawLiteral>>& 
  *
  * @return the variable, either found or created
  */
-shared_ptr<Variable> Formula::findOrCreateVariable(Id p_variableId) {
-	shared_ptr<Variable> variable = nullptr;
+std::shared_ptr<Variable> Formula::findOrCreateVariable(Id p_variableId) {
+	std::shared_ptr<Variable> variable = nullptr;
 
 	// Search the variable
-	auto match_id([p_variableId](const shared_ptr<Variable>& variable) { return variable->id() == p_variableId; } );
-	auto iterator = find_if(m_variables.cbegin(), m_variables.cend(), cref(match_id));
+	auto match_id([p_variableId](const std::shared_ptr<Variable>& variable) {
+		return variable->id() == p_variableId;
+	});
+	auto iterator = std::find_if(m_variables.cbegin(), m_variables.cend(), std::cref(match_id));
 
 	// If the variable was found, select it
 	if (iterator != m_variables.cend()) {
@@ -101,7 +103,7 @@ shared_ptr<Variable> Formula::findOrCreateVariable(Id p_variableId) {
 	}
 	// Otherwise, create & add it
 	else {
-		variable = make_shared<Variable>(p_variableId);
+		variable = std::make_shared<Variable>(p_variableId);
 		m_variables.insert(variable);
 		log_debug(log_formula, "Variable x%u added.", variable->id());
 	}
@@ -118,8 +120,10 @@ shared_ptr<Variable> Formula::findOrCreateVariable(Id p_variableId) {
  */
 Literal Formula::findUnitLiteral() const {
 	// Search an unary clause
-	auto isUnary([](const shared_ptr<Clause>& clause) { return clause->isUnary(); } );
-	auto iterator = find_if(m_clauses.cbegin(), m_clauses.cend(), cref(isUnary));
+	auto isUnary([](const std::shared_ptr<Clause>& clause) {
+		return clause->isUnary();
+	});
+	auto iterator = std::find_if(m_clauses.cbegin(), m_clauses.cend(), std::cref(isUnary));
 
 	// If a clause has been found, retrieve its literal
 	if (iterator != m_clauses.cend()) {
@@ -142,7 +146,7 @@ Literal Formula::findUnitLiteral() const {
  * @param p_literal
  *            the literal to remove
  */
-void Formula::unlinkVariable(const shared_ptr<Clause>& p_clause, const Literal& p_literal) {
+void Formula::unlinkVariable(const std::shared_ptr<Clause>& p_clause, const Literal& p_literal) {
 	// Parameters check
 	if (isNull(p_clause)) {
 		log_error(log_formula, "Cannot remove a literal from a NULL clause.");
@@ -170,7 +174,7 @@ void Formula::unlinkVariable(const shared_ptr<Clause>& p_clause, const Literal& 
  * @param p_variable
  *            the variable to remove
  */
-void Formula::removeVariable(const shared_ptr<Variable>& p_variable) {
+void Formula::removeVariable(const std::shared_ptr<Variable>& p_variable) {
 	p_variable->setUnused();
 	m_unusedVariables.insert(p_variable);
 	m_variables.erase(p_variable);
@@ -184,7 +188,7 @@ void Formula::removeVariable(const shared_ptr<Variable>& p_variable) {
  * @param p_variable
  *            the variable to add
  */
-void Formula::addVariable(const shared_ptr<Variable>& p_variable) {
+void Formula::addVariable(const std::shared_ptr<Variable>& p_variable) {
 	m_variables.insert(p_variable);
 	m_unusedVariables.erase(p_variable);
 	p_variable->setUsed();
@@ -198,7 +202,7 @@ void Formula::addVariable(const shared_ptr<Variable>& p_variable) {
  * @param p_clause
  *            the clause
  */
-void Formula::addClause(const shared_ptr<Clause>& p_clause) {
+void Formula::addClause(const std::shared_ptr<Clause>& p_clause) {
 	// Parameters check
 	if (isNull(p_clause)) {
 		log_error(log_formula, "Cannot add a NULL clause.");
@@ -234,7 +238,7 @@ void Formula::addClause(const shared_ptr<Clause>& p_clause) {
  * @param p_literal
  *            the literal to add
  */
-void Formula::addLiteralToClause(const shared_ptr<Clause>& p_clause, Literal p_literal) {
+void Formula::addLiteralToClause(const std::shared_ptr<Clause>& p_clause, Literal p_literal) {
 	// Parameters check
 	if (isNull(p_clause)) {
 		log_error(log_formula, "Cannot add a literal to a NULL clause.");
@@ -253,7 +257,7 @@ void Formula::addLiteralToClause(const shared_ptr<Clause>& p_clause, Literal p_l
 /**
  * 
  */
-void Formula::removeClause(const shared_ptr<Clause>& p_clause) {
+void Formula::removeClause(const std::shared_ptr<Clause>& p_clause) {
 	// Parameters check
 	if (isNull(p_clause)) {
 		log_error(log_formula, "Cannot remove a NULL clause.");
@@ -277,7 +281,7 @@ void Formula::removeClause(const shared_ptr<Clause>& p_clause) {
 /**
  * 
  */
-void Formula::removeLiteralFromClause(const shared_ptr<Clause>& p_clause, Literal p_literal) {
+void Formula::removeLiteralFromClause(const std::shared_ptr<Clause>& p_clause, Literal p_literal) {
 	// Parameters check
 	if (isNull(p_clause)) {
 		log_error(log_formula, "Cannot add a literal to a NULL clause.");
@@ -309,7 +313,7 @@ bool Formula::hasVariables() const {
 /**
  * 
  */
-unordered_set<shared_ptr<Variable>>::iterator Formula::beginVariable() {
+std::unordered_set<std::shared_ptr<Variable>>::iterator Formula::beginVariable() {
 	return m_variables.begin();
 }
 
@@ -317,7 +321,7 @@ unordered_set<shared_ptr<Variable>>::iterator Formula::beginVariable() {
 /**
  * 
  */
-unordered_set<shared_ptr<Variable>>::iterator Formula::endVariable() {
+std::unordered_set<std::shared_ptr<Variable>>::iterator Formula::endVariable() {
 	return m_variables.end();
 }
 

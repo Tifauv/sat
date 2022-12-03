@@ -22,7 +22,6 @@
 #include "Literal.h"
 #include "HistoryStep.h"
 
-using namespace std;
 
 namespace sat {
 
@@ -43,7 +42,7 @@ public:
 	 * @param p_clause
 	 *            the clause to save
 	 */
-	void addClause(const shared_ptr<Clause>& p_clause);
+	void addClause(const std::shared_ptr<Clause>& p_clause);
 
 	/**
 	 * Adds an operation of type OP_ADD_LITERAL_TO_CLAUSE as last step of the history.
@@ -53,7 +52,7 @@ public:
 	 * @param p_literal
 	 *            the literal to save
 	 */
-	void addLiteral(const shared_ptr<Clause>& p_clause, Literal p_literal);
+	void addLiteral(const std::shared_ptr<Clause>& p_clause, Literal p_literal);
 
 	/**
 	 * Replays the modifications stored in the history.
@@ -65,7 +64,7 @@ public:
 
 private:
 	/** The steps of the history. */
-	stack<unique_ptr<HistoryStep>> m_steps;
+	std::stack<std::unique_ptr<HistoryStep>> m_steps;
 };
 
 } // namespace sat::history

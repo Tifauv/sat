@@ -21,7 +21,6 @@
 #include <list>
 #include <ostream>
 
-using namespace std;
 
 namespace sat {
 namespace solver {
@@ -61,7 +60,7 @@ public:
 	/**
 	 * Gives a reference to the inner list of literals.
 	 */
-	list<Literal>& getLiterals();
+	std::list<Literal>& getLiterals();
 
 	/**
 	 * Appends a literal.
@@ -92,7 +91,7 @@ public:
 	/**
 	 * Prints the valuation to the given stream.
 	 */
-	friend ostream& operator<<(ostream& p_outStream, const Valuation& p_valuation);
+	friend std::ostream& operator<<(std::ostream& p_outStream, const Valuation& p_valuation);
 
 
 private:
@@ -100,7 +99,7 @@ private:
 	bool m_unsatisfiable;
 	
 	/** The list of literals. */
-	list<Literal> m_literals;
+	std::list<Literal> m_literals;
 };
 
 } // namespace sat::solver

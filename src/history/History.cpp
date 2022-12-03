@@ -34,7 +34,7 @@ namespace history {
  * @param p_clause
  *            the clause to save
  */
-void History::addClause(const shared_ptr<Clause>& p_clause) {
+void History::addClause(const std::shared_ptr<Clause>& p_clause) {
 	// Parameters check
 	if (isNull(p_clause)) {
 		log_error(log_history, "The clause to add is NULL.");
@@ -42,7 +42,7 @@ void History::addClause(const shared_ptr<Clause>& p_clause) {
 	}
 
 	// Add the new step
-	m_steps.push( unique_ptr<RemoveClauseStep>(new RemoveClauseStep(p_clause)) );
+	m_steps.push( std::unique_ptr<RemoveClauseStep>(new RemoveClauseStep(p_clause)) );
 	log_info(log_history, "Clause %u added to the history.", p_clause->id());
 }
 
@@ -55,7 +55,7 @@ void History::addClause(const shared_ptr<Clause>& p_clause) {
  * @param p_literal
  *            the literal to save
  */
-void History::addLiteral(const shared_ptr<Clause>& p_clause, Literal p_literal) {
+void History::addLiteral(const std::shared_ptr<Clause>& p_clause, Literal p_literal) {
 	// Parameters check
 	if (isNull(p_clause)) {
 		log_error(log_history, "The clause to add is NULL.");
@@ -63,7 +63,7 @@ void History::addLiteral(const shared_ptr<Clause>& p_clause, Literal p_literal) 
 	}
 
 	// Add the new step
-	m_steps.push( unique_ptr<RemoveLiteralFromClauseStep>(new RemoveLiteralFromClauseStep(p_clause, p_literal)) );
+	m_steps.push( std::unique_ptr<RemoveLiteralFromClauseStep>(new RemoveLiteralFromClauseStep(p_clause, p_literal)) );
 	log_info(log_history, "Literal %sx%u of clause %u added to the history.", (p_literal.isNegative() ? "¬" : ""), p_literal.id(), p_clause->id());
 }
 

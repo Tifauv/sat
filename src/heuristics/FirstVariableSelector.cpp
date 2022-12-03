@@ -26,7 +26,7 @@ namespace selectors {
 
 
 // METHODS
-shared_ptr<Variable> FirstVariableSelector::getVariable(Formula& p_formula) {
+std::shared_ptr<Variable> FirstVariableSelector::getVariable(Formula& p_formula) {
 	if (!p_formula.hasVariables())
 		return nullptr;
 

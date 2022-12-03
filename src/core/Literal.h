@@ -20,7 +20,6 @@
 #include <memory>
 #include "Variable.h"
 
-using namespace std;
 
 namespace sat {
 
@@ -30,18 +29,18 @@ class Clause;
 class Literal {
 public:
 	Literal();
-	Literal(const weak_ptr<Variable>& p_variable, int p_sign);
+	Literal(const std::weak_ptr<Variable>& p_variable, int p_sign);
 	Literal(const Literal&) = default;
 
-	shared_ptr<Variable> var()  const;
+	std::shared_ptr<Variable> var()  const;
 	Id        id()   const;
 	int       sign() const;
 
 	bool isPositive() const;
 	bool isNegative() const;
 
-	shared_ptr<Clause> occurence();
-	shared_ptr<Clause> oppositeOccurence();
+	std::shared_ptr<Clause> occurence();
+	std::shared_ptr<Clause> oppositeOccurence();
 
 	Literal operator-();
 	Literal& operator=(const Literal&) = default;
@@ -53,7 +52,7 @@ public:
 	bool operator>=(const Literal& p_literal) const;
 
 private:
-	weak_ptr<Variable> m_variable;
+	std::weak_ptr<Variable> m_variable;
 	int m_sign;
 };
 

@@ -21,7 +21,6 @@
 #include <functional>
 #include "SolverListener.h"
 
-using namespace std;
 
 namespace sat {
 namespace solver {
@@ -85,7 +84,7 @@ public:
 
 private:
 	/** The listeners. */
-	vector<reference_wrapper<SolverListener>> m_listeners;
+	std::vector<std::reference_wrapper<SolverListener>> m_listeners;
 
 };
 

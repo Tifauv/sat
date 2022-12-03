@@ -21,8 +21,6 @@
 #include "ListenableSolver.h"
 #include "ResolutionStack.h"
 
-using namespace std;
-
 
 namespace sat {
 class Literal;
@@ -149,7 +147,7 @@ protected:
 	 *
 	 * @return the conflict clause
 	 */
-	shared_ptr<Clause> getConflictClause() const;
+	std::shared_ptr<Clause> getConflictClause() const;
 
 	/**
 	 * Updates the conflict clause.
@@ -157,7 +155,7 @@ protected:
 	 * @param p_clause
 	 *            the new conflict clause
 	 */
-	void setConflictClause(const shared_ptr<Clause>&);
+	void setConflictClause(const std::shared_ptr<Clause>&);
 
 	/**
 	 * Resets the conflict clause to nullptr.
@@ -196,7 +194,7 @@ private:
 	Valuation m_valuation;
 
 	/** A conflicting clause. */
-	shared_ptr<Clause> m_conflictClause;
+	std::shared_ptr<Clause> m_conflictClause;
 
 	/** The algorithm's resolution stack. */
 	ResolutionStack m_resolution;

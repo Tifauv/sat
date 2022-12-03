@@ -35,7 +35,7 @@ FormulaObject(p_id) {
 
 
 // METHODS
-void Variable::addOccurence(const shared_ptr<Clause>& p_clause, int p_sign) {
+void Variable::addOccurence(const std::shared_ptr<Clause>& p_clause, int p_sign) {
 	// Parameters check
 	if (isNull(p_clause)) {
 		log_error(log_formula, "Attempted to add a NULL clause to variable x%u.", id());
@@ -85,7 +85,7 @@ unsigned int Variable::countOccurences() const {
 }
 
 
-shared_ptr<Clause> Variable::occurence(int p_sign) const {
+std::shared_ptr<Clause> Variable::occurence(int p_sign) const {
 	if (p_sign == SIGN_POSITIVE) {
 		if (m_positiveOccurences.empty())
 			return nullptr;
@@ -98,26 +98,26 @@ shared_ptr<Clause> Variable::occurence(int p_sign) const {
 }
 
 
-vector<shared_ptr<Clause>>::iterator Variable::beginOccurence(int p_sign) {
+std::vector<std::shared_ptr<Clause>>::iterator Variable::beginOccurence(int p_sign) {
 	if (p_sign == SIGN_POSITIVE)
 		return m_positiveOccurences.begin();
 	return m_negativeOccurences.begin();
 }
 
 
-vector<shared_ptr<Clause>>::iterator Variable::endOccurence(int p_sign) {
+std::vector<std::shared_ptr<Clause>>::iterator Variable::endOccurence(int p_sign) {
 	if (p_sign == SIGN_POSITIVE)
 		return m_positiveOccurences.end();
 	return m_negativeOccurences.end();
 }
 
 
-void Variable::removePositiveOccurence(const shared_ptr<Clause>& p_clause) {
+void Variable::removePositiveOccurence(const std::shared_ptr<Clause>& p_clause) {
 	std::erase(m_positiveOccurences, p_clause);
 }
 
 
-void Variable::removeNegativeOccurence(const shared_ptr<Clause>& p_clause) {
+void Variable::removeNegativeOccurence(const std::shared_ptr<Clause>& p_clause) {
 	std::erase(m_negativeOccurences, p_clause);
 }
 

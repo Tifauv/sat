@@ -88,7 +88,7 @@ void StatisticsListener::onBacktrack(Literal&) {
 /**
  * Prints the current statistics to the given stream.
  */
-ostream& operator<<(ostream& p_outStream, const StatisticsListener& p_stats) {
+std::ostream& operator<<(std::ostream& p_outStream, const StatisticsListener& p_stats) {
 	p_outStream << "Statistics [ " <<
 			p_stats.m_decisions    << " decisions  |  "    <<
 			p_stats.m_propagations << " propagations  |  " <<

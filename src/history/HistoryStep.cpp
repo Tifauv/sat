@@ -24,13 +24,13 @@ namespace history {
 
 
 // CONSTRUCTORS
-HistoryStep::HistoryStep(const shared_ptr<Clause>& p_clause) :
+HistoryStep::HistoryStep(const std::shared_ptr<Clause>& p_clause) :
 m_clause(p_clause),
 m_literal() {
 }
 
 
-HistoryStep::HistoryStep(const shared_ptr<Clause>& p_clause, Literal p_literal) :
+HistoryStep::HistoryStep(const std::shared_ptr<Clause>& p_clause, Literal p_literal) :
 m_clause(p_clause),
 m_literal(p_literal) {
 }
@@ -42,7 +42,7 @@ m_literal(p_literal) {
  * 
  * @return a pointer to the clause
  */
-shared_ptr<Clause> HistoryStep::clause() const {
+std::shared_ptr<Clause> HistoryStep::clause() const {
 	return m_clause;
 }
 

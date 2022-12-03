@@ -41,7 +41,7 @@ void CnfLoader::loadProblem(char* p_filename, Formula& p_formula) {
 	log_debug(log_cnf, "Loading problem from CNF file '%s'...", p_filename);
 	
 	// Ouverture du fichier
-	ifstream file(p_filename);
+	std::ifstream file(p_filename);
 	if (!file.is_open()) {
 		log_error(log_cnf, "Could not open file '%s'.", p_filename);
 		return;
@@ -49,7 +49,7 @@ void CnfLoader::loadProblem(char* p_filename, Formula& p_formula) {
 	log_debug(log_cnf, "File '%s' opened.", p_filename);
 	
 	// Initializations
-	string line;
+	std::string line;
 	unsigned int lineNo = 0;
 	unsigned int clauseId = 1;
 	
@@ -86,11 +86,11 @@ void CnfLoader::loadProblem(char* p_filename, Formula& p_formula) {
  * @return nullptr if p_filename is nullptr,
  *         the valuation loaded otherwise
  */
-unique_ptr<vector<RawLiteral>> CnfLoader::loadSolution(char* p_filename) {
+std::unique_ptr<std::vector<RawLiteral>> CnfLoader::loadSolution(char* p_filename) {
 	log_debug(log_cnf, "Loading solution from SAT file '%s'...", p_filename);
 	
 	// Ouverture du fichier
-	ifstream file(p_filename);
+	std::ifstream file(p_filename);
 	if (!file.is_open()) {
 		log_error(log_cnf, "Could not open file '%s'.", p_filename);
 		return nullptr;
@@ -98,8 +98,8 @@ unique_ptr<vector<RawLiteral>> CnfLoader::loadSolution(char* p_filename) {
 	log_debug(log_cnf, "File '%s' opened.", p_filename);
 	
 	// Initializations
-	unique_ptr<vector<RawLiteral>> solution = nullptr;
-	string line;
+	std::unique_ptr<std::vector<RawLiteral>> solution = nullptr;
+	std::string line;
 	unsigned int lineNo = 0;
 	
 	while (getline(file, line)) {
@@ -130,12 +130,12 @@ unique_ptr<vector<RawLiteral>> CnfLoader::loadSolution(char* p_filename) {
  * Parses a clause line from a cnf file.
  * 
  */
-unique_ptr<vector<RawLiteral>> CnfLoader::parseClause(string p_line) {
+std::unique_ptr<std::vector<RawLiteral>> CnfLoader::parseClause(std::string p_line) {
 	// I/ Création du tableau
-	auto literals = unique_ptr<vector<RawLiteral>>(new vector<RawLiteral>());
+	auto literals = std::unique_ptr<std::vector<RawLiteral>>(new std::vector<RawLiteral>());
 	
 	// III/ Initialisation du tableau
-	istringstream source(p_line);
+	std::istringstream source(p_line);
 	int token;
 	while ((source >> token) && (notNull(literals))) {
 		// If the '0' token is found, this is the end of the clause.
@@ -180,7 +180,7 @@ unique_ptr<vector<RawLiteral>> CnfLoader::parseClause(string p_line) {
  *          0 if p_literal does not appear in p_literals
  *          1 if p_literal appears in p_literals
  */
-int CnfLoader::existsLiteral(RawLiteral& p_literal, vector<RawLiteral>& p_literals) {
+int CnfLoader::existsLiteral(RawLiteral& p_literal, std::vector<RawLiteral>& p_literals) {
 	auto foundLiteral = find_if(p_literals.begin(), p_literals.end(), [p_literal](RawLiteral x){return x.id() == p_literal.id();});
 	
 	// Literal found

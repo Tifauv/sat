@@ -42,8 +42,8 @@ void ChronoListener::cleanup() {
 /**
  * Prints the current statistics to the given stream.
  */
-ostream& operator<<(ostream& p_outStream, const ChronoListener& p_stats) {
-	p_outStream << "Took " << chrono::duration_cast<chrono::milliseconds>(p_stats.m_end - p_stats.m_start).count() << " milliseconds";
+std::ostream& operator<<(std::ostream& p_outStream, const ChronoListener& p_stats) {
+	p_outStream << "Took " << std::chrono::duration_cast<std::chrono::milliseconds>(p_stats.m_end - p_stats.m_start).count() << " milliseconds";
 	return p_outStream;
 }
 

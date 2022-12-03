@@ -22,7 +22,6 @@
 #include "ResolutionStackLevel.h"
 #include "Valuation.h"
 
-using namespace std;
 
 namespace sat {
 namespace solver {
@@ -52,7 +51,7 @@ public:
 	/**
 	 * Gives the current depth (number of levels) of the stack.
 	 */
-	stack<unique_ptr<ResolutionStackLevel>>::size_type currentLevel() const;
+	std::stack<std::unique_ptr<ResolutionStackLevel>>::size_type currentLevel() const;
 
 	/* Current level literals operations */
 	/**
@@ -83,7 +82,7 @@ public:
 	 * @param p_clause
 	 *            the clause that is removed from the formula
 	 */
-	void addClause(const shared_ptr<Clause>& p_clause);
+	void addClause(const std::shared_ptr<Clause>& p_clause);
 
 	/**
 	 * Stores a 'literal removed from clause' operation to the current level's history.
@@ -93,7 +92,7 @@ public:
 	 * @param p_literal
 	 *            the literal that is remove from that clause
 	 */
-	void addLiteral(const shared_ptr<Clause>& p_clause, Literal p_literal);
+	void addLiteral(const std::shared_ptr<Clause>& p_clause, Literal p_literal);
 
 	/**
 	 * Replays the history stored in the current level.
@@ -113,7 +112,7 @@ public:
 
 private:
 	/** The histories for each level. */
-	deque<unique_ptr<ResolutionStackLevel>> m_resolutionLevels;
+	std::deque<std::unique_ptr<ResolutionStackLevel>> m_resolutionLevels;
 };
 
 } // namespace sat::solver

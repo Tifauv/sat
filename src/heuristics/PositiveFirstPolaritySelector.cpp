@@ -26,7 +26,7 @@ namespace selectors {
 
 
 // METHODS
-Literal PositiveFirstPolaritySelector::getLiteral(const shared_ptr<Variable>& p_variable) {
+Literal PositiveFirstPolaritySelector::getLiteral(const std::shared_ptr<Variable>& p_variable) {
 	if (p_variable == nullptr) {
 		return Literal();
 	}

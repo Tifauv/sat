@@ -20,7 +20,6 @@
 #include <memory>
 #include "Literal.h"
 
-using namespace std;
 
 namespace sat {
 
@@ -43,7 +42,7 @@ public:
 	 * @param p_clause
 	 *            the clause to record
 	 */
-	explicit HistoryStep(const shared_ptr<Clause>& p_clause);
+	explicit HistoryStep(const std::shared_ptr<Clause>& p_clause);
 
 
 	/**
@@ -54,7 +53,7 @@ public:
 	 * @param p_literal
 	 *            the literal to record
 	 */
-	explicit HistoryStep(const shared_ptr<Clause>& p_clause, Literal p_literal);
+	explicit HistoryStep(const std::shared_ptr<Clause>& p_clause, Literal p_literal);
 
 
 	/**
@@ -67,7 +66,7 @@ public:
 	 * 
 	 * @return a pointer to the clause
 	 */
-	shared_ptr<Clause> clause() const;
+	std::shared_ptr<Clause> clause() const;
 
 
 	/**
@@ -89,7 +88,7 @@ public:
 
 
 private:
-	shared_ptr<Clause> m_clause;
+	std::shared_ptr<Clause> m_clause;
 	Literal            m_literal;
 };
 

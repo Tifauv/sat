@@ -38,7 +38,7 @@ public:
 	 * @param p_clause
 	 *            the recorded clause
 	 */
-	explicit RemoveClauseStep(const shared_ptr<Clause>& p_clause);
+	explicit RemoveClauseStep(const std::shared_ptr<Clause>& p_clause);
 
 
 	/**
