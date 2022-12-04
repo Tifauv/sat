@@ -74,7 +74,7 @@ int main(int p_argc, char* p_argv[]) {
 		formula.log();
 
 		// Load the SAT solution file
-		std::unique_ptr<std::vector<sat::RawLiteral>> solution = loader.loadSolution(satFilename);
+		auto solution = loader.loadSolution(satFilename);
 
 		// Check the solution
 		sat::checker::BasicSolutionChecker checker(formula);
