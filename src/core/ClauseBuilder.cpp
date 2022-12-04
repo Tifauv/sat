@@ -56,7 +56,7 @@ m_literals(new std::vector<RawLiteral>(*p_builder.m_literals)) {}
  */
 ClauseBuilder& ClauseBuilder::reset(unsigned int p_clauseId) {
 	m_clauseId = p_clauseId;
-	m_literals = std::unique_ptr<std::vector<RawLiteral>>(new std::vector<RawLiteral>());
+	m_literals = std::make_unique<std::vector<RawLiteral>>();
 	return *this;
 }
 

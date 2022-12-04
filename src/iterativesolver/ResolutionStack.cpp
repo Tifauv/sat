@@ -38,7 +38,7 @@ ResolutionStack::ResolutionStack() {
  */
 void ResolutionStack::nextLevel() {
 	log_debug(log_history, "Adding a new level to the resolution stack (current stack size=%lu)", m_resolutionLevels.size());
-	m_resolutionLevels.emplace_back(std::unique_ptr<ResolutionStackLevel>(new ResolutionStackLevel()));
+	m_resolutionLevels.emplace_back(std::make_unique<ResolutionStackLevel>());
 }
 
 

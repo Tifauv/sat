@@ -132,7 +132,7 @@ std::unique_ptr<std::vector<RawLiteral>> CnfLoader::loadSolution(char* p_filenam
  */
 std::unique_ptr<std::vector<RawLiteral>> CnfLoader::parseClause(std::string p_line) {
 	// I/ Création du tableau
-	auto literals = std::unique_ptr<std::vector<RawLiteral>>(new std::vector<RawLiteral>());
+	auto literals = std::make_unique<std::vector<RawLiteral>>();
 	
 	// III/ Initialisation du tableau
 	std::istringstream source(p_line);

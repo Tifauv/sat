@@ -42,7 +42,7 @@ void History::addClause(const std::shared_ptr<Clause>& p_clause) {
 	}
 
 	// Add the new step
-	m_steps.push( std::unique_ptr<RemoveClauseStep>(new RemoveClauseStep(p_clause)) );
+	m_steps.push( std::make_unique<RemoveClauseStep>(p_clause) );
 	log_info(log_history, "Clause %u added to the history.", p_clause->id());
 }
 
@@ -63,7 +63,7 @@ void History::addLiteral(const std::shared_ptr<Clause>& p_clause, Literal p_lite
 	}
 
 	// Add the new step
-	m_steps.push( std::unique_ptr<RemoveLiteralFromClauseStep>(new RemoveLiteralFromClauseStep(p_clause, p_literal)) );
+	m_steps.push( std::make_unique<RemoveLiteralFromClauseStep>(p_clause, p_literal) );
 	log_info(log_history, "Literal %sx%u of clause %u added to the history.", (p_literal.isNegative() ? "¬" : ""), p_literal.id(), p_clause->id());
 }
 
