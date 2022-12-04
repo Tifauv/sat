@@ -44,7 +44,7 @@ Literal VariablePolarityLiteralSelector::getLiteral(Formula& p_formula) {
 	}
 
 	// Variable found : select the polarity of the literal
-	Literal literal = m_polaritySelector.getLiteral(variable);
+	auto literal = m_polaritySelector.getLiteral(variable);
 	log_debug(log_dpll, "Literal %sx%u selected.", (literal.isNegative() ? "¬" : ""), literal.id());
 	return literal;
 }

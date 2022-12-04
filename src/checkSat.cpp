@@ -61,7 +61,7 @@ int main(int p_argc, char* p_argv[]) {
 		exit(-2);
 	}
 
-	int rc = 0;
+	auto rc = 0;
 	{
 		// Files to load
 		auto cnfFilename = p_argv[1];

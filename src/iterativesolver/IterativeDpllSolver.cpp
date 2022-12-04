@@ -73,7 +73,7 @@ Valuation& IterativeDpllSolver::solve() {
  * Main loop of the DPLL algorithm.
  */
 void IterativeDpllSolver::dpll() {
-	Result result = Result::UNDEFINED;
+	auto result = Result::UNDEFINED;
 
 	while (result == Result::UNDEFINED) {
 		m_resolution.logCurrentLiterals();
@@ -156,7 +156,7 @@ void IterativeDpllSolver::fullUnitPropagate() {
  */
 bool IterativeDpllSolver::applyUnitPropagate() {
 	// Search a unit literal
-	Literal literal = m_formula.findUnitLiteral();
+	auto literal = m_formula.findUnitLiteral();
 
 	// Exit if there is no unit literal
 	if (isNull(literal.var()))
@@ -324,7 +324,7 @@ void IterativeDpllSolver::applyConflict() {
  */
 void IterativeDpllSolver::applyBackjump() {
 	// Rewind to the last decision literal
-	Literal currentLiteral = m_resolution.lastDecisionLiteral();
+	auto currentLiteral = m_resolution.lastDecisionLiteral();
 	m_resolution.replay(m_formula);
 	m_resolution.popLevel();
 
@@ -344,7 +344,7 @@ void IterativeDpllSolver::applyBackjump() {
 void IterativeDpllSolver::applyDecide() {
 	m_resolution.nextLevel();
 
-	Literal selectedLiteral = m_literalSelector.getLiteral(m_formula);
+	auto selectedLiteral = m_literalSelector.getLiteral(m_formula);
 	listeners().onDecide(selectedLiteral);
 
 	assertLiteral(selectedLiteral);

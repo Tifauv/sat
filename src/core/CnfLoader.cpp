@@ -50,8 +50,8 @@ void CnfLoader::loadProblem(char* p_filename, Formula& p_formula) {
 	
 	// Initializations
 	std::string line;
-	unsigned int lineNo = 0;
-	unsigned int clauseId = 1;
+	auto lineNo = 0;
+	auto clauseId = 1;
 	
 	while (getline(file, line)) {
 		lineNo++;
@@ -100,7 +100,7 @@ std::unique_ptr<std::vector<RawLiteral>> CnfLoader::loadSolution(char* p_filenam
 	// Initializations
 	std::unique_ptr<std::vector<RawLiteral>> solution = nullptr;
 	std::string line;
-	unsigned int lineNo = 0;
+	auto lineNo = 0;
 	
 	while (getline(file, line)) {
 		lineNo++;

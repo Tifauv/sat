@@ -31,7 +31,7 @@ std::shared_ptr<Variable> LeastUsedVariableSelector::getVariable(Formula& p_form
 	if (!p_formula.hasVariables())
 		return nullptr;
 	
-	unsigned int minimumUse = std::numeric_limits<unsigned int>::max();
+	auto minimumUse = std::numeric_limits<unsigned int>::max();
 	std::shared_ptr<Variable> selectedVar = nullptr;
 	for (auto it = p_formula.beginVariable(); it != p_formula.endVariable(); ++it) {
 		if ((*it)->countOccurences() < minimumUse) {

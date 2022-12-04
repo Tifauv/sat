@@ -138,7 +138,7 @@ int main(int p_argc, char* p_argv[]) {
 		//solver.addListener(cachingPolaritySelector);
 
 		/* Solve the problem */
-		sat::solver::Valuation& valuation = solver.solve();
+		auto valuation = solver.solve();
 
 		/* Output the solution */
 		if (valuation.isUnsatisfiable()) {

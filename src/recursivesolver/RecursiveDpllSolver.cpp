@@ -103,14 +103,14 @@ void RecursiveDpllSolver::dpll() {
 	 * Choose the reduction literal.
 	 * This is the crucial step, performance-wise.
 	 */
-	Literal chosen_literal = decide();
+	auto chosen_literal = decide();
 
 	/*
 	 * First reduction with the chosen literal.
 	 */
 	log_info(log_dpll, "First reduction attempt...");
 	History history;
-	bool satisfiable = propagate(chosen_literal, history);
+	auto satisfiable = propagate(chosen_literal, history);
 
 	/*
 	 * The reduced valuation is satisfiable: we are done.
@@ -174,7 +174,7 @@ void RecursiveDpllSolver::dpll() {
  */
 Literal RecursiveDpllSolver::decide() {
 	// Search a unit literal
-	Literal chosen_literal = m_formula.findUnitLiteral();
+	auto chosen_literal = m_formula.findUnitLiteral();
 
 	// If there is no unit literal, use the selector
 	if (isNull(chosen_literal.var())) {
@@ -207,7 +207,7 @@ bool RecursiveDpllSolver::propagate(Literal p_literal, History& p_history) {
 	removeClausesWithLiteral(p_literal, p_history);
 
 	// Remove the literal from the clauses that contain the oposite sign
-	bool satisfiable = removeOppositeLiteralFromClauses(p_literal, p_history);
+	auto satisfiable = removeOppositeLiteralFromClauses(p_literal, p_history);
 
 	// The variable is now empty, we can remove it
 	m_formula.removeVariable(p_literal.var());

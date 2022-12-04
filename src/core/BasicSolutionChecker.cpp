@@ -81,7 +81,7 @@ bool BasicSolutionChecker::checkSolution(std::vector<RawLiteral>& p_solution) {
 bool BasicSolutionChecker::reduce(const RawLiteral& p_rawLiteral) {
 	// Rebuild a Literal from a RawLiteral
 	for (auto it = m_formula.beginVariable(); it != m_formula.endVariable(); ++it) {
-		std::shared_ptr<Variable> variable = *it;
+		auto variable = *it;
 		
 		if (variable->id() == p_rawLiteral.id()) {
 			Literal literal(variable, p_rawLiteral.sign());
@@ -92,7 +92,7 @@ bool BasicSolutionChecker::reduce(const RawLiteral& p_rawLiteral) {
 				m_formula.removeClause(clause);
 		
 			// Remove the literal from the clauses that contain the oposite sign
-			bool satisfiable = true;
+			auto satisfiable = true;
 			for (auto clause = literal.oppositeOccurence(); notNull(clause); clause = literal.oppositeOccurence()) {
 				// Remove the literal from the clause
 				m_formula.removeLiteralFromClause(clause, -literal);

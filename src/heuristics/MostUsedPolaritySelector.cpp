@@ -28,11 +28,10 @@ namespace selectors {
 
 // METHODS
 Literal MostUsedPolaritySelector::getLiteral(const std::shared_ptr<Variable>& p_variable) {
-	if (isNull(p_variable)) {
+	if (isNull(p_variable))
 		return Literal();
-	}
 
-	int sign = SIGN_POSITIVE;
+	auto sign = SIGN_POSITIVE;
 	if (p_variable->countNegativeOccurences() > p_variable->countPositiveOccurences())
 		sign = SIGN_NEGATIVE;
 	return Literal(p_variable, sign);

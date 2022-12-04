@@ -119,7 +119,7 @@ void Valuation::pop() {
 	if (m_literals.empty())
 		return;
 
-	Literal literal = m_literals.back();
+	auto literal = m_literals.back();
 	m_literals.pop_back();
 	log_info(log_valuation, "Literal %sx%u removed from the valuation.", (literal.isNegative() ? "¬" : ""), literal.id());
 }

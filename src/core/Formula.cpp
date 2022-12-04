@@ -128,7 +128,7 @@ Literal Formula::findUnitLiteral() const {
 	// If a clause has been found, retrieve its literal
 	if (iterator != m_clauses.cend()) {
 		auto clause = *iterator;
-		Literal unitLiteral = clause->firstLiteral();
+		auto unitLiteral = clause->firstLiteral();
 		log_debug(log_formula, "Unit literal %sx%u found in clause %u.", (unitLiteral.isNegative() ? "¬" : ""), unitLiteral. id(), clause->id());
 		return unitLiteral;
 	}
@@ -340,9 +340,9 @@ void Formula::log() const {
 		auto line = "   " + std::to_string(clause->id()) + ": ";
 
 		// Clause's literals
-		int deb = 1;
+		auto deb = 1;
 		for (auto literalIt = clause->beginLiteral(); literalIt != clause->endLiteral(); ++literalIt) {
-			const Literal literal = *literalIt;
+			auto literal = *literalIt;
 
 			line.append(deb != 1 ? " v " : "").append(literal.isNegative() ? "¬x" : "x").append(std::to_string(literal.id()));
 			if (deb == 1)
