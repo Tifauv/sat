@@ -70,7 +70,7 @@ void CnfLoader::loadProblem(char* p_filename, Formula& p_formula) {
 			break;
 		
 		// Transformation string -> tab
-		p_formula.createClause(clauseId, parseClause(line));
+		p_formula.createClause(clauseId, *parseClause(line));
 		++clauseId;
 	}
 	log_info(log_cnf, "Problem loaded from CNF file '%s'.", p_filename);

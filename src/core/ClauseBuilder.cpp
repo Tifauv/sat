@@ -81,7 +81,7 @@ ClauseBuilder& ClauseBuilder::withNegativeLiteral(unsigned int p_variable) {
  * Builds the clause and add it to the formula.
  */
 Formula& ClauseBuilder::build() {
-	m_formula.createClause(m_clauseId, m_literals);
+	m_formula.createClause(m_clauseId, *(m_literals.get()));
 	return m_formula;
 }
 

@@ -56,12 +56,12 @@ ClauseBuilder& Formula::newClause(Id p_clauseId) {
  * @param p_literals
  *            the raw literals
  */
-void Formula::createClause(Id p_clauseId, const std::unique_ptr<std::vector<RawLiteral>>& p_literals) {
+void Formula::createClause(Id p_clauseId, const std::vector<RawLiteral>& p_literals) {
 	// Create the clause & add it to the list
 	auto clause = std::make_shared<Clause>(p_clauseId);
 	
 	// Link the new clause with its literals
-	for (const auto& literal : *p_literals) {
+	for (const auto& literal : p_literals) {
 		// Find the variable for the literal
 		auto variable = findOrCreateVariable(literal.id());
 

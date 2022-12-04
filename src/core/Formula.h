@@ -37,7 +37,7 @@ public:
 	Formula();
 
 	ClauseBuilder& newClause(Id p_clauseId);
-	void createClause(Id p_clauseId, const std::unique_ptr<std::vector<RawLiteral>>& p_literals);
+	void createClause(Id p_clauseId, const std::vector<RawLiteral>& p_literals);
 
 	Literal findUnitLiteral() const;
 
