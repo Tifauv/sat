@@ -98,8 +98,8 @@ std::unique_ptr<std::vector<RawLiteral>> CnfLoader::loadSolution(char* p_filenam
 	log_debug(log_cnf, "File '%s' opened.", p_filename);
 	
 	// Initializations
-	std::unique_ptr<std::vector<RawLiteral>> solution = nullptr;
-	std::string line;
+	auto solution = std::unique_ptr<std::vector<RawLiteral>>();
+	auto line = std::string();
 	auto lineNo = 0;
 	
 	while (getline(file, line)) {

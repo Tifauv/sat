@@ -138,7 +138,7 @@ void Valuation::log() {
 	}
 
 	// Otherwise, print the elements
-	std::string line = "Valuation:";
+	auto line = std::string("Valuation:");
 	for (const auto& literal : m_literals)
 		line.append("  ").append(literal.isNegative() ? "¬" : "").append("x").append(std::to_string(literal.id()));
 

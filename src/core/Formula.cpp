@@ -88,7 +88,7 @@ void Formula::createClause(Id p_clauseId, const std::vector<RawLiteral>& p_liter
  * @return the variable, either found or created
  */
 std::shared_ptr<Variable> Formula::findOrCreateVariable(Id p_variableId) {
-	std::shared_ptr<Variable> variable = nullptr;
+	auto variable = std::shared_ptr<Variable>();
 
 	// Search the variable
 	auto match_id([p_variableId](const std::shared_ptr<Variable>& variable) {

@@ -30,8 +30,8 @@ std::shared_ptr<Variable> MostUsedVariableSelector::getVariable(Formula& p_formu
 	if (!p_formula.hasVariables())
 		return nullptr;
 
-	unsigned int maximumUse = 0;
-	std::shared_ptr<Variable> selectedVar = nullptr;
+	auto maximumUse = 0u;
+	auto selectedVar = std::shared_ptr<Variable>();
 	for (auto it = p_formula.beginVariable(); it != p_formula.endVariable(); ++it) {
 		if ((*it)->countOccurences() > maximumUse) {
 			selectedVar = *it;

@@ -40,7 +40,7 @@ namespace sudoku {
  */
 void SudokuLoader::loadProblem(char* p_filename, sat::Formula& p_formula) {
 	log_debug(log_sudoku, "Loading sudoku problem from file '%s'...", p_filename);
-	m_clauseId = 1;
+	m_clauseId = 1u;
 
 	generateSudokuConstraints(p_formula);
 
@@ -75,14 +75,14 @@ void SudokuLoader::generateSudokuConstraints(sat::Formula& p_formula) {
 	log_debug(log_sudoku, "Generating sudoku constraints...");
 
 	// General line / column / square constraints
-	for (unsigned  value=1; value<=SIZE; value++) {
+	for (auto value=1u; value<=SIZE; value++) {
 		// Generate line and column constraints
-		for (unsigned line=1; line<=SIZE; line++) {
+		for (auto line=1u; line<=SIZE; line++) {
 			generateLineConstraints(p_formula, value, line);
 			generateColumnConstraints(p_formula, value, line);
 		}
-		for (unsigned squareLine=1; squareLine<=SQUARE_SIZE; squareLine++)
-			for (unsigned squareColumn=1; squareColumn<=SQUARE_SIZE; squareColumn++)
+		for (auto squareLine=1u; squareLine<=SQUARE_SIZE; squareLine++)
+			for (auto squareColumn=1u; squareColumn<=SQUARE_SIZE; squareColumn++)
 				generateSquareConstraints(p_formula, value, squareLine, squareColumn);
 	}
 
@@ -96,8 +96,8 @@ void SudokuLoader::generateSudokuConstraints(sat::Formula& p_formula) {
 
 void SudokuLoader::generateLineConstraints(sat::Formula& p_formula, unsigned int p_value, unsigned int p_line) {
 	log_debug(log_sudoku, "  - line constraints for value %d line %d", p_value, p_line);
-	for (unsigned startCol=1; startCol<=SIZE; startCol++)
-		for (unsigned targetCol=startCol+1; targetCol<=SIZE; targetCol++)
+	for (auto startCol=1u; startCol<=SIZE; startCol++)
+		for (auto targetCol=startCol+1u; targetCol<=SIZE; targetCol++)
 			p_formula.newClause(m_clauseId++)
 				.withNegativeLiteral(p_line*100 +  startCol*10 + p_value)
 				.withNegativeLiteral(p_line*100 + targetCol*10 + p_value)
@@ -107,8 +107,8 @@ void SudokuLoader::generateLineConstraints(sat::Formula& p_formula, unsigned int
 
 void SudokuLoader::generateColumnConstraints(sat::Formula& p_formula, unsigned int p_value, unsigned int p_column) {
 	log_debug(log_sudoku, "  - column constraints for value %d column %d", p_value, p_column);
-	for (unsigned startLine=1; startLine<=SIZE; startLine++)
-		for (unsigned targetLine=startLine+1; targetLine<=SIZE; targetLine++)
+	for (auto startLine=1u; startLine<=SIZE; startLine++)
+		for (auto targetLine=startLine+1u; targetLine<=SIZE; targetLine++)
 			p_formula.newClause(m_clauseId++)
 				.withNegativeLiteral( startLine*100 + p_column*10 + p_value)
 				.withNegativeLiteral(targetLine*100 + p_column*10 + p_value)
@@ -120,13 +120,13 @@ void SudokuLoader::generateSquareConstraints(sat::Formula& p_formula, unsigned i
 	auto squareLineOffset   = SQUARE_SIZE * (p_squareLine   - 1);
 	auto squareColumnOffset = SQUARE_SIZE * (p_squareColumn - 1);
 
-	for (unsigned lineInSquare=1; lineInSquare<=SQUARE_SIZE; lineInSquare++) {
-		for (unsigned columnInSquare=1; columnInSquare<=SQUARE_SIZE; columnInSquare++) {
-			for (unsigned targetLineInSquare=1; targetLineInSquare<=SQUARE_SIZE; targetLineInSquare++) {
+	for (auto lineInSquare=1u; lineInSquare<=SQUARE_SIZE; lineInSquare++) {
+		for (auto columnInSquare=1u; columnInSquare<=SQUARE_SIZE; columnInSquare++) {
+			for (auto targetLineInSquare=1u; targetLineInSquare<=SQUARE_SIZE; targetLineInSquare++) {
 				if (lineInSquare == targetLineInSquare)
 					continue;
 
-				for (unsigned targetColumnInSquare=1; targetColumnInSquare<=SQUARE_SIZE; targetColumnInSquare++) {
+				for (auto targetColumnInSquare=1u; targetColumnInSquare<=SQUARE_SIZE; targetColumnInSquare++) {
 					if (columnInSquare == targetColumnInSquare)
 						continue;
 
@@ -147,10 +147,10 @@ void SudokuLoader::generateSquareConstraints(sat::Formula& p_formula, unsigned i
 
 
 void SudokuLoader::generateValuesPerCell(sat::Formula& p_formula) {
-	for (unsigned line=1; line<=SIZE; line++)
-		for (unsigned column=1; column<=SIZE; column++) {
+	for (auto line=1u; line<=SIZE; line++)
+		for (auto column=1u; column<=SIZE; column++) {
 			auto clause = p_formula.newClause(m_clauseId++);
-			for (unsigned value=1; value<=SIZE; value++)
+			for (auto value=1u; value<=SIZE; value++)
 				clause.withPositiveLiteral(line*100 + column*10 + value);
 			clause.build();
 		}
@@ -158,10 +158,10 @@ void SudokuLoader::generateValuesPerCell(sat::Formula& p_formula) {
 
 
 void SudokuLoader::generateUniqueValuePerCell(sat::Formula& p_formula) {
-	for (unsigned value=1; value<=SIZE; value++)
-		for (unsigned targetValue=value+1; targetValue<=SIZE; targetValue++)
-			for (unsigned line=1; line<=SIZE; line++)
-				for (unsigned column=1; column<=SIZE; column++)
+	for (auto value=1u; value<=SIZE; value++)
+		for (auto targetValue=value+1u; targetValue<=SIZE; targetValue++)
+			for (auto line=1u; line<=SIZE; line++)
+				for (auto column=1u; column<=SIZE; column++)
 					p_formula.newClause(m_clauseId++)
 						.withNegativeLiteral(line*100 + column*10 +       value)
 						.withNegativeLiteral(line*100 + column*10 + targetValue)
