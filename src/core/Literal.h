@@ -29,7 +29,7 @@ class Clause;
 class Literal {
 public:
 	Literal();
-	Literal(const std::weak_ptr<Variable>& p_variable, int p_sign);
+	Literal(std::weak_ptr<Variable> p_variable, int p_sign);
 	Literal(const Literal&) = default;
 
 	std::shared_ptr<Variable> var()  const;

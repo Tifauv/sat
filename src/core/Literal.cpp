@@ -28,7 +28,7 @@ m_variable(),
 m_sign(SIGN_POSITIVE) {}
 
 
-Literal::Literal(const std::weak_ptr<Variable>& p_variable, int p_sign) :
+Literal::Literal(std::weak_ptr<Variable> p_variable, int p_sign) :
 m_variable(p_variable),
 m_sign(p_sign) {}
 
