@@ -217,13 +217,13 @@ void Formula::addClause(const std::shared_ptr<Clause>& p_clause) {
 	// Ensure the linked variables are enabled
 	for (auto literalIterator = p_clause->beginLiteral(); literalIterator != p_clause->endLiteral(); ++literalIterator) {
 		auto variable = (*literalIterator).var();
-		
+
+		// Relink the variable with the clause
+		variable->addOccurence(p_clause, (*literalIterator).sign());
+
 		// Move the variable to the current list if needed
 		if (variable->isUnused())
 			addVariable(std::move(variable));
-		
-		// Relink the variable with the clause
-		variable->addOccurence(p_clause, (*literalIterator).sign());
 	}
 	
 	log_info(log_formula, "Clause %u added.", p_clause->id());
