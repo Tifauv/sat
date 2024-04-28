@@ -30,7 +30,7 @@ namespace sudoku {
  *
  * This class is NOT thread-safe because of the m_clauseId state it maintains.
  * It can however be used multiple times because the m_clauseId field is reset
- * at each {@link #loadSudoku} invocation.
+ * at each {@link #loadProblem} invocation.
  */
 class SudokuLoader {
 public:

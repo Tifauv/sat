@@ -67,9 +67,6 @@ void SudokuLoader::loadProblem(char* p_filename, sat::Formula& p_formula) {
 
 /**
  * Loads the standard 9x9 Sudoku constraints.
- *
- * @param p_formula
- *            the formula to initialize
  */
 void SudokuLoader::generateSudokuConstraints(sat::Formula& p_formula) {
 	log_debug(log_sudoku, "Generating sudoku constraints...");
