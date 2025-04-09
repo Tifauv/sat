@@ -44,7 +44,7 @@
 void usage(char* p_command) {
 	std::cout << "Usage: " << p_command << " <grid_file>" << std::endl;
 	std::cout << "    <grid_file>  A sudoku grid file is a text file that lists all the known values." << std::endl;
-	std::cout << "                 Each value is on its own line, formated as a triplet <value, line, column>." << std::endl;
+	std::cout << "                 Each value is on its own line, formated as a triplet <line, column, value>." << std::endl;
 	std::cout << "                 For example, the following grid :" << std::endl;
 	std::cout << "                   | 1     6       3   |" << std::endl;
 	std::cout << "                   | 5         2       |" << std::endl;
